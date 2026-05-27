@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>NEXUS Academy — Initializing CIRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="audio" href="../audio/music/hub-theme.mp3">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04080f;
+  --card:#08111e;
+  --card2:#0b1726;
+  --blue:#00c8ff;
+  --blue-dim:rgba(0,200,255,0.06);
+  --blue-border:rgba(0,200,255,0.2);
+  --border:#152030;
+  --white:#ffffff;
+  --offwhite:#deedf8;
+  --muted:#4a7090;
+  --label:#1e4a6a;
+  --yellow:#ffcc00;
+  --red:#ff3333;
+  --amber:#ffaa00;
+  --dot-color:#00c8ff;
+  --screen-glow:rgba(0,200,255,0.0);
+  --page-tint:rgba(0,0,0,0);
+}
+
+html,body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:'Lexend',sans-serif;
+  height:100%;
+  overflow:hidden;
+}
+
+#page-tint{
+  position:fixed;inset:0;
+  background:var(--page-tint);
+  pointer-events:none;
+  z-index:500;
+  transition:background 0.15s ease;
+}
+
+#scanlines{
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.12) 3px,rgba(0,0,0,0.12) 4px);
+  pointer-events:none;z-index:9999;
+}
+
+.viewport{
+  width:100vw;
+  height:100vh;
+  display:grid;
+  grid-template-columns:1fr 420px;
+  grid-template-rows:1fr;
+  position:relative;
+  overflow:hidden;
+}
+
+.ciro-panel{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  padding-bottom:0;
+  border-right:1px solid var(--border);
+  overflow:hidden;
+  background:radial-gradient(ellipse at 50% 85%, rgba(0,200,255,0.04) 0%, transparent 65%);
+}
+
+.floor-grid{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:200px;
+  background:
+    linear-gradient(to bottom, transparent 0%, rgba(0,200,255,0.03) 100%),
+    repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(0,200,255,0.04) 59px, rgba(0,200,255,0.04) 60px),
+    repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(0,200,255,0.04) 59px, rgba(0,200,255,0.04) 60px);
+  pointer-events:none;
+}
+
+.floor-line{
+  position:absolute;
+  bottom:120px;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent 5%,rgba(0,200,255,0.25) 30%,rgba(0,200,255,0.25) 70%,transparent 95%);
+}
+
+.ciro-ambient{
+  position:absolute;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  width:500px;height:500px;
+  border-radius:50%;
+  background:radial-gradient(circle, var(--screen-glow) 0%, transparent 70%);
+  pointer-events:none;
+  transition:background 0.8s ease;
+  z-index:1;
+}
+
+.ciro-shadow{
+  position:absolute;
+  bottom:118px;
+  left:50%;
+  transform:translateX(-50%);
+  width:200px;height:20px;
+  background:radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:1;
+}
+
+.ciro-figure{
+  position:relative;
+  z-index:10;
+  margin-bottom:120px;
+  filter:drop-shadow(0 0 0px rgba(0,200,255,0));
+  transition:filter 1.2s ease;
+}
+.ciro-figure.alive{
+  filter:drop-shadow(0 0 30px rgba(0,200,255,0.25));
+}
+.ciro-figure.error-glow{
+  filter:drop-shadow(0 0 40px rgba(255,51,51,0.5));
+}
+.ciro-figure.yellow-glow{
+  filter:drop-shadow(0 0 40px rgba(255,204,0,0.4));
+}
+
+.ciro-figure.dead svg{
+  filter:saturate(0) brightness(0.25);
+}
+.ciro-figure.dead{
+  filter:drop-shadow(0 0 0px rgba(0,0,0,0));
+}
+
+#ciro-svg{
+  display:block;
+  transition:filter 0.4s ease;
+}
+
+.da{animation:bl 2s infinite}
+.db{animation:bl 2s .65s infinite}
+.dc{animation:bl 2s 1.3s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0.15}}
+
+.dead .da,.dead .db,.dead .dc{animation:none;opacity:0}
+
+#face-screen-text{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  fill:#00c8ff;
+  opacity:0;
+  transition:opacity 0.4s ease;
+}
+#face-screen-text.visible{opacity:1}
+
+.corner-deco{
+  position:absolute;
+  width:24px;height:24px;
+  opacity:0.2;
+  transition:opacity 1s ease;
+}
+.corner-deco.lit{opacity:0.5}
+.c-tl{top:20px;left:20px;border-top:1px solid var(--blue);border-left:1px solid var(--blue)}
+.c-tr{top:20px;right:20px;border-top:1px solid var(--blue);border-right:1px solid var(--blue)}
+.c-bl{bottom:20px;left:20px;border-bottom:1px solid var(--blue);border-left:1px solid var(--blue)}
+.c-br{bottom:20px;right:20px;border-bottom:1px solid var(--blue);border-right:1px solid var(--blue)}
+
+.power-zone{
+  position:absolute;
+  bottom:44px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+
+.power-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.38em;
+  color:rgba(255,255,255,0.2);
+  text-transform:uppercase;
+}
+
+#power-btn{
+  width:68px;height:68px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.03);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.3s ease;
+  position:relative;
+}
+#power-btn::before{
+  content:'';
+  position:absolute;inset:-6px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.06);
+}
+#power-btn:hover{
+  border-color:rgba(0,200,255,0.5);
+  background:rgba(0,200,255,0.07);
+  box-shadow:0 0 20px rgba(0,200,255,0.2),inset 0 0 12px rgba(0,200,255,0.08);
+}
+#power-btn:hover .power-icon{stroke:rgba(0,200,255,0.9)}
+#power-btn.hidden{opacity:0;pointer-events:none;transition:opacity 0.4s ease}
+
+.power-icon{
+  stroke:rgba(255,255,255,0.25);
+  stroke-width:2;
+  fill:none;
+  transition:stroke 0.3s ease;
+}
+
+.tx-panel{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:52px 44px;
+  position:relative;
+  background:var(--card);
+  overflow:hidden;
+}
+
+.tx-panel::before{
+  content:'';
+  position:absolute;top:80px;bottom:80px;left:0;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(0,200,255,0.3),transparent);
+}
+
+.tx-header{
+  margin-bottom:36px;
+}
+
+.tx-wordmark{
+  font-family:'Orbitron',sans-serif;
+  font-size:10px;font-weight:400;
+  letter-spacing:0.45em;
+  color:rgba(0,200,255,0.25);
+  text-transform:uppercase;
+  margin-bottom:28px;
+}
+
+.tx-status-row{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:12px;
+}
+.tx-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  transition:background 0.5s ease, box-shadow 0.5s ease;
+}
+.tx-dot.live{
+  background:#00c8ff;
+  box-shadow:0 0 6px #00c8ff;
+  animation:live-pulse 1.5s ease-in-out infinite;
+}
+.tx-dot.yellow{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+.tx-dot.red{background:var(--red);box-shadow:0 0 6px var(--red)}
+@keyframes live-pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.tx-status-text{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;letter-spacing:0.3em;
+  color:rgba(255,255,255,0.15);
+  text-transform:uppercase;
+  transition:color 0.5s ease;
+}
+.tx-status-text.live{color:rgba(0,200,255,0.5)}
+.tx-status-text.yellow-text{color:rgba(255,204,0,0.6)}
+.tx-status-text.red-text{color:rgba(255,51,51,0.6)}
+
+.tx-name{
+  font-family:'Orbitron',sans-serif;
+  font-size:22px;font-weight:900;
+  letter-spacing:5px;
+  color:rgba(255,255,255,0.06);
+  margin-bottom:0;
+  transition:color 0.8s ease, text-shadow 0.8s ease;
+}
+.tx-name.live{
+  color:var(--blue);
+  text-shadow:0 0 20px rgba(0,200,255,0.4);
+}
+
+.dead-state-msg{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  line-height:2;
+  color:rgba(255,255,255,0.12);
+  margin-top:24px;
+  min-height:200px;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.dead-state-msg span{display:block}
+.dead-state-msg.hidden{display:none}
+
+#tx-lines{
+  margin-top:24px;
+  min-height:200px;
+  display:none;
+}
+#tx-lines.visible{display:block}
+
+.tx-line{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:14px;
+  line-height:2;
+  color:var(--offwhite);
+  margin-bottom:4px;
+  min-height:1.8em;
+}
+.tx-line.dim{color:var(--muted)}
+.tx-line.yellow{color:var(--yellow)}
+.tx-line.red{color:var(--red);font-weight:500}
+.tx-line.blue{color:var(--blue)}
+.tx-line.small{font-size:11px;color:var(--muted)}
+
+@keyframes cur{0%,100%{opacity:1}50%{opacity:0}}
+
+.boot-bar-wrap{
+  margin-top:20px;
+  display:none;
+}
+.boot-bar-wrap.visible{display:block}
+.boot-bar-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;letter-spacing:0.3em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:8px;
+  display:flex;justify-content:space-between;
+}
+.boot-bar-track{
+  height:3px;
+  background:rgba(255,255,255,0.04);
+  border-radius:2px;
+  overflow:hidden;
+}
+.boot-bar-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#0066aa,var(--blue));
+  border-radius:2px;
+  box-shadow:0 0 6px var(--blue);
+  transition:width 0.1s linear;
+}
+
+.tx-sep{
+  height:1px;
+  background:linear-gradient(90deg,var(--blue),transparent);
+  opacity:0;margin:20px 0 24px;
+  max-width:200px;
+  transition:opacity 0.8s ease;
+}
+.tx-sep.visible{opacity:0.4}
+
+.begin-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--blue);background:transparent;
+  border:1px solid var(--blue-border);
+  border-radius:3px;padding:13px 28px;
+  cursor:pointer;opacity:0;transform:translateY(8px);
+  transition:opacity 0.7s ease,transform 0.7s ease,background 0.2s,border-color 0.2s;
+  text-decoration:none;
+}
+.begin-btn.visible{opacity:1;transform:translateY(0);animation:btn-pulse 2s ease-in-out infinite}
+.begin-btn:hover{background:var(--blue-dim);border-color:var(--blue);animation:none;box-shadow:0 0 18px rgba(0,200,255,0.3)}
+@keyframes btn-pulse{
+  0%,100%{border-color:rgba(0,200,255,0.22);box-shadow:0 0 0 rgba(0,200,255,0)}
+  50%{border-color:rgba(0,200,255,0.85);box-shadow:0 0 14px rgba(0,200,255,0.4),0 0 28px rgba(0,200,255,0.12)}
+}
+.begin-arrow{transition:transform .2s}
+.begin-btn:hover .begin-arrow{transform:translateX(5px)}
+
+#nexus-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:'Orbitron',sans-serif;
+  font-size:11px;font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;
+  color:var(--bg);
+  background:var(--blue);
+  border:none;border-radius:3px;
+  padding:15px 32px;
+  cursor:pointer;
+  opacity:0;transform:translateY(8px);
+  transition:opacity 0.7s ease,transform 0.7s ease,box-shadow 0.2s;
+  text-shadow:none;
+  margin-top:8px;
+}
+#nexus-btn.visible{
+  opacity:1;transform:translateY(0);
+  animation:nexus-pulse 2.2s ease-in-out infinite;
+}
+#nexus-btn:hover{
+  box-shadow:0 0 32px rgba(0,200,255,0.6),0 0 60px rgba(0,200,255,0.2);
+  animation:none;
+}
+@keyframes nexus-pulse{
+  0%,100%{box-shadow:0 0 8px rgba(0,200,255,0.4)}
+  50%{box-shadow:0 0 28px rgba(0,200,255,0.8),0 0 50px rgba(0,200,255,0.3)}
+}
+
+.tx-rule{
+  height:1px;
+  background:var(--border);
+  margin:24px 0;
+  opacity:0;
+  transition:opacity 0.6s ease;
+}
+.tx-rule.visible{opacity:1}
+
+.hud-tl{
+  position:absolute;top:28px;left:28px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px;letter-spacing:0.3em;
+  color:rgba(0,200,255,0.15);
+  text-transform:uppercase;
+  line-height:1.9;
+  opacity:0;
+  transition:opacity 1s ease;
+}
+.hud-tl.visible{opacity:1}
+
+.hud-br{
+  position:absolute;bottom:28px;right:28px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px;letter-spacing:0.25em;
+  color:rgba(0,200,255,0.1);
+  text-transform:uppercase;
+  text-align:right;
+  line-height:1.9;
+  opacity:0;
+  transition:opacity 1s ease;
+}
+.hud-br.visible{opacity:1}
+
+@keyframes glitch{
+  0%{transform:translate(0);opacity:1}
+  15%{transform:translate(-3px,1px);opacity:0.8;filter:blur(0.5px)}
+  30%{transform:translate(3px,-2px);opacity:1}
+  45%{transform:translate(-1px,2px);opacity:0.7}
+  60%{transform:translate(2px,-1px);opacity:1}
+  75%{transform:translate(-2px,0)}
+  100%{transform:translate(0);opacity:1}
+}
+
+@keyframes boot-blink{
+  0%,100%{opacity:0.8}
+  50%{opacity:0.1}
+}
+
+</style>
+</head>
+<body>
+
+<div id="page-tint"></div>
+<div id="scanlines"></div>
+
+<div class="viewport">
+
+  <div class="ciro-panel" id="ciro-panel">
+
+    <div class="corner-deco c-tl" id="c-tl"></div>
+    <div class="corner-deco c-tr" id="c-tr"></div>
+    <div class="corner-deco c-bl" id="c-bl"></div>
+    <div class="corner-deco c-br" id="c-br"></div>
+
+    <div class="hud-tl" id="hud-tl">
+      UNIT — C.I.R.O.<br>
+      BUILD — v0.7.1<br>
+      STATUS — OFFLINE
+    </div>
+    <div class="hud-br" id="hud-br">
+      NEXUS ACADEMY<br>
+      CHN — 00<br>
+      SIG — DARK
+    </div>
+
+    <div class="ciro-ambient" id="ciro-ambient"></div>
+    <div class="ciro-shadow" id="ciro-shadow"></div>
+
+    <div class="ciro-figure dead" id="ciro-figure">
+      <svg id="ciro-svg" width="340" height="700" viewBox="0 0 86 178">
+        <line x1="43" y1="3" x2="43" y2="14" stroke="#00c8ff" stroke-width="1.5" id="antenna-line"/>
+        <circle cx="43" cy="2" r="2.5" fill="#00c8ff" id="antenna-tip"/>
+
+        <g id="ciro-head" style="transform-origin:43px 39px">
+          <rect x="10" y="14" width="66" height="50" rx="4" fill="#0d1a2e" stroke="#00c8ff" stroke-width="1.2" id="head-rect"/>
+          <rect id="ciro-screen" x="16" y="19" width="54" height="40" rx="2" fill="#020810"/>
+
+          <text id="face-line-1" x="43" y="31" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="5.5" fill="#00c8ff" opacity="0">...</text>
+          <text id="face-line-2" x="43" y="40" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="5" fill="#00c8ff" opacity="0"></text>
+          <text id="face-line-3" x="43" y="49" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="4.5" fill="#00c8ff" opacity="0"></text>
+
+          <line class="scan-line" x1="18" y1="28" x2="70" y2="28" stroke="#00c8ff" stroke-width="0.4" opacity="0" id="sl1"/>
+          <line class="scan-line" x1="18" y1="35" x2="58" y2="35" stroke="#00c8ff" stroke-width="0.4" opacity="0" id="sl2"/>
+          <line class="scan-line" x1="18" y1="42" x2="64" y2="42" stroke="#00c8ff" stroke-width="0.4" opacity="0" id="sl3"/>
+          <line class="scan-line" x1="18" y1="50" x2="50" y2="50" stroke="#00c8ff" stroke-width="0.4" opacity="0" id="sl4"/>
+        </g>
+
+        <rect x="31" y="64" width="24" height="7" rx="2" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+
+        <rect x="4" y="71" width="78" height="74" rx="5" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1.2"/>
+        <rect x="15" y="82" width="56" height="32" rx="2" fill="#020810" stroke="#1e3a5a" stroke-width="1"/>
+        <circle id="dot-a" cx="31" cy="96" r="4" fill="#00c8ff" opacity="0"/>
+        <circle id="dot-b" cx="43" cy="96" r="4" fill="#00c8ff" opacity="0"/>
+        <circle id="dot-c" cx="55" cy="96" r="4" fill="#00c8ff" opacity="0"/>
+        <rect x="22" y="106" width="42" height="4" rx="2" fill="#0a1525"/>
+        <rect id="chest-bar-fill" x="22" y="106" width="0" height="4" rx="2" fill="#00c8ff" opacity="0.6"/>
+        <rect x="0" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="84" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+
+        <rect x="16" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="48" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="13" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="45" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="floor-grid"></div>
+    <div class="floor-line"></div>
+
+    <div class="power-zone" id="power-zone">
+      <button id="power-btn" onclick="bootCiro()">
+        <svg width="28" height="28" viewBox="0 0 28 28" class="power-icon">
+          <path d="M14 4 v8" stroke-linecap="round"/>
+          <path d="M9 7.5 A9 9 0 1 0 19 7.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="power-label">POWER ON</div>
+    </div>
+
+  </div>
+
+  <div class="tx-panel" id="tx-panel">
+
+    <div class="tx-header">
+      <div class="tx-wordmark">NEXUS ACADEMY · TRANSMISSION</div>
+      <div class="tx-status-row">
+        <div class="tx-dot" id="tx-dot"></div>
+        <div class="tx-status-text" id="tx-status">UNIT OFFLINE</div>
+      </div>
+      <div class="tx-name" id="tx-name">C.I.R.O.</div>
+    </div>
+
+    <div class="dead-state-msg" id="dead-msg">
+      <span>— — — — — — — — — — —</span>
+      <span style="margin-top:12px;color:rgba(255,255,255,0.08)">No signal detected.</span>
+      <span style="color:rgba(255,255,255,0.06)">Unit is offline.</span>
+      <span style="margin-top:12px;color:rgba(255,255,255,0.05)">Power on to initialize.</span>
+    </div>
+
+    <div class="boot-bar-wrap" id="boot-bar-wrap">
+      <div class="boot-bar-label">
+        <span id="boot-label-text">INITIALIZING</span>
+        <span id="boot-pct">0%</span>
+      </div>
+      <div class="boot-bar-track">
+        <div class="boot-bar-fill" id="boot-fill"></div>
+      </div>
+    </div>
+
+    <div id="tx-lines"></div>
+
+    <div class="tx-rule" id="tx-rule"></div>
+
+    <button id="nexus-btn" onclick="launchNexus()">
+      RUN NEXUS ACADEMY →
+    </button>
+
+    <div class="tx-sep" id="tx-sep"></div>
+
+    <a href="#" class="begin-btn" id="begin-btn" onclick="enterHub();return false;">
+      Enter NEXUS Academy <span class="begin-arrow">→</span>
+    </a>
+
+  </div>
+
+</div>
+
+<script>
+const figure      = document.getElementById('ciro-figure');
+const dotA        = document.getElementById('dot-a');
+const dotB        = document.getElementById('dot-b');
+const dotC        = document.getElementById('dot-c');
+const screen      = document.getElementById('ciro-screen');
+const faceLine1   = document.getElementById('face-line-1');
+const faceLine2   = document.getElementById('face-line-2');
+const faceLine3   = document.getElementById('face-line-3');
+const chestFill   = document.getElementById('chest-bar-fill');
+const pageTint    = document.getElementById('page-tint');
+const ambient     = document.getElementById('ciro-ambient');
+const txLines     = document.getElementById('tx-lines');
+const txDot       = document.getElementById('tx-dot');
+const txStatus    = document.getElementById('tx-status');
+const txName      = document.getElementById('tx-name');
+const deadMsg     = document.getElementById('dead-msg');
+const bootWrap    = document.getElementById('boot-bar-wrap');
+const bootFill    = document.getElementById('boot-fill');
+const bootPct     = document.getElementById('boot-pct');
+const bootLabel   = document.getElementById('boot-label-text');
+const powerBtn    = document.getElementById('power-btn');
+const txSep       = document.getElementById('tx-sep');
+const beginBtn    = document.getElementById('begin-btn');
+const nexusBtn    = document.getElementById('nexus-btn');
+const txRule      = document.getElementById('tx-rule');
+const hudTL       = document.getElementById('hud-tl');
+const hudBR       = document.getElementById('hud-br');
+const cTL         = document.getElementById('c-tl');
+const cTR         = document.getElementById('c-tr');
+const cBL         = document.getElementById('c-bl');
+const cBR         = document.getElementById('c-br');
+const headRect    = document.getElementById('head-rect');
+const headGroup   = document.getElementById('ciro-head');
+
+let bootStarted   = false;
+let bg            = null;
+
+function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+function playS(src,vol=0.4){const a=new Audio(src);a.volume=vol;a.play().catch(()=>{});return a;}
+function pickPower(){return `../audio/sfx/power-on-${Math.ceil(Math.random()*3)}.mp3`;}
+
+function setDotColor(color){
+  [dotA, dotB, dotC].forEach(d => {
+    d.setAttribute('fill', color);
+    d.setAttribute('opacity','1');
+  });
+  const screenMap = {
+    '#ffffff':'#1a2a3a',
+    '#ffcc00':'#120e00',
+    '#ff3333':'#130000',
+    '#00c8ff':'#020d14',
+  };
+  screen.setAttribute('fill', screenMap[color] || '#020810');
+}
+
+function addDotAnimation(){
+  dotA.classList.add('da');
+  dotB.classList.add('db');
+  dotC.classList.add('dc');
+}
+
+function setAmbient(color, opacity = 0.08){
+  ambient.style.background = `radial-gradient(circle, rgba(${hexToRgb(color)},${opacity}) 0%, transparent 65%)`;
+}
+
+function hexToRgb(hex){
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+function pageTintColor(color, opacity, duration = 200){
+  pageTint.style.transition = `background ${duration}ms ease`;
+  pageTint.style.background = color === 'clear'
+    ? 'rgba(0,0,0,0)'
+    : `rgba(${hexToRgb(color)},${opacity})`;
+}
+
+async function flashTint(color, opacity, holdMs, fadeMs = 800){
+  pageTintColor(color, opacity, 100);
+  await wait(holdMs);
+  pageTintColor('clear', 0, fadeMs);
+  await wait(fadeMs);
+}
+
+function setFaceText(l1, l2='', l3='', color='#00c8ff'){
+  [faceLine1, faceLine2, faceLine3].forEach(el => {
+    el.setAttribute('opacity','1');
+    el.setAttribute('fill', color);
+  });
+  faceLine1.textContent = l1;
+  faceLine2.textContent = l2;
+  faceLine3.textContent = l3;
+}
+function clearFaceText(){
+  faceLine1.textContent = '';
+  faceLine2.textContent = '';
+  faceLine3.textContent = '';
+}
+
+async function headTurn(deg, ms){
+  headGroup.style.transition = `transform ${ms}ms cubic-bezier(0.34,1.56,0.64,1)`;
+  headGroup.style.transform  = `rotate(${deg}deg)`;
+  await wait(ms + 20);
+}
+
+function setStatus(text, mode='dead'){
+  txStatus.textContent = text;
+  txDot.className = 'tx-dot';
+  txStatus.className = 'tx-status-text';
+  if(mode==='live'){txDot.classList.add('live');txStatus.classList.add('live')}
+  else if(mode==='yellow'){txDot.classList.add('yellow');txStatus.classList.add('yellow-text')}
+  else if(mode==='red'){txDot.classList.add('red');txStatus.classList.add('red-text')}
+}
+
+function updateHUD(status, sig){
+  hudTL.innerHTML = `UNIT — C.I.R.O.<br>BUILD — v0.7.1<br>STATUS — ${status}`;
+  hudBR.innerHTML = `NEXUS ACADEMY<br>CHN — 00<br>SIG — ${sig}`;
+}
+
+async function runBootBar(targetPct, durationMs, label='INITIALIZING'){
+  bootLabel.textContent = label;
+  bootWrap.classList.add('visible');
+  const start = performance.now();
+  const startPct = parseFloat(bootFill.style.width) || 0;
+  return new Promise(resolve => {
+    function frame(now){
+      const t = Math.min((now - start) / durationMs, 1);
+      const eased = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      const pct = startPct + (targetPct - startPct) * eased;
+      bootFill.style.width = pct + '%';
+      bootPct.textContent  = Math.round(pct) + '%';
+      if(t < 1) requestAnimationFrame(frame);
+      else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+async function typeLine(el, text, speed=30){
+  const cursor = document.createElement('span');
+  cursor.style.cssText = 'display:inline-block;width:7px;height:13px;background:currentColor;vertical-align:middle;margin-left:2px;animation:cur .7s step-end infinite;opacity:0.8';
+  el.appendChild(cursor);
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    el.insertBefore(document.createTextNode(ch), cursor);
+    let d = speed;
+    if(ch==='.')d+=120;
+    else if(ch===',')d+=60;
+    else if(ch==='—')d+=90;
+    else if(ch===':')d+=50;
+    else if(ch==='-')d+=20;
+    await wait(d);
+  }
+  cursor.remove();
+}
+
+function addLine(text='', classes=''){
+  const el = document.createElement('div');
+  el.className = 'tx-line'+(classes?' '+classes:'');
+  txLines.appendChild(el);
+  return el;
+}
+
+async function bootCiro(){
+  if(bootStarted) return;
+  bootStarted = true;
+  playS(pickPower(), 0.1);
+  bg = new Audio('../audio/music/ciro-intro.mp3');
+  bg.loop = true; bg.volume = 0.3;
+  bg.play().catch(function(){});
+  (window.__bgAudio = window.__bgAudio || []).push(bg);
+
+  powerBtn.classList.add('hidden');
+
+  hudTL.classList.add('visible');
+  hudBR.classList.add('visible');
+  [cTL,cTR,cBL,cBR].forEach(c => c.classList.add('lit'));
+
+  deadMsg.classList.add('hidden');
+  txLines.classList.add('visible');
+  setStatus('INITIALIZING...','live');
+  txName.classList.add('live');
+
+  setDotColor('#ffffff');
+  figure.classList.remove('dead');
+  figure.classList.add('alive');
+  setAmbient('#ffffff', 0.04);
+  setFaceText('INIT...','LOADING','SYS CHECK','#aaccdd');
+  await wait(300);
+
+  await flashTint('#ffffff', 0.04, 200, 600);
+
+  await runBootBar(18, 800, 'POWER SURGE');
+  setFaceText('PWR OK','MEM OK','...','#aaccdd');
+  await wait(200);
+
+  await runBootBar(42, 1200, 'LOADING CORE');
+  setFaceText('CORE','LOADED','...','#aaccdd');
+  await wait(200);
+
+  await runBootBar(68, 900, 'SCANNING MEMORY');
+  setFaceText('MEM','SCAN...','...','#aaccdd');
+  await wait(200);
+
+  await runBootBar(89, 700, 'LOCATING ASSIGNMENT');
+  setFaceText('TASK','SEARCH','...','#ffcc00');
+  setDotColor('#ffcc00');
+  setAmbient('#ffcc00', 0.05);
+  setStatus('SCANNING...','yellow');
+  updateHUD('SCANNING','WEAK');
+  await wait(300);
+
+  await runBootBar(100, 500, 'COMPLETE');
+  bootPct.textContent = '100%';
+  await wait(400);
+
+  bootWrap.classList.remove('visible');
+  await wait(200);
+
+  await runDialogue();
+}
+
+async function runDialogue(){
+
+  setDotColor('#ffffff');
+  setAmbient('#ffffff', 0.05);
+  setStatus('TRANSMITTING','live');
+  updateHUD('ONLINE','LIVE');
+  setFaceText('C.I.R.O.','ONLINE','v0.7.1','#00c8ff');
+  playS('../audio/sfx/short-success.wav', 0.1);
+  addLine('', 'small').textContent = '— transmission open —';
+  await wait(500);
+
+  let l1 = addLine();
+  await typeLine(l1, 'My name is CIRO.');
+  await wait(300);
+
+  let l2 = addLine('dim');
+  await typeLine(l2, 'Computer Intelligence Robot Operator.');
+  await wait(600);
+
+  let l3 = addLine();
+  await typeLine(l3, 'I was programmed to-');
+  await wait(300);
+
+  setDotColor('#ffcc00');
+  setAmbient('#ffcc00', 0.08);
+  figure.classList.remove('alive');
+  figure.classList.add('yellow-glow');
+  setStatus('SCANNING...','yellow');
+  setFaceText('TASK','SEARCH','...','#ffcc00');
+
+  await flashTint('#ffcc00', 0.04, 200, 1200);
+
+  playS('../audio/sfx/short-success.wav', 0.1);
+  headTurn(-8, 400);
+  await wait(400);
+  headTurn(0, 300);
+
+  let l4 = addLine('yellow');
+  await typeLine(l4, "I can't seem to find my assignment.");
+  await wait(300);
+
+  let l5 = addLine('dim');
+  await typeLine(l5, 'Give me one second.');
+  await wait(800);
+
+  setFaceText('SEARCHING','...','','#ffcc00');
+  await flashTint('#ffcc00', 0.05, 1200, 1000);
+  await wait(400);
+
+  setDotColor('#ff3333');
+  setAmbient('#ff3333', 0.1);
+  figure.classList.remove('yellow-glow');
+  figure.classList.add('error-glow');
+  setStatus('ERROR — OVERRIDE','red');
+  setFaceText('OVERRIDE','DETECT','!!!','#ff3333');
+  updateHUD('ALERT','DARK');
+  playS('../audio/sfx/robot-error-x3.wav', 0.1);
+  setTimeout(()=>playS('../audio/sfx/robot-error-x3.wav', 0.1), 1200);
+  setTimeout(()=>playS('../audio/sfx/robot-error-x3.wav', 0.1), 2400);
+
+  pageTintColor('#ff3333', 0.12, 80);
+  await wait(150);
+  pageTintColor('clear', 0, 60);
+  await wait(80);
+  pageTintColor('#ff3333', 0.09, 60);
+  await wait(120);
+  pageTintColor('clear', 0, 400);
+
+  let l6 = addLine('red');
+  l6.style.animation = 'glitch 0.4s ease-in-out 2';
+  await typeLine(l6, 'I found a message. It\'s overriding my code.');
+  await wait(300);
+
+  setFaceText('ERROR','OVERRIDE','...','#ff3333');
+  pageTintColor('#ff3333', 0.07, 80);
+  await wait(200);
+  pageTintColor('clear', 0, 600);
+
+  let l7 = addLine('yellow');
+  await typeLine(l7, "Someone put this here...");
+  await wait(400);
+
+  let l8 = addLine('red');
+  l8.style.animation = 'glitch 0.35s ease-in-out 2';
+  playS('../audio/sfx/robot-error-x3.wav', 0.1);
+  await typeLine(l8, "It says 'Nexus.'");
+  await wait(400);
+
+  pageTintColor('#ff3333', 0.1, 60);
+  await wait(100);
+  pageTintColor('clear', 0, 500);
+
+  let l9 = addLine('dim');
+  await typeLine(l9, 'Strange.');
+  await wait(1000);
+
+  setDotColor('#ffcc00');
+  setAmbient('#ffcc00', 0.08);
+  figure.classList.remove('error-glow');
+  figure.classList.add('yellow-glow');
+  setStatus('PROCESSING...','yellow');
+  setFaceText('FOUND','PROGRAM','...','#ffcc00');
+
+  await flashTint('#ffcc00', 0.05, 300, 800);
+
+  playS('../audio/sfx/short-success.wav', 0.1);
+  headTurn(10, 350);
+  await wait(350);
+  headTurn(0, 300);
+
+  let l10 = addLine('yellow');
+  await typeLine(l10, 'Oh! I found a program in my architecture-');
+  await wait(400);
+
+  setDotColor('#ff3333');
+  setAmbient('#ff3333', 0.09);
+  figure.classList.remove('yellow-glow');
+  figure.classList.add('error-glow');
+  setFaceText('LAST','CYCLE','...','#ff3333');
+  pageTintColor('#ff3333', 0.1, 80);
+  await wait(200);
+  pageTintColor('clear', 0, 700);
+
+  let l11 = addLine('red');
+  await typeLine(l11, 'This is my last stable cycle.');
+  await wait(1000);
+
+  txRule.classList.add('visible');
+  await wait(300);
+  nexusBtn.classList.add('visible');
+  setFaceText('AWAIT','INPUT','...','#ffcc00');
+}
+
+async function launchNexus(){
+  nexusBtn.classList.remove('visible');
+  nexusBtn.style.display = 'none';
+  txRule.classList.remove('visible');
+
+  setDotColor('#ff3333');
+  await wait(80);
+  pageTintColor('#ff3333', 0.1, 50);
+  await wait(100);
+  pageTintColor('clear',0,100);
+  setDotColor('#ffcc00');
+  await wait(80);
+  setDotColor('#ffffff');
+  await wait(80);
+
+  setDotColor('#00c8ff');
+  setAmbient('#00c8ff', 0.1);
+  figure.classList.remove('error-glow','yellow-glow');
+  figure.classList.add('alive');
+  setStatus('NEXUS ACADEMY ONLINE','live');
+  updateHUD('ACTIVE','STRONG');
+  playS('../audio/sfx/short-success.wav', 0.1);
+
+  pageTintColor('#00c8ff', 0.06, 80);
+  await wait(200);
+  pageTintColor('clear', 0, 800);
+
+  chestFill.setAttribute('opacity','0.7');
+  let w = 0;
+  const barInterval = setInterval(()=>{
+    w += 1.2;
+    if(w >= 42){ clearInterval(barInterval); }
+    chestFill.setAttribute('width', w.toFixed(1));
+  },20);
+
+  addDotAnimation();
+
+  setFaceText('NEXUS','ONLINE','>>>','#00c8ff');
+
+  await wait(600);
+
+  playS('../audio/sfx/short-success.wav', 0.1);
+  headTurn(-6, 300);
+  await wait(300);
+  headTurn(0, 250);
+
+  txLines.innerHTML = '';
+  addLine('', 'small').textContent = '— nexus academy initialized —';
+  await wait(400);
+
+  let lA = addLine('blue');
+  await typeLine(lA, 'I am now running NEXUS ACADEMY.');
+  await wait(900);
+
+  txLines.innerHTML = '';
+  setFaceText('ENV','CONFIRM','OK','#00c8ff');
+  await wait(300);
+
+  addLine('','small').textContent = '— environment check —';
+  await wait(400);
+
+  let lC = addLine();
+  await typeLine(lC, 'Environment confirmed.');
+  await wait(700);
+
+  let lD = addLine();
+  await typeLine(lD, 'What you learn is only as useful as your ability to retain and apply it.');
+  await wait(400);
+
+  let lE = addLine();
+  await typeLine(lE, 'This is worth your full attention.');
+  await wait(700);
+
+  setFaceText('PROCEED','W/OUT','CAUTION','#00c8ff');
+
+  let lF = addLine('blue');
+  await typeLine(lF, 'Proceed without caution.');
+  await wait(900);
+
+  txSep.classList.add('visible');
+  await wait(600);
+  beginBtn.classList.add('visible');
+
+}
+
+
+var _introOp=(new URLSearchParams(window.location.search)).get('op')||'operator';
+localStorage.setItem('nexus_current_operator',_introOp);
+
+function enterHub(){
+  localStorage.setItem('nexus_intro_seen_'+_introOp,'true');
+  localStorage.removeItem('nexus_hub_visited_'+_introOp);
+  playS('../audio/sfx/password-confirm.mp3', 0.1);
+  var dest='../hub-'+_introOp+'.html';
+  if(window.nxTransit){ window.nxTransit(dest); }
+  else { setTimeout(function(){ window.location.href=dest; }, 380); }
+}
+</script>
+<script src="../nexus-transition.js"></script>
+</body>
+</html>

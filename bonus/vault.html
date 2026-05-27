@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>NEXUS Academy — Bonus Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08101f;--card:#0d1628;--card2:#111d30;
+  --blue:#00c8ff;--blue-dim:rgba(0,200,255,0.07);--blue-border:rgba(0,200,255,0.22);
+  --border:#1a2d45;--white:#ffffff;--offwhite:#eaf3fb;--body-text:#cce2f2;
+  --muted:#5a8aaa;--navy:#060d1a;
+}
+html{background:var(--bg);color:var(--white);font-size:16px;line-height:1.7}
+body{background:var(--bg);min-height:100vh;font-family:'Lexend',sans-serif}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,200,255,0.007) 3px,rgba(0,200,255,0.007) 4px);pointer-events:none;z-index:999}
+nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;position:sticky;top:0;z-index:100;width:100%}
+.wordmark{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;letter-spacing:4px;color:var(--white);text-decoration:none}
+.wordmark span{color:var(--blue)}
+.nav-label{font-family:'Lexend',sans-serif;font-size:13px;font-weight:300;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.nav-back{font-family:'Lexend',sans-serif;font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:8px 18px;border-radius:3px;transition:color .2s,border-color .2s}
+.nav-back:hover{color:var(--blue);border-color:var(--blue-border)}
+.browser-shell{width:1280px;margin:0 auto}
+.content-col{max-width:860px;margin:0 auto;padding:52px 0 100px}
+.ciro-widget{background:var(--navy);border:1px solid var(--border);border-radius:12px;padding:28px 32px;display:flex;gap:28px;align-items:flex-start;margin-bottom:44px}
+.ciro-figure{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.ciro-ver{color:#1a5060;font-size:9px;letter-spacing:2px;font-weight:500;font-family:'IBM Plex Mono',monospace}
+.ciro-msg{flex:1;min-width:0}
+.ciro-tag-line{color:#1a5060;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.3em;margin-bottom:14px;text-transform:uppercase;font-weight:500}
+.ciro-text{color:#a8c8e0;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:400;line-height:1.85;min-height:60px}
+.ciro-cursor{display:inline-block;width:9px;height:1.1em;background:var(--blue);margin-left:3px;vertical-align:text-bottom;animation:cblk .8s step-end infinite}
+@keyframes cblk{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes dp{0%,100%{opacity:.9}50%{opacity:.15}}
+.da{animation:dp 2s infinite}.db{animation:dp 2s .65s infinite}.dc{animation:dp 2s 1.3s infinite}
+.vault-header{text-align:center;margin-bottom:36px}
+.vault-title{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;letter-spacing:3px;color:var(--white);text-transform:uppercase;margin-bottom:8px}
+.vault-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.video-list{display:flex;flex-direction:column;gap:10px}
+.video-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:20px 28px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:20px;transition:border-color .2s,background .2s,transform .15s}
+.video-card:hover{border-color:var(--blue-border);background:var(--blue-dim);transform:translateY(-1px)}
+.card-left{display:flex;align-items:center;gap:20px}
+.card-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:3px;color:var(--muted);flex-shrink:0;width:28px}
+.card-title{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:0.05em;line-height:1.3}
+.card-play{width:36px;height:36px;border-radius:50%;border:1px solid var(--blue-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue);font-size:14px;transition:background .2s}
+.video-card:hover .card-play{background:var(--blue-dim)}
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.popup-overlay.open{opacity:1;pointer-events:auto}
+.popup-box{width:90%;max-width:920px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transform:translateY(16px);transition:transform .3s}
+.popup-overlay.open .popup-box{transform:translateY(0)}
+.popup-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+.popup-title{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--white);text-transform:uppercase}
+.popup-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:3px;transition:color .2s,background .2s}
+.popup-close:hover{color:var(--white);background:rgba(255,255,255,0.06)}
+.popup-frame{position:relative;padding-bottom:56.25%;height:0}
+.popup-frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../hub-operator.html" class="wordmark" id="hub-wordmark">NEXUS <span>ACADEMY</span></a>
+  <div class="nav-label">Bonus Vault</div>
+  <a href="../hub-operator.html" class="nav-back" id="hub-back">← Hub</a>
+</nav>
+
+<div class="browser-shell">
+<div class="content-col">
+
+  <div class="ciro-widget">
+    <div class="ciro-figure">
+      <svg width="86" height="178" viewBox="0 0 86 178">
+        <line x1="43" y1="3" x2="43" y2="14" stroke="#00c8ff" stroke-width="1.5"/>
+        <circle cx="43" cy="2" r="2.5" fill="#00c8ff"/>
+        <rect x="10" y="14" width="66" height="50" rx="4" fill="#0d1a2e" stroke="#00c8ff" stroke-width="1.2"/>
+        <rect x="16" y="20" width="54" height="38" rx="2" fill="#050f1c"/>
+        <line x1="18" y1="28" x2="70" y2="28" stroke="#00c8ff" stroke-width="0.5" opacity="0.55"/>
+        <line x1="18" y1="35" x2="60" y2="35" stroke="#00c8ff" stroke-width="0.5" opacity="0.35"/>
+        <line x1="18" y1="42" x2="66" y2="42" stroke="#00c8ff" stroke-width="0.5" opacity="0.25"/>
+        <line x1="18" y1="49" x2="52" y2="49" stroke="#00c8ff" stroke-width="0.5" opacity="0.18"/>
+        <rect x="31" y="64" width="24" height="7" rx="2" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="4" y="71" width="78" height="74" rx="5" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1.2"/>
+        <rect x="15" y="82" width="56" height="32" rx="2" fill="#050f1c" stroke="#1e3a5a" stroke-width="1"/>
+        <circle cx="31" cy="96" r="4" fill="#00c8ff" class="da"/>
+        <circle cx="43" cy="96" r="4" fill="#00c8ff" class="db"/>
+        <circle cx="55" cy="96" r="4" fill="#00c8ff" class="dc"/>
+        <rect x="22" y="106" width="42" height="4" rx="2" fill="#1e3a5a"/>
+        <rect x="0" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="84" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="16" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="48" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="13" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="45" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+      </svg>
+      <div class="ciro-ver">CIRO v0.7</div>
+    </div>
+    <div class="ciro-msg">
+      <div class="ciro-tag-line">NEXUS ACADEMY · SUPPLEMENTAL CHANNEL</div>
+      <div class="ciro-text" id="ciro-text"><span class="ciro-cursor"></span></div>
+    </div>
+  </div>
+
+  <div class="vault-header">
+    <div class="vault-title">Bonus Vault</div>
+    <div class="vault-sub">Supplemental Transmissions — Open Access</div>
+  </div>
+
+  <div class="video-list" id="video-list"></div>
+
+</div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+  <div class="popup-box">
+    <div class="popup-header">
+      <div class="popup-title" id="popup-title"></div>
+      <button class="popup-close" onclick="closePopup()">&#x2715;</button>
+    </div>
+    <div class="popup-frame">
+      <iframe id="popup-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+const VIDEOS = [
+  { id:'Xg55nTrbYYY', title:'FULL Claude Tutorial For Beginners in 2026! (FULL COURSE)' },
+  { id:'lD8Llq2heis', title:'Learn Zapier in 7 minutes: Business & Personal Automation Tutorial For Beginners (2025)' },
+  { id:'GuTcle5edjk', title:'you need to learn MCP RIGHT NOW!! (Model Context Protocol)' },
+  { id:'EH5jx5qPabU', title:'From Zero to Your First AI Agent in 25 Minutes (No Coding)' },
+];
+
+const CIRO_LINES = [
+  { text: "These transmissions were not part of the standard sequence.", pauseAfter: 800 },
+  { text: "They go deeper. Selected for operators who need more than the minimum.", pauseAfter: 800 },
+  { text: "Use them when the work requires it.", pauseAfter: 0 },
+];
+
+function buildCards(){
+  const list = document.getElementById('video-list');
+  VIDEOS.forEach((v, i)=>{
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.innerHTML = `
+      <div class="card-left">
+        <div class="card-num">0${i+1}</div>
+        <div class="card-title">${v.title}</div>
+      </div>
+      <div class="card-play">▶</div>`;
+    card.addEventListener('click', ()=> openPopup(v));
+    list.appendChild(card);
+  });
+}
+
+const hubMusic=new Audio('../audio/music/hub-theme.mp3');
+hubMusic.loop=true;(window.__bgAudio=window.__bgAudio||[]).push(hubMusic);
+(function(){
+  var mode=Math.floor(Math.random()*3);
+  var fadeIv=null;
+  function fadeIn(){
+    if(fadeIv)clearInterval(fadeIv);
+    hubMusic.volume=0;
+    var step=0,steps=Math.round(3000/16);
+    fadeIv=setInterval(function(){step++;if(step>=steps){hubMusic.volume=0.67;clearInterval(fadeIv);fadeIv=null;}else{hubMusic.volume=0.67*step/steps;}},16);
+  }
+  function begin(){
+    if(mode===0){hubMusic.volume=0.67;}else{hubMusic.currentTime=mode===1?105:hubMusic.duration*(2/3);fadeIn();}
+    return hubMusic.play();
+  }
+  function init(){
+    if(mode===0||hubMusic.readyState>=1){
+      begin().catch(function(){var s=function(){document.removeEventListener('click',s);document.removeEventListener('touchstart',s);begin().catch(function(){});};document.addEventListener('click',s);document.addEventListener('touchstart',s);});
+    }else{hubMusic.addEventListener('loadedmetadata',function(){init();},{once:true});}
+  }
+  init();
+})();
+window.addEventListener('pageshow',function(e){if(e.persisted)hubMusic.play().catch(function(){});});
+function fadeHubMusic(toVol,ms){
+  var steps=25,delta=(toVol-hubMusic.volume)/steps,iv=ms/steps,s=0;
+  var t=setInterval(function(){hubMusic.volume=Math.max(0,Math.min(1,hubMusic.volume+delta));if(++s>=steps)clearInterval(t);},iv);
+}
+
+function openPopup(v){
+  fadeHubMusic(0,500);
+  document.getElementById('popup-title').textContent = v.title;
+  document.getElementById('popup-iframe').src = `https://www.youtube.com/embed/${v.id}?autoplay=1`;
+  document.getElementById('popup-overlay').classList.add('open');
+}
+
+function closePopup(e){
+  if(e && e.target !== document.getElementById('popup-overlay') && !e.target.classList.contains('popup-close')) return;
+  document.getElementById('popup-overlay').classList.remove('open');
+  document.getElementById('popup-iframe').src = '';
+  fadeHubMusic(0.67,500);
+}
+
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePopup({ target: document.getElementById('popup-overlay') }); });
+
+(function(){
+  const el = document.getElementById('ciro-text');
+  let lineIdx = 0, charIdx = 0, text = '';
+
+  function typeLine(){
+    if(lineIdx >= CIRO_LINES.length){ el.innerHTML = text; return; }
+    const line = CIRO_LINES[lineIdx];
+    if(charIdx < line.text.length){
+      text += line.text[charIdx++];
+      el.innerHTML = text + '<span class="ciro-cursor"></span>';
+      setTimeout(typeLine, 28);
+    } else {
+      lineIdx++; charIdx = 0;
+      if(lineIdx < CIRO_LINES.length){
+        text += ' ';
+        setTimeout(typeLine, line.pauseAfter || 400);
+      } else {
+        el.innerHTML = text;
+      }
+    }
+  }
+
+  setTimeout(typeLine, 600);
+})();
+
+buildCards();
+
+window.addEventListener('load',()=>{
+  localStorage.setItem('nexus_last_page_'+(localStorage.getItem('nexus_current_operator')||'operator'), JSON.stringify({url:location.pathname, title:'Bonus Vault'}));
+});
+</script>
+<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var hu='../hub-'+op+'.html';var wm=document.getElementById('hub-wordmark');var bk=document.getElementById('hub-back');if(wm)wm.href=hu;if(bk)bk.href=hu;})();</script>
+<script src="../nexus-transition.js"></script>
+</body>
+</html>

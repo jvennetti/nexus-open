@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/"
+  to = "/pre-course/ciro-intro.html?op=operator"
+  status = 302

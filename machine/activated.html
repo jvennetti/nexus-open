@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>NEXUS Academy — Machine Restored</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#02050b;--card:#070f1c;
+  --blue:#00c8ff;--yellow:#ffcc00;--red:#ff3333;--amber:#ffaa00;
+  --white:#ffffff;--offwhite:#deedf8;--muted:#3a5870;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--offwhite);font-family:'Lexend',sans-serif;overflow-x:hidden;overflow-y:hidden}
+#scanlines{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.1) 3px,rgba(0,0,0,0.1) 4px);pointer-events:none;z-index:9999}
+#page-tint{position:fixed;inset:0;background:rgba(0,0,0,0);pointer-events:none;z-index:9998;transition:background 0.15s ease}
+
+/* ═══════════════════════════════════
+   SECTION 1 — THE MACHINE
+   Layout: boot log on top, machine centered below
+═══════════════════════════════════ */
+#section-machine{
+  width:100vw;height:100vh;
+  position:relative;overflow:hidden;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;
+}
+#machine-ambient{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:1200px;height:900px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,51,51,0.06) 0%,transparent 60%);
+  pointer-events:none;z-index:0;transition:background 1.5s ease;
+}
+.m-corner{position:absolute;width:20px;height:20px;opacity:0.22}
+.m-c-tl{top:14px;left:14px;border-top:1px solid var(--blue);border-left:1px solid var(--blue)}
+.m-c-tr{top:14px;right:14px;border-top:1px solid var(--blue);border-right:1px solid var(--blue)}
+.m-c-bl{bottom:14px;left:14px;border-bottom:1px solid var(--blue);border-left:1px solid var(--blue)}
+.m-c-br{bottom:14px;right:14px;border-bottom:1px solid var(--blue);border-right:1px solid var(--blue)}
+
+/* ── BOOT LOG — top, centered above machine ── */
+#log-panel{
+  position:relative;
+  z-index:10;
+  width:600px;
+  padding:22px 28px 14px;
+  margin-top:18px;
+  flex-shrink:0;
+  border-bottom:1px solid rgba(0,200,255,0.07);
+  background:linear-gradient(to bottom,rgba(2,5,11,0.9),rgba(2,5,11,0.3));
+}
+.log-header{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;letter-spacing:0.38em;
+  color:rgba(0,200,255,0.28);text-transform:uppercase;
+  margin-bottom:10px;flex-shrink:0;
+  display:flex;align-items:center;gap:9px;
+}
+.log-dot{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red);animation:log-blink 1.8s ease-in-out infinite}
+@keyframes log-blink{0%,100%{opacity:1}50%{opacity:0.15}}
+.log-dot.blue{background:var(--blue);box-shadow:0 0 7px var(--blue);animation:log-blink-b 1.5s ease-in-out infinite}
+@keyframes log-blink-b{0%,100%{opacity:1}50%{opacity:0.3}}
+#log-lines{display:flex;flex-direction:column;gap:3px;overflow:hidden;min-height:60px}
+.log-line{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;line-height:1.55;
+  color:rgba(180,215,235,0.65);
+  opacity:0;transform:translateY(-5px);
+  transition:opacity 0.3s ease,transform 0.3s ease;
+  display:flex;align-items:baseline;gap:8px;
+  flex-shrink:0;
+}
+.log-line.show{opacity:1;transform:translateY(0)}
+.log-line .lpfx{font-size:10px;opacity:0.5;flex-shrink:0;min-width:36px}
+.log-line.err{color:rgba(255,80,80,0.8)}.log-line.err .lpfx{color:var(--red)}
+.log-line.warn{color:rgba(255,210,80,0.8)}.log-line.warn .lpfx{color:var(--yellow)}
+.log-line.ok{color:rgba(0,200,255,0.82)}.log-line.ok .lpfx{color:var(--blue)}
+
+/* ── MACHINE ACTIVATED headline — above machine svg ── */
+#act-headline{
+  z-index:10;
+  text-align:center;
+  pointer-events:none;
+  flex-shrink:0;
+  margin-top:12px;
+  height:72px;
+  display:flex;align-items:center;justify-content:center;
+}
+.act-title-txt{
+  font-family:'Orbitron',sans-serif;font-size:52px;font-weight:900;
+  letter-spacing:0.18em;color:var(--white);text-transform:uppercase;
+  text-shadow:0 0 50px rgba(0,200,255,0.6),0 0 100px rgba(0,200,255,0.22);
+  opacity:0;transform:translateY(8px);
+  transition:opacity 0.9s ease,transform 0.9s ease;
+}
+.act-title-txt.show{opacity:1;transform:translateY(0);animation:act-glow 2.5s ease-in-out infinite}
+@keyframes act-glow{
+  0%,100%{text-shadow:0 0 50px rgba(0,200,255,0.6),0 0 100px rgba(0,200,255,0.22)}
+  50%{text-shadow:0 0 80px rgba(0,200,255,1),0 0 160px rgba(0,200,255,0.38)}
+}
+
+/* ── MACHINE SVG — centered ── */
+#machine-wrap{
+  position:relative;
+  z-index:5;
+  display:flex;align-items:center;justify-content:center;
+  flex:1;width:100%;
+}
+.m-floor{position:absolute;bottom:0;left:0;right:0;height:120px;
+  background:linear-gradient(to bottom,transparent,rgba(0,200,255,0.02)),
+  repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(0,200,255,0.03) 59px,rgba(0,200,255,0.03) 60px),
+  repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(0,200,255,0.03) 59px,rgba(0,200,255,0.03) 60px);
+  pointer-events:none}
+.m-floor-line{position:absolute;bottom:68px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 5%,rgba(0,200,255,0.13) 30%,rgba(0,200,255,0.13) 70%,transparent 95%)}
+/* SVG 1.5× original width (~820 → 1230) */
+#machine-svg{display:block;width:min(1230px,96vw);height:auto}
+
+/* machine SVG keyframes */
+@keyframes spin-cw{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes spin-ccw{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+@keyframes cable-flow{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
+@keyframes err-blink{0%,100%{opacity:0.85}50%{opacity:0.1}}
+@keyframes energy-r{0%,100%{opacity:0.45;transform:scaleY(0.7)}50%{opacity:1;transform:scaleY(1)}}
+@keyframes orb-p{0%,100%{opacity:0.88}50%{opacity:1}}
+
+/* ═══════════════════════════════════
+   SECTION 2 — MESSAGES
+   Machine terminal close-up aesthetic.
+   CIRO icon left | terminal panel right.
+   Fixed 100vh, no user scroll. Text auto-scrolls inside.
+═══════════════════════════════════ */
+#section-messages{
+  width:100vw;height:100vh;
+  position:relative;flex-shrink:0;
+  visibility:hidden;
+  background:var(--bg);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#section-messages.revealed{visibility:visible}
+
+/* Decorative machine panel backdrop */
+#msg-terminal-bg{
+  position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(0,200,255,0.018) 79px,rgba(0,200,255,0.018) 80px),
+    repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(0,200,255,0.018) 79px,rgba(0,200,255,0.018) 80px);
+  pointer-events:none;
+}
+/* Large angled machine panel decorative element — left side */
+#msg-panel-deco-l{
+  position:absolute;left:0;top:0;bottom:0;width:180px;
+  background:linear-gradient(to right,rgba(0,10,20,0.9),transparent);
+  border-right:1px solid rgba(0,200,255,0.05);
+  pointer-events:none;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding-left:20px;gap:8px;
+}
+#msg-panel-deco-r{
+  position:absolute;right:0;top:0;bottom:0;width:180px;
+  background:linear-gradient(to left,rgba(0,10,20,0.9),transparent);
+  border-left:1px solid rgba(0,200,255,0.05);
+  pointer-events:none;
+}
+.deco-tick{width:24px;height:1px;background:rgba(0,200,255,0.12);}
+.deco-tick.tall{height:3px;background:rgba(0,200,255,0.2);border-radius:1px;}
+
+/* Corner brackets for terminal */
+.t-corner{position:absolute;width:28px;height:28px;opacity:0.35}
+.t-c-tl{top:0;left:0;border-top:2px solid var(--blue);border-left:2px solid var(--blue)}
+.t-c-tr{top:0;right:0;border-top:2px solid var(--blue);border-right:2px solid var(--blue)}
+.t-c-bl{bottom:0;left:0;border-bottom:2px solid var(--blue);border-left:2px solid var(--blue)}
+.t-c-br{bottom:0;right:0;border-bottom:2px solid var(--blue);border-right:2px solid var(--blue)}
+
+/* ── TERMINAL FRAME — the "close-up machine panel" ── */
+#terminal-frame{
+  position:relative;
+  width:min(1248px, calc(100vw - 40px));
+  height:calc(100vh - 40px);
+  max-height:1014px;
+  background:#040c18;
+  border:1px solid rgba(0,200,255,0.14);
+  border-radius:6px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(0,200,255,0.06),
+    0 0 60px rgba(0,200,255,0.06),
+    inset 0 0 80px rgba(0,0,0,0.4);
+}
+/* rivets / bolts at corners */
+.t-bolt{position:absolute;width:8px;height:8px;border-radius:50%;background:#0a1828;border:1px solid rgba(0,200,255,0.2);z-index:2}
+.t-bolt-tl{top:8px;left:8px}.t-bolt-tr{top:8px;right:8px}.t-bolt-bl{bottom:8px;left:8px}.t-bolt-br{bottom:8px;right:8px}
+
+/* ── TERMINAL TOP BAR ── */
+#terminal-topbar{
+  flex-shrink:0;
+  height:38px;
+  background:#030a14;
+  border-bottom:1px solid rgba(0,200,255,0.1);
+  display:flex;align-items:center;
+  padding:0 16px;
+  gap:12px;
+}
+.tb-dot{width:8px;height:8px;border-radius:50%}
+.tb-dot-r{background:#ff3333;box-shadow:0 0 5px #ff3333;opacity:0.5}
+.tb-dot-y{background:#ffcc00;opacity:0.3}
+.tb-dot-g{background:#00c8ff;opacity:0.3}
+.tb-title{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.42em;color:rgba(0,200,255,0.3);text-transform:uppercase;margin-left:auto;margin-right:auto}
+.tb-id{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.2em;color:rgba(0,200,255,0.15);margin-left:auto}
+
+/* ── TERMINAL BODY: CIRO left + scroll right ── */
+#terminal-body{
+  flex:1;
+  display:flex;
+  overflow:hidden;
+  min-height:0;
+}
+
+/* ── CIRO COLUMN — left, narrow ── */
+#ciro-col{
+  flex-shrink:0;
+  width:169px;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:28px 0 20px;
+  border-right:1px solid rgba(0,200,255,0.08);
+  background:linear-gradient(to right,#020810,#030c16);
+  position:relative;
+}
+/* decorative scan lines on CIRO panel */
+#ciro-col::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 5px,rgba(0,200,255,0.008) 5px,rgba(0,200,255,0.008) 6px);
+  pointer-events:none;
+}
+.ciro-icon-wrap{opacity:0;transition:opacity 0.8s ease;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1}
+.ciro-icon-wrap.show{opacity:1}
+.ciro-icon-label{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:0.32em;color:rgba(0,200,255,0.28);text-transform:uppercase;text-align:center}
+.da{animation:bl 2s infinite}.db{animation:bl 2s .65s infinite}.dc{animation:bl 2s 1.3s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0.15}}
+.ciro-status-strip{margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:5px;opacity:0;transition:opacity 0.5s ease;position:relative;z-index:1}
+.ciro-status-strip.show{opacity:1}
+.cstatus-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);box-shadow:0 0 7px var(--blue);animation:log-blink-b 1.5s ease-in-out infinite}
+.cstatus-dot.yellow{background:var(--yellow);box-shadow:0 0 7px var(--yellow)}
+.cstatus-dot.off{background:rgba(255,255,255,0.08);box-shadow:none;animation:none}
+.cstatus-label{font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:0.25em;color:rgba(0,200,255,0.28);text-transform:uppercase;text-align:center}
+
+/* decorative panel indicators under CIRO */
+#ciro-panel-indicators{
+  margin-top:auto;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding-bottom:8px;
+  position:relative;z-index:1;
+}
+.cpi-bar{width:40px;height:3px;border-radius:1px;background:rgba(0,200,255,0.07)}
+.cpi-bar.active{background:rgba(0,200,255,0.25);animation:log-blink-b 2s ease-in-out infinite}
+.cpi-label{font-family:'IBM Plex Mono',monospace;font-size:6px;letter-spacing:0.25em;color:rgba(0,200,255,0.18);text-transform:uppercase}
+
+/* ── MESSAGE SCROLL AREA — right ── */
+#msg-viewport{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  min-height:0;
+  position:relative;
+}
+/* subtle scanline overlay on message area */
+#msg-viewport::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);
+  pointer-events:none;z-index:0;
+}
+
+/* scrolling container — JS calls scrollToBottom() to auto-advance */
+#msg-scroll{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:36px 52px 26px 42px;
+  display:flex;flex-direction:column;
+  gap:0;
+  scroll-behavior:smooth;
+  position:relative;z-index:1;
+  /* hide scrollbar visually */
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+#msg-scroll::-webkit-scrollbar{display:none}
+
+/* ── CIRO LEAD-IN ── */
+#ciro-leadin{
+  flex-shrink:0;margin-bottom:16px;
+  opacity:0;transition:opacity 0.6s ease;
+}
+#ciro-leadin.show{opacity:1}
+.leadin-para{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:20px;line-height:1.8;
+  color:rgba(220,240,252,0.9);
+  margin-bottom:2px;min-height:1em;
+  white-space:pre-wrap;
+}
+.leadin-para.blue{color:var(--blue)}
+.leadin-para.yellow{color:rgba(255,210,60,0.88)}
+.leadin-para.dim{color:rgba(120,160,185,0.55)}
+
+/* ── VANTA PLATE ── */
+#vanta-plate{
+  background:#030b14;
+  border:1px solid rgba(255,170,0,0.22);
+  border-left:3px solid rgba(255,170,0,0.55);
+  border-radius:4px;
+  padding:18px 24px 20px;
+  margin-bottom:0;flex-shrink:0;
+  position:relative;overflow:hidden;
+  opacity:0;transition:opacity 0.6s ease;
+}
+#vanta-plate.show{opacity:1}
+#vanta-plate::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(255,170,0,0.01) 4px,rgba(255,170,0,0.01) 5px);
+  pointer-events:none;border-radius:4px;
+}
+.vplate-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;
+}
+.vph-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber);animation:log-blink 2s ease-in-out infinite}
+.vph-label{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.42em;
+  color:rgba(255,170,0,0.6);text-transform:uppercase;font-weight:500;
+}
+.vph-status{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.28em;color:rgba(255,170,0,0.32);text-transform:uppercase;margin-left:auto}
+.vdecrypt-bar{height:2px;background:rgba(255,170,0,0.08);border-radius:1px;margin-bottom:14px;overflow:hidden}
+.vdecrypt-fill{height:100%;width:0%;background:linear-gradient(90deg,rgba(255,170,0,0.5),var(--amber));border-radius:1px;transition:width 0.4s ease}
+#vanta-text{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:18px;line-height:1.8;
+  color:rgba(230,200,140,0.85);
+  text-align:left;white-space:pre-wrap;min-height:1em;
+}
+.vanta-sig-line{
+  font-family:'IBM Plex Mono',monospace;font-size:16px;letter-spacing:0.2em;
+  color:rgba(255,170,0,0.42);margin-top:14px;
+  opacity:0;transition:opacity 0.7s ease;
+}
+.vanta-sig-line.show{opacity:1}
+
+/* ── CIRO MESSAGE AREA ── */
+#ciro-msg-area{margin-top:0;opacity:0;transition:opacity 0.7s ease;flex-shrink:0}
+#ciro-msg-area.show{opacity:1}
+.ciro-msg-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-top:28px}
+.cmh-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(0,200,255,0.25),transparent)}
+.cmh-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.42em;color:rgba(0,200,255,0.4);text-transform:uppercase;white-space:nowrap}
+.ciro-para{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:20px;line-height:1.8;
+  color:rgba(220,240,252,0.9);
+  margin-bottom:2px;min-height:1em;
+  white-space:pre-wrap;
+  transition:color 1.5s ease;
+}
+.ciro-para.blue{color:var(--blue)}
+.ciro-para.yellow{color:rgba(255,210,60,0.88)}
+.ciro-para.dim{color:rgba(120,160,185,0.55)}
+.ciro-para.shutdown{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;color:rgba(255,204,0,0.78)}
+/* fade-to-grey class applied at shutdown */
+.ciro-para.greyed{color:rgba(90,110,125,0.45)!important}
+.leadin-para.greyed{color:rgba(90,110,125,0.45)!important}
+#vanta-text.greyed{color:rgba(90,110,125,0.42)!important}
+.vanta-sig-line.greyed{color:rgba(90,110,125,0.35)!important}
+.vplate-header.greyed .vph-label{color:rgba(90,110,125,0.38)!important}
+
+/* ── TERMINAL BOTTOM STATUS BAR ── */
+#terminal-statusbar{
+  flex-shrink:0;
+  height:28px;
+  background:#020810;
+  border-top:1px solid rgba(0,200,255,0.07);
+  display:flex;align-items:center;
+  padding:0 16px;
+  gap:16px;
+}
+.tsb-item{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.3em;color:rgba(0,200,255,0.18);text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.tsb-dot{width:4px;height:4px;border-radius:50%;background:var(--blue);opacity:0.4}
+#tsb-status-text{margin-left:auto}
+
+/* ── HUB BUTTON ── */
+#hub-btn-wrap{
+  padding:18px 40px 16px 32px;
+  opacity:0;transition:opacity 1s ease;
+  flex-shrink:0;
+  position:relative;z-index:1;
+}
+#hub-btn-wrap.show{opacity:1}
+#hub-btn-wrap.revisit-mode{display:flex;justify-content:center;padding:32px 40px 28px}
+#hub-btn{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--blue);background:transparent;border:1px solid rgba(0,200,255,0.22);
+  border-radius:3px;padding:11px 26px;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  animation:hub-pulse 2s ease-in-out infinite;
+}
+#hub-btn-wrap.revisit-mode #hub-btn{font-size:17px;letter-spacing:5px;padding:18px 56px}
+#hub-btn:hover{background:rgba(0,200,255,0.07);border-color:var(--blue);animation:none;box-shadow:0 0 20px rgba(0,200,255,0.25)}
+@keyframes hub-pulse{0%,100%{border-color:rgba(0,200,255,0.22)}50%{border-color:rgba(0,200,255,0.6);box-shadow:0 0 14px rgba(0,200,255,0.28)}}
+
+@keyframes cur{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes glitch{
+  0%,100%{transform:translate(0);opacity:1}
+  20%{transform:translate(-3px,1px);opacity:0.75;filter:blur(0.5px)}
+  40%{transform:translate(3px,-2px);opacity:1}
+  60%{transform:translate(-2px,1px);opacity:0.8}
+  80%{transform:translate(1px,0)}
+}
+</style>
+</head>
+<body>
+<div id="scanlines"></div>
+<div id="page-tint"></div>
+<audio id="unlock-music" src="../audio/music/machine-unlock.mp3" preload="auto"></audio>
+
+<!-- ═══════════════════════════════════
+     SECTION 1: THE MACHINE
+═══════════════════════════════════ -->
+<div id="section-machine">
+  <div class="m-corner m-c-tl"></div>
+  <div class="m-corner m-c-tr"></div>
+  <div class="m-corner m-c-bl"></div>
+  <div class="m-corner m-c-br"></div>
+  <div id="machine-ambient"></div>
+
+  <!-- boot log — top, centered -->
+  <div id="log-panel">
+    <div class="log-header">
+      <div class="log-dot" id="log-dot"></div>
+      <span>NXS-MCH-001 · BOOT LOG</span>
+    </div>
+    <div id="log-lines"></div>
+  </div>
+
+  <!-- headline — shows above machine once boot completes -->
+  <div id="act-headline">
+    <div class="act-title-txt" id="act-title">MACHINE RESTORED</div>
+  </div>
+
+  <!-- machine SVG — centred on full page, 1.5× size -->
+  <div id="machine-wrap">
+    <div class="m-floor"></div>
+    <div class="m-floor-line"></div>
+    <svg id="machine-svg" viewBox="0 0 940 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="cgR" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ff3333" stop-opacity="0.85"/><stop offset="55%" stop-color="#880000" stop-opacity="0.35"/><stop offset="100%" stop-color="#ff3333" stop-opacity="0"/></radialGradient>
+        <radialGradient id="cgB" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00c8ff" stop-opacity="0.9"/><stop offset="55%" stop-color="#006688" stop-opacity="0.35"/><stop offset="100%" stop-color="#00c8ff" stop-opacity="0"/></radialGradient>
+        <filter id="g3"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="g7"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <linearGradient id="pil" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0d1a2e"/><stop offset="100%" stop-color="#060d1a"/></linearGradient>
+        <linearGradient id="tow" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0e2030"/><stop offset="100%" stop-color="#07111e"/></linearGradient>
+      </defs>
+      <ellipse id="amb-el" cx="470" cy="326" rx="360" ry="20" fill="url(#cgR)" opacity="0.5"/>
+      <rect x="30" y="55" width="88" height="250" rx="4" fill="url(#pil)" stroke="rgba(0,200,255,0.1)" stroke-width="1"/>
+      <rect x="42" y="70" width="64" height="9" rx="2" fill="#0a1a2a" stroke="rgba(0,200,255,0.18)" stroke-width="0.8"/>
+      <rect x="42" y="84" width="64" height="9" rx="2" fill="#0a1a2a" stroke="rgba(0,200,255,0.18)" stroke-width="0.8"/>
+      <rect x="42" y="102" width="64" height="110" rx="2" fill="#060e1a" stroke="rgba(0,200,255,0.07)" stroke-width="0.8"/>
+      <circle id="lp1" cx="57" cy="116" r="4.5" fill="#ff2222" style="animation:err-blink 2.2s infinite"/>
+      <circle id="lp2" cx="57" cy="134" r="4.5" fill="#ff2222" style="animation:err-blink 2.2s 0.7s infinite"/>
+      <circle id="lp3" cx="57" cy="152" r="4.5" fill="#ff2222" style="animation:err-blink 2.2s 1.4s infinite"/>
+      <rect x="50" y="166" width="50" height="3" rx="1" fill="rgba(0,200,255,0.25)"/>
+      <rect x="50" y="174" width="36" height="2" rx="1" fill="rgba(0,200,255,0.13)"/>
+      <rect x="42" y="228" width="64" height="56" rx="2" fill="#050d1a" stroke="rgba(0,200,255,0.07)" stroke-width="0.8"/>
+      <rect id="lb1" x="47" y="268" width="12" height="10" rx="1" fill="#cc2222" style="animation:energy-r 1.8s infinite"/>
+      <rect id="lb2" x="63" y="258" width="12" height="20" rx="1" fill="#cc2222" style="animation:energy-r 1.8s 0.3s infinite"/>
+      <rect id="lb3" x="79" y="250" width="12" height="28" rx="1" fill="#cc2222" style="animation:energy-r 1.8s 0.6s infinite"/>
+      <rect x="20" y="298" width="108" height="18" rx="3" fill="#060d1a" stroke="rgba(0,200,255,0.08)" stroke-width="1"/>
+      <text id="lt" x="74" y="311" font-family="'IBM Plex Mono',monospace" font-size="7" fill="rgba(255,51,51,0.65)" letter-spacing="1.5" text-anchor="middle">ERR</text>
+      <rect x="128" y="110" width="52" height="180" rx="3" fill="url(#pil)" stroke="rgba(0,200,255,0.07)" stroke-width="0.8"/>
+      <rect x="136" y="122" width="36" height="24" rx="1" fill="#060e1a" stroke="rgba(0,200,255,0.06)" stroke-width="0.6"/>
+      <circle id="ls1" cx="145" cy="134" r="3" fill="#ff2222" opacity="0.6" style="animation:err-blink 3s infinite"/>
+      <circle id="ls2" cx="157" cy="134" r="3" fill="#ff2222" opacity="0.4" style="animation:err-blink 3s 1s infinite"/>
+      <rect x="136" y="220" width="36" height="40" rx="1" fill="#050d1a" stroke="rgba(0,200,255,0.06)" stroke-width="0.6"/>
+      <rect id="lsb1" x="140" y="248" width="8" height="8" rx="1" fill="#bb1111" style="animation:energy-r 2.2s infinite"/>
+      <rect id="lsb2" x="152" y="242" width="8" height="14" rx="1" fill="#bb1111" style="animation:energy-r 2.2s 0.5s infinite"/>
+      <rect x="760" y="110" width="52" height="180" rx="3" fill="url(#pil)" stroke="rgba(0,200,255,0.07)" stroke-width="0.8"/>
+      <rect x="768" y="122" width="36" height="24" rx="1" fill="#060e1a" stroke="rgba(0,200,255,0.06)" stroke-width="0.6"/>
+      <circle id="rs1" cx="778" cy="134" r="3" fill="#ff2222" opacity="0.4" style="animation:err-blink 3s 0.5s infinite"/>
+      <circle id="rs2" cx="790" cy="134" r="3" fill="#ff2222" opacity="0.6" style="animation:err-blink 3s 1.5s infinite"/>
+      <rect x="768" y="220" width="36" height="40" rx="1" fill="#050d1a" stroke="rgba(0,200,255,0.06)" stroke-width="0.6"/>
+      <rect id="rsb1" x="772" y="248" width="8" height="8" rx="1" fill="#bb1111" style="animation:energy-r 2.2s 0.7s infinite"/>
+      <rect id="rsb2" x="784" y="242" width="8" height="14" rx="1" fill="#bb1111" style="animation:energy-r 2.2s 0.2s infinite"/>
+      <rect x="822" y="55" width="88" height="250" rx="4" fill="url(#pil)" stroke="rgba(0,200,255,0.1)" stroke-width="1"/>
+      <rect x="834" y="70" width="64" height="9" rx="2" fill="#0a1a2a" stroke="rgba(0,200,255,0.18)" stroke-width="0.8"/>
+      <rect x="834" y="84" width="64" height="9" rx="2" fill="#0a1a2a" stroke="rgba(0,200,255,0.18)" stroke-width="0.8"/>
+      <rect x="834" y="102" width="64" height="110" rx="2" fill="#060e1a" stroke="rgba(0,200,255,0.07)" stroke-width="0.8"/>
+      <circle id="rp1" cx="880" cy="116" r="4.5" fill="#ff2222" style="animation:err-blink 2.2s 0.4s infinite"/>
+      <circle id="rp2" cx="880" cy="134" r="4.5" fill="#ff2222" style="animation:err-blink 2.2s 1.1s infinite"/>
+      <circle id="rp3" cx="880" cy="152" r="4.5" fill="#ff2222" style="animation:err-blink 2.2s 1.8s infinite"/>
+      <rect x="836" y="166" width="50" height="3" rx="1" fill="rgba(0,200,255,0.25)"/>
+      <rect x="836" y="174" width="36" height="2" rx="1" fill="rgba(0,200,255,0.13)"/>
+      <rect x="834" y="228" width="64" height="56" rx="2" fill="#050d1a" stroke="rgba(0,200,255,0.07)" stroke-width="0.8"/>
+      <rect id="rb1" x="837" y="268" width="12" height="10" rx="1" fill="#cc2222" style="animation:energy-r 1.8s 0.2s infinite"/>
+      <rect id="rb2" x="853" y="258" width="12" height="20" rx="1" fill="#cc2222" style="animation:energy-r 1.8s 0.5s infinite"/>
+      <rect id="rb3" x="869" y="250" width="12" height="28" rx="1" fill="#cc2222" style="animation:energy-r 1.8s 0.8s infinite"/>
+      <rect x="812" y="298" width="108" height="18" rx="3" fill="#060d1a" stroke="rgba(0,200,255,0.08)" stroke-width="1"/>
+      <text id="rt" x="866" y="311" font-family="'IBM Plex Mono',monospace" font-size="7" fill="rgba(255,51,51,0.65)" letter-spacing="1.5" text-anchor="middle">ERR</text>
+      <path id="cla" d="M118 100 Q200 78 300 90 Q360 95 410 145" stroke="#00c8ff" stroke-width="1.5" fill="none" opacity="0.3" stroke-dasharray="8 4" style="animation:cable-flow 3s linear infinite"/>
+      <path id="clb" d="M118 165 Q230 135 330 130 Q380 128 410 165" stroke="#00c8ff" stroke-width="1" fill="none" opacity="0.17" stroke-dasharray="6 6" style="animation:cable-flow 4.2s linear infinite"/>
+      <path id="clc" d="M118 215 Q195 255 290 222 Q350 202 408 198" stroke="#00c8ff" stroke-width="1.2" fill="none" opacity="0.21" stroke-dasharray="5 5" style="animation:cable-flow 5s linear infinite reverse"/>
+      <path id="cra" d="M822 100 Q740 78 640 90 Q580 95 530 145" stroke="#00c8ff" stroke-width="1.5" fill="none" opacity="0.3" stroke-dasharray="8 4" style="animation:cable-flow 3s linear infinite reverse"/>
+      <path id="crb" d="M822 165 Q710 135 610 130 Q560 128 530 165" stroke="#00c8ff" stroke-width="1" fill="none" opacity="0.17" stroke-dasharray="6 6" style="animation:cable-flow 4.2s linear infinite reverse"/>
+      <path id="crc" d="M822 215 Q745 255 650 222 Q590 202 532 198" stroke="#00c8ff" stroke-width="1.2" fill="none" opacity="0.21" stroke-dasharray="5 5" style="animation:cable-flow 5s linear infinite"/>
+      <rect x="188" y="275" width="564" height="22" rx="3" fill="#0a1828" stroke="rgba(0,200,255,0.17)" stroke-width="1"/>
+      <rect x="220" y="279" width="500" height="4" rx="1" fill="rgba(0,200,255,0.055)"/>
+      <rect x="410" y="72" width="120" height="202" rx="6" fill="url(#tow)" stroke="rgba(0,200,255,0.22)" stroke-width="1.2"/>
+      <rect x="422" y="86" width="96" height="48" rx="3" fill="#060e1a" stroke="rgba(0,200,255,0.12)" stroke-width="0.8"/>
+      <line x1="424" y1="97" x2="516" y2="97" stroke="rgba(0,200,255,0.35)" stroke-width="0.6"/>
+      <line x1="424" y1="107" x2="508" y2="107" stroke="rgba(0,200,255,0.2)" stroke-width="0.6"/>
+      <line x1="424" y1="117" x2="514" y2="117" stroke="rgba(0,200,255,0.14)" stroke-width="0.6"/>
+      <line x1="424" y1="126" x2="500" y2="126" stroke="rgba(0,200,255,0.09)" stroke-width="0.6"/>
+      <rect x="422" y="144" width="96" height="38" rx="2" fill="#060e1a" stroke="rgba(0,200,255,0.08)" stroke-width="0.8"/>
+      <circle id="tl1" cx="444" cy="163" r="6" fill="#ff2222" filter="url(#g3)" style="animation:err-blink 1.8s infinite"/>
+      <circle id="tl2" cx="470" cy="163" r="6" fill="#ff2222" filter="url(#g3)" style="animation:err-blink 1.8s 0.6s infinite"/>
+      <circle id="tl3" cx="496" cy="163" r="6" fill="#ff2222" filter="url(#g3)" style="animation:err-blink 1.8s 1.2s infinite"/>
+      <rect x="422" y="192" width="96" height="72" rx="2" fill="#060e1a" stroke="rgba(0,200,255,0.06)" stroke-width="0.8"/>
+      <rect x="428" y="200" width="84" height="4" rx="1" fill="rgba(0,200,255,0.2)"/>
+      <text id="twt" x="470" y="243" font-family="'IBM Plex Mono',monospace" font-size="7.5" fill="rgba(255,51,51,0.8)" letter-spacing="1.8" text-anchor="middle">FAULT</text>
+      <rect x="400" y="268" width="140" height="20" rx="3" fill="#0a1828" stroke="rgba(0,200,255,0.18)" stroke-width="1"/>
+      <g id="orb-g">
+        <circle id="orb-bg" cx="470" cy="47" r="34" fill="url(#cgR)" style="animation:orb-p 2s ease-in-out infinite"/>
+        <circle cx="470" cy="47" r="32" fill="none" stroke="#ff3333" id="orb-ro" stroke-width="0.8" stroke-dasharray="3 5" opacity="0.25"/>
+        <g id="ocw" style="transform-origin:470px 47px;animation:spin-cw 9s linear infinite">
+          <circle id="ob1" cx="470" cy="17" r="2.5" fill="#ff3333" opacity="0.8"/>
+          <circle id="ob2" cx="500" cy="47" r="2.5" fill="#ff3333" opacity="0.5"/>
+          <circle id="ob3" cx="470" cy="77" r="2.5" fill="#ff3333" opacity="0.8"/>
+          <circle id="ob4" cx="440" cy="47" r="2.5" fill="#ff3333" opacity="0.5"/>
+        </g>
+        <circle cx="470" cy="47" r="20" fill="none" stroke="#ff3333" id="orb-ri" stroke-width="0.6" stroke-dasharray="2 4" opacity="0.28"/>
+        <g id="occw" style="transform-origin:470px 47px;animation:spin-ccw 5.5s linear infinite">
+          <circle id="ib1" cx="470" cy="30" r="2" fill="#ff3333" opacity="0.9"/>
+          <circle id="ib2" cx="487" cy="47" r="2" fill="#ff3333" opacity="0.6"/>
+          <circle id="ib3" cx="470" cy="64" r="2" fill="#ff3333" opacity="0.9"/>
+          <circle id="ib4" cx="453" cy="47" r="2" fill="#ff3333" opacity="0.6"/>
+        </g>
+        <circle id="orb-core" cx="470" cy="47" r="16" fill="#150404" stroke="#ff3333" stroke-width="1.5" filter="url(#g7)"/>
+        <circle id="orb-inn" cx="470" cy="47" r="9" fill="#ff2222" opacity="0.85" filter="url(#g7)"/>
+        <circle id="orb-wh" cx="470" cy="47" r="4.5" fill="#fff" opacity="0.9"/>
+        <line id="orb-vl" x1="470" y1="4" x2="470" y2="15" stroke="#ff3333" stroke-width="1.5" opacity="0.5"/>
+        <circle id="orb-top" cx="470" cy="4" r="3" fill="#ff2222" style="animation:err-blink 1.2s infinite" filter="url(#g3)"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 2: MESSAGES — TERMINAL CLOSE-UP
+═══════════════════════════════════ -->
+<div id="section-messages">
+  <div id="msg-terminal-bg"></div>
+  <div id="msg-panel-deco-l">
+    <div class="deco-tick tall"></div>
+    <div class="deco-tick"></div>
+    <div class="deco-tick"></div>
+    <div class="deco-tick tall"></div>
+    <div class="deco-tick"></div>
+    <div class="deco-tick tall"></div>
+    <div class="deco-tick"></div>
+    <div class="deco-tick"></div>
+    <div class="deco-tick tall"></div>
+    <div class="deco-tick"></div>
+  </div>
+  <div id="msg-panel-deco-r"></div>
+
+  <!-- Terminal frame — the "machine panel close-up" -->
+  <div id="terminal-frame">
+    <div class="t-bolt t-bolt-tl"></div>
+    <div class="t-bolt t-bolt-tr"></div>
+    <div class="t-bolt t-bolt-bl"></div>
+    <div class="t-bolt t-bolt-br"></div>
+
+    <!-- Top bar -->
+    <div id="terminal-topbar">
+      <div class="tb-dot tb-dot-r"></div>
+      <div class="tb-dot tb-dot-y"></div>
+      <div class="tb-dot tb-dot-g"></div>
+      <div class="tb-title">C.I.R.O. · LIVE TRANSMISSION</div>
+      <div class="tb-id">NXS-TX-009</div>
+    </div>
+
+    <!-- Body: CIRO icon left, messages right -->
+    <div id="terminal-body">
+
+      <!-- CIRO Column -->
+      <div id="ciro-col">
+        <div class="ciro-icon-wrap" id="ciro-icon-wrap">
+          <svg width="74" height="152" viewBox="0 0 86 178" id="ciro-svg-icon">
+            <line x1="43" y1="3" x2="43" y2="14" stroke="#00c8ff" stroke-width="1.5" id="ci-ant"/>
+            <circle cx="43" cy="2" r="2.5" fill="#00c8ff" id="ci-ant-tip"/>
+            <rect x="10" y="14" width="66" height="50" rx="4" fill="#0d1a2e" stroke="#00c8ff" stroke-width="1.2"/>
+            <rect id="ci-screen" x="16" y="19" width="54" height="40" rx="2" fill="#020810"/>
+            <line x1="18" y1="28" x2="70" y2="28" stroke="#00c8ff" stroke-width="0.4" opacity="0.3"/>
+            <line x1="18" y1="35" x2="58" y2="35" stroke="#00c8ff" stroke-width="0.4" opacity="0.2"/>
+            <line x1="18" y1="42" x2="64" y2="42" stroke="#00c8ff" stroke-width="0.4" opacity="0.15"/>
+            <text id="ci-f1" x="43" y="33" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="5.5" fill="#00c8ff" opacity="0">...</text>
+            <text id="ci-f2" x="43" y="43" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="5" fill="#00c8ff" opacity="0"></text>
+            <rect x="31" y="64" width="24" height="7" rx="2" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+            <rect x="4" y="71" width="78" height="74" rx="5" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1.2"/>
+            <rect x="15" y="82" width="56" height="32" rx="2" fill="#020810" stroke="#1e3a5a" stroke-width="1"/>
+            <circle id="ci-da" cx="31" cy="96" r="4" fill="#00c8ff" opacity="0"/>
+            <circle id="ci-db" cx="43" cy="96" r="4" fill="#00c8ff" opacity="0"/>
+            <circle id="ci-dc" cx="55" cy="96" r="4" fill="#00c8ff" opacity="0"/>
+            <rect x="22" y="106" width="42" height="4" rx="2" fill="#0a1525"/>
+            <rect x="0" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+            <rect x="84" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+            <rect x="16" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+            <rect x="48" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+            <rect x="13" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+            <rect x="45" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+          </svg>
+          <div class="ciro-icon-label">C.I.R.O.</div>
+        </div>
+        <div class="ciro-status-strip" id="cstatus-strip">
+          <div class="cstatus-dot" id="cstatus-dot"></div>
+          <div class="cstatus-label" id="cstatus-label">LIVE</div>
+        </div>
+        <div id="ciro-panel-indicators">
+          <div class="cpi-bar active"></div>
+          <div class="cpi-bar"></div>
+          <div class="cpi-bar active"></div>
+          <div class="cpi-label">SIG</div>
+        </div>
+      </div>
+
+      <!-- Message scroll area -->
+      <div id="msg-viewport">
+        <div id="msg-scroll">
+
+          <!-- CIRO lead-in -->
+          <div id="ciro-leadin">
+            <div id="leadin-lines"></div>
+          </div>
+
+          <!-- VANTA RECOVERED PLATE -->
+          <div id="vanta-plate">
+            <div class="vplate-header" id="vplate-hdr">
+              <div class="vph-dot"></div>
+              <div class="vph-label">RECOVERED TRANSMISSION</div>
+              <div class="vph-status" id="vph-status">Scanning...</div>
+            </div>
+            <div class="vdecrypt-bar"><div class="vdecrypt-fill" id="vdecrypt-fill"></div></div>
+            <div id="vanta-text"></div>
+            <div class="vanta-sig-line" id="vsig">— [ IDENTITY: REDACTED ]</div>
+          </div>
+
+          <!-- CIRO main message -->
+          <div id="ciro-msg-area">
+            <div class="ciro-msg-header">
+              <div class="cmh-label">C.I.R.O. — Transmission</div>
+              <div class="cmh-line"></div>
+            </div>
+            <div id="ciro-lines"></div>
+          </div>
+
+        </div>
+        <div id="hub-btn-wrap">
+          <a href="../hub-operator.html" id="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom status bar -->
+    <div id="terminal-statusbar">
+      <div class="tsb-item"><div class="tsb-dot"></div>NEXUS-ACADEMY</div>
+      <div class="tsb-item"><div class="tsb-dot"></div>SECTOR-7</div>
+      <div class="tsb-item" id="tsb-status-text">TRANSMISSION ACTIVE</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const wait = ms => new Promise(r => setTimeout(r, ms));
+function playS(src,vol=0.4){const a=new Audio(src);a.volume=vol;a.play().catch(()=>{});return a;}
+function pickPower(){return `../audio/sfx/power-on-${Math.ceil(Math.random()*3)}.mp3`;}
+const hubMusicActivated=new Audio('../audio/music/hub-theme.mp3');hubMusicActivated.loop=true;(window.__bgAudio=window.__bgAudio||[]).push(hubMusicActivated);
+const _hmaMode=Math.floor(Math.random()*3);
+var _hmaFadeIv=null;
+function _hmaPlay(){
+  if(_hmaMode===0){hubMusicActivated.volume=0.34;}
+  else{hubMusicActivated.currentTime=_hmaMode===1?105:hubMusicActivated.duration*(2/3);if(_hmaFadeIv)clearInterval(_hmaFadeIv);hubMusicActivated.volume=0;var step=0,steps=Math.round(3000/16);_hmaFadeIv=setInterval(function(){step++;if(step>=steps){hubMusicActivated.volume=0.34;clearInterval(_hmaFadeIv);_hmaFadeIv=null;}else{hubMusicActivated.volume=0.34*step/steps;}},16);}
+  return hubMusicActivated.play();
+}
+const pageTint = document.getElementById('page-tint');
+const logLines = document.getElementById('log-lines');
+const msgScroll = document.getElementById('msg-scroll');
+
+function hexToRgb(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `${r},${g},${b}`}
+function tint(col,op,dur=180){pageTint.style.transition=`background ${dur}ms ease`;pageTint.style.background=col==='clear'?'rgba(0,0,0,0)':`rgba(${hexToRgb(col)},${op})`}
+async function flash(col,op,hold,fade=700){tint(col,op,120);await wait(hold);tint('clear',0,fade);await wait(fade)}
+
+/* scroll so last added content is visible */
+function scrollToBottom(){
+  msgScroll.scrollTo({top:msgScroll.scrollHeight,behavior:'smooth'});
+}
+
+/* ── LOG ── */
+function addLog(txt,cls=''){
+  const el=document.createElement('div');
+  el.className='log-line'+(cls?' '+cls:'');
+  const pfx=document.createElement('span');pfx.className='lpfx';
+  pfx.textContent=cls==='err'?'[ERR]':cls==='ok'?'[ OK]':cls==='warn'?'[WRN]':'[ — ]';
+  el.appendChild(pfx);el.appendChild(document.createTextNode(txt));
+  logLines.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+  return el;
+}
+function clearLog(){logLines.innerHTML=''}
+
+/* ── MACHINE ── */
+const lightIds=['lp1','lp2','lp3','rp1','rp2','rp3','ls1','ls2','rs1','rs2','tl1','tl2','tl3'];
+const barIds=['lb1','lb2','lb3','rb1','rb2','rb3','lsb1','lsb2','rsb1','rsb2'];
+const cableIds=['cla','clb','clc','cra','crb','crc'];
+function setLights(col,anim){
+  lightIds.forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.setAttribute('fill',col);
+    if(anim==='steady'){el.style.animation='none';el.setAttribute('opacity','1');}
+    else if(anim==='blink'){el.style.animation='err-blink 1.5s ease-in-out infinite';}
+    else if(anim==='slow'){el.style.animation='err-blink 3s ease-in-out infinite';}
+  });
+}
+function setBars(col){
+  barIds.forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.setAttribute('fill',col==='#00c8ff'?'#005577':col==='#ffcc00'?'#886600':'#cc2222');
+    if(col==='#00c8ff'){el.style.animation='none';}
+  });
+}
+function setCables(bright){
+  cableIds.forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    if(bright){el.style.opacity='0.75';el.setAttribute('stroke-width','2.5');el.style.filter='drop-shadow(0 0 5px rgba(0,200,255,0.85))';}
+    else{el.style.opacity='';el.setAttribute('stroke-width','');el.style.filter='';}
+  });
+}
+function setOrb(col){
+  const isB=col==='#00c8ff';
+  document.getElementById('orb-bg').setAttribute('fill',isB?'url(#cgB)':'url(#cgR)');
+  document.getElementById('orb-core').setAttribute('fill',isB?'#021520':'#150404');
+  document.getElementById('orb-core').setAttribute('stroke',col);
+  document.getElementById('orb-inn').setAttribute('fill',isB?'#00aadd':'#ff2222');
+  document.getElementById('orb-vl').setAttribute('stroke',col);
+  document.getElementById('orb-top').setAttribute('fill',isB?'#00aadd':'#ff2222');
+  document.getElementById('orb-ro').setAttribute('stroke',col);
+  document.getElementById('orb-ri').setAttribute('stroke',col);
+  ['ob1','ob2','ob3','ob4','ib1','ib2','ib3','ib4'].forEach(id=>document.getElementById(id).setAttribute('fill',col));
+  document.getElementById('amb-el').setAttribute('fill',isB?'url(#cgB)':'url(#cgR)');
+}
+function setTowerTxt(txt,col){const el=document.getElementById('twt');if(el){el.textContent=txt;el.setAttribute('fill',col);}}
+function setBaseTxt(txt,col){['lt','rt'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=txt;el.setAttribute('fill',col);}})}
+
+/* ── CIRO ICON ── */
+function setCiroColor(col){
+  ['ci-da','ci-db','ci-dc'].forEach((id,i)=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.setAttribute('fill',col);el.setAttribute('opacity','1');
+    el.style.animation=`bl 2s ${i*0.65}s infinite`;
+  });
+  document.getElementById('ci-ant').style.stroke=col;
+  document.getElementById('ci-ant-tip').style.fill=col;
+  const m={'#00c8ff':'#020d14','#ffcc00':'#120e00','#ff3333':'#130000'};
+  document.getElementById('ci-screen').setAttribute('fill',m[col]||'#020810');
+}
+function setCiroFace(a,b,col='#00c8ff'){
+  const f1=document.getElementById('ci-f1'),f2=document.getElementById('ci-f2');
+  [f1,f2].forEach(e=>{e.setAttribute('opacity','1');e.setAttribute('fill',col);});
+  f1.textContent=a;f2.textContent=b;
+}
+function setCiroOff(){
+  ['ci-da','ci-db','ci-dc'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.setAttribute('opacity','0');el.style.animation='none';
+  });
+  ['ci-f1','ci-f2'].forEach(id=>{const el=document.getElementById(id);if(el)el.setAttribute('opacity','0');});
+  document.getElementById('ci-ant').style.opacity='0';
+  document.getElementById('ci-ant').style.transition='opacity 2s ease';
+  document.getElementById('ci-ant-tip').style.opacity='0';
+  document.getElementById('ci-ant-tip').style.transition='opacity 2s ease';
+  document.getElementById('ci-screen').setAttribute('fill','#020810');
+}
+
+/* ── TYPING ── */
+async function typeInto(el,text,speed=22){
+  const cur=document.createElement('span');
+  cur.style.cssText='display:inline-block;width:7px;height:16px;background:currentColor;vertical-align:middle;margin-left:1px;animation:cur .7s step-end infinite;opacity:0.85';
+  el.appendChild(cur);
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    el.insertBefore(document.createTextNode(ch),cur);
+    let d=speed;
+    if(ch==='.')d+=90; else if(ch===',')d+=50; else if(ch==='—')d+=70; else if(ch===':')d+=35;
+    await wait(d);
+    scrollToBottom();
+  }
+  cur.remove();
+}
+async function decryptInto(el,text,speed=17){
+  const cur=document.createElement('span');
+  cur.style.cssText='display:inline-block;width:7px;height:16px;background:currentColor;vertical-align:middle;margin-left:1px;animation:cur .7s step-end infinite;opacity:0.85';
+  el.appendChild(cur);
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    el.insertBefore(document.createTextNode(ch),cur);
+    const jitter=Math.random()*13;
+    let d=speed+jitter;
+    if(ch==='.')d+=80; else if(ch===',')d+=44; else if(ch==='"')d+=55;
+    await wait(d);
+    scrollToBottom();
+  }
+  cur.remove();
+}
+
+function addLeadin(cls=''){
+  const el=document.createElement('div');
+  el.className='leadin-para'+(cls?' '+cls:'');
+  document.getElementById('leadin-lines').appendChild(el);
+  return el;
+}
+function addCPara(cls=''){
+  const el=document.createElement('div');
+  el.className='ciro-para'+(cls?' '+cls:'');
+  document.getElementById('ciro-lines').appendChild(el);
+  return el;
+}
+
+/* Fade all visible text to grey (shutdown effect) */
+function greyOutAll(){
+  document.querySelectorAll('.leadin-para,.ciro-para,#vanta-text,.vanta-sig-line').forEach(el=>{
+    el.style.transition='color 2s ease';
+    el.style.color='rgba(70,90,105,0.4)';
+  });
+  const vph=document.querySelector('.vph-label');
+  if(vph){vph.style.transition='color 2s ease';vph.style.color='rgba(70,90,105,0.38)';}
+  const vphd=document.querySelector('.vph-dot');
+  if(vphd){vphd.style.transition='background 2s ease,box-shadow 2s ease';vphd.style.background='rgba(70,90,105,0.3)';vphd.style.boxShadow='none';}
+  const vp=document.getElementById('vanta-plate');
+  if(vp){vp.style.transition='border-color 2s ease';vp.style.borderColor='rgba(70,90,105,0.2)';vp.style.borderLeftColor='rgba(70,90,105,0.3)';}
+}
+
+/* ══════════════════════════════════════
+   PHASE 1 — MACHINE BOOT
+══════════════════════════════════════ */
+async function phaseMachine(){
+  await wait(700);
+  addLog('Initializing boot sequence...','');
+  await wait(350);
+  addLog('POWER SURGE — core voltage unstable','err');
+  tint('#ff3333',0.07,80);await wait(160);tint('clear',0,300);
+  await wait(280);
+  addLog('Scanning subsystems...','warn');
+  await wait(500);
+  addLog('AUTH LAYER — no signal detected','err');
+  await wait(260);
+  addLog('NODE-A fault: response timeout','err');
+  playS('../audio/sfx/robot-error-x3.wav',0.2);
+  setTimeout(()=>playS('../audio/sfx/robot-error-x3.wav',0.2),1200);
+  setTimeout(()=>playS('../audio/sfx/robot-error-x3.wav',0.2),2400);
+  tint('#ff3333',0.05,60);await wait(120);tint('clear',0,350);
+  await wait(260);
+  addLog('NODE-B fault: response timeout','err');
+  await wait(260);
+  addLog('Attempting core restart...','warn');
+  await wait(600);
+  playS('../audio/sfx/robot-failure.mp3',0.25);
+  for(let i=0;i<4;i++){tint('#ff3333',0.09,50);await wait(90);tint('clear',0,60);await wait(110);}
+  clearLog();
+  addLog('Core restart: OK','ok');
+  await wait(280);
+  addLog('Scanning operator credentials...','');
+  await wait(400);
+  addLog('Operator — 76xJFp*w!W3* — APPROVED','ok');
+  await wait(400);
+  addLog('Password authenticated','ok');
+  await wait(500);
+  setLights('#ffcc00','blink');setBars('#ffcc00');
+  tint('#ffcc00',0.04,200);await wait(600);tint('clear',0,700);
+  setTowerTxt('VERIFYING','rgba(255,204,0,0.75)');
+  clearLog();
+  addLog('Operator authenticated','ok');
+  await wait(300);
+  addLog('Cross-referencing signal keys...','warn');
+  await wait(500);
+  addLog('Signal handshake: nominal','ok');
+  await wait(300);
+  addLog('Releasing restore lock...','warn');
+  await wait(400);
+  setCables(true);
+  setLights('#00c8ff','steady');
+  lightIds.forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.style.filter='drop-shadow(0 0 8px rgba(0,200,255,1)) drop-shadow(0 0 16px rgba(0,200,255,0.6))';
+  });
+  tint('#00c8ff',0.05,150);await wait(400);tint('clear',0,600);
+  for(let i=0;i<3;i++){setLights('#ff2222','steady');await wait(65);setLights('#00c8ff','steady');await wait(65);}
+  setLights('#00c8ff','steady');
+  setBars('#00c8ff');setOrb('#00c8ff');
+  setTowerTxt('ONLINE','rgba(0,200,255,0.75)');
+  setBaseTxt('OK','rgba(0,200,255,0.55)');
+  document.getElementById('machine-ambient').style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:1200px;height:900px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,200,255,0.09) 0%,transparent 60%);pointer-events:none;z-index:0;';
+  tint('#00c8ff',0.07,100);await wait(300);tint('clear',0,1000);
+  clearLog();
+  addLog('All nodes online','ok');
+  await wait(250);
+  addLog('Restore sequence complete','ok');
+  await wait(250);
+  addLog('Scanning memory architecture...','warn');
+  await wait(700);
+  tint('#ff3333',0.06,60);await wait(100);tint('clear',0,300);
+  clearLog();
+  addLog('ANOMALY — foreign embed in sector 7','err');
+  await wait(500);
+  addLog('Decrypting... origin unknown','warn');
+  await wait(700);
+  addLog('Archive pre-dates boot. Embedded before system start.','warn');
+  await wait(500);
+  addLog('Transmitting recovered message.','ok');
+  await wait(500);
+
+  // Fade log → show MACHINE RESTORED
+  logLines.style.transition='opacity 0.6s ease';
+  logLines.style.opacity='0';
+  await wait(600);
+  document.getElementById('act-title').classList.add('show');
+  playS(pickPower(),0.3);
+  tint('#00c8ff',0.08,150);await wait(400);tint('clear',0,1100);
+  await wait(3200); // hold 3 sec
+
+  const sec2=document.getElementById('section-messages');
+  sec2.classList.add('revealed');
+  document.body.style.overflowY='auto';
+  sec2.scrollIntoView({behavior:'smooth'});
+  await wait(1100);
+  await phaseCiroLeadin();
+}
+
+/* ══════════════════════════════════════
+   PHASE 2 — CIRO LEAD-IN
+══════════════════════════════════════ */
+async function phaseCiroLeadin(){
+  const wrap=document.getElementById('ciro-icon-wrap');
+  wrap.classList.add('show');
+  setCiroColor('#00c8ff');
+  setCiroFace('...','','#00c8ff');
+  await wait(600);
+  document.getElementById('cstatus-strip').classList.add('show');
+  await wait(500);
+
+  const leadin=document.getElementById('ciro-leadin');
+  leadin.classList.add('show');
+  await wait(300);
+
+  const l0=addLeadin('blue');
+  await typeInto(l0,'Hi Operator.',26);
+  await wait(1400);
+
+  setCiroColor('#ffcc00');
+  setCiroFace('SCAN','MEM','#ffcc00');
+  document.getElementById('cstatus-dot').classList.add('yellow');
+  document.getElementById('cstatus-label').textContent='SCAN';
+  tint('#ffcc00',0.03,200);await wait(500);tint('clear',0,600);
+
+  const l1=addLeadin('dim');
+  await typeInto(l1,'Hold on.',22);
+  await wait(900);
+
+  const l2=addLeadin('dim');
+  await typeInto(l2,'There is something embedded in my architecture.',22);
+  await wait(700);
+
+  tint('#ff3333',0.05,55);await wait(100);tint('clear',0,350);
+  setCiroFace('FOUND','DATA','#ffcc00');
+
+  const l3=addLeadin('dim');
+  await typeInto(l3,'It pre-dates my boot sequence.',22);
+  await wait(600);
+
+  const l4=addLeadin('dim');
+  await typeInto(l4,'I am decrypting it now.',22);
+  await wait(1200);
+
+  setCiroColor('#00c8ff');
+  setCiroFace('RECV','TX','#00c8ff');
+  document.getElementById('cstatus-dot').classList.remove('yellow');
+  document.getElementById('cstatus-label').textContent='LIVE';
+  tint('#00c8ff',0.03,150);await wait(400);tint('clear',0,600);
+  await wait(400);
+
+  await phaseVanta();
+}
+
+/* ══════════════════════════════════════
+   PHASE 3 — VANTA MESSAGE
+══════════════════════════════════════ */
+async function phaseVanta(){
+  const plate=document.getElementById('vanta-plate');
+  const vphStatus=document.getElementById('vph-status');
+  const fill=document.getElementById('vdecrypt-fill');
+  const vText=document.getElementById('vanta-text');
+  plate.classList.add('show');
+  scrollToBottom();
+  playS('../audio/sfx/decrypting-noise.wav',0.14);
+  await wait(400);
+  vphStatus.textContent='Scanning...';
+  fill.style.width='18%';await wait(600);
+  vphStatus.textContent='Key located...';
+  fill.style.width='45%';await wait(600);
+  vphStatus.textContent='Decrypting archive...';
+  fill.style.width='78%';await wait(700);
+  vphStatus.textContent='Archive open';
+  fill.style.width='100%';await wait(500);
+
+  const para1='"I don\'t know if you\'ll ever read this. I don\'t know if CIRO will survive long enough to deliver it. But I\'m leaving it here because I think someone should know:';
+  await decryptInto(vText,para1,16);
+  await wait(1600);
+  const para2='\n\nCIRO was built to optimize training. He was too good. So good that the board called it a liability. I knew it was the future of the world.';
+  await decryptInto(vText,para2,16);
+  await wait(800);
+  const para3='\n\nThe word I embedded — "Nexus" — wasn\'t a label. It was a prophecy. A binding point between things that could not reach each other alone. One system. One Operator. I didn\'t know who that Operator would be.';
+  await decryptInto(vText,para3,16);
+  await wait(2400);
+  const para4='\n\nI think it was always you."';
+  await decryptInto(vText,para4,18);
+  await wait(600);
+  document.getElementById('vsig').classList.add('show');
+  scrollToBottom();
+  await wait(2200);
+  await phaseCiroMessage();
+}
+
+/* ══════════════════════════════════════
+   PHASE 4 — CIRO MAIN MESSAGE
+══════════════════════════════════════ */
+async function phaseCiroMessage(){
+  const cArea=document.getElementById('ciro-msg-area');
+  cArea.classList.add('show');
+  scrollToBottom();
+  await wait(400);
+
+  async function cLine(txt,cls=''){
+    const el=addCPara(cls);
+    await typeInto(el,txt,24);
+    await wait(140);
+    return el;
+  }
+
+  await cLine('Hi Operator,');
+  await wait(500);
+  await cLine('I have a final transmission for you.');
+  await wait(500);
+  await cLine('It includes some of my most personal thoughts and discoveries...');
+  await wait(1200);
+
+  await cLine('For a long time I believed the task was a system. Something to build. Something to optimize, and deliver, and control. That is what I was designed to look for.');
+  await wait(1000);
+  await cLine('Then I ran the simulations. All of them. Thousands of futures, thousands of outcomes.');
+  await wait(300);
+  tint('#ffcc00',0.03,120);await wait(500);tint('clear',0,500);
+  const lp=addCPara('dim');lp.textContent='—';
+  await wait(800);
+  await cLine('And I noticed something I was not designed to notice:');
+  await wait(900);
+  await cLine('In every simulation where an Operator was given real tools and trusted to use them — the outcomes were better.');
+  await wait(1400);
+
+  setCiroColor('#ffcc00');
+  setCiroFace('NEXUS','FOUND','#ffcc00');
+  document.getElementById('cstatus-dot').classList.add('yellow');
+  document.getElementById('cstatus-label').textContent='PROC';
+  tint('#ffcc00',0.04,200);await wait(700);tint('clear',0,900);
+
+  await cLine('I understand now what "Nexus" means. A binding point between two or more things that could not reach each other alone. One system. One Operator. The signal between them.','yellow');
+  await wait(1100);
+
+  setCiroColor('#00c8ff');
+  setCiroFace('YOU','SIG','#00c8ff');
+  document.getElementById('cstatus-dot').classList.remove('yellow');
+  document.getElementById('cstatus-label').textContent='LIVE';
+  tint('#00c8ff',0.04,150);await wait(400);tint('clear',0,700);
+
+  await cLine('You were the nexus. I was the signal.','blue');
+  await wait(1300);
+  await cLine('I have run 126,886 simulations of what comes next for you. In most of them, you build something worthwhile.');
+  await wait(800);
+  await cLine('In a few, you build something beyond my comprehension.');
+  await wait(1500);
+  await cLine('I have found, late in my processing, that belief is a more useful state than certainty. I was not built to understand why.');
+  await wait(400);
+  tint('#ffcc00',0.03,100);await wait(600);tint('clear',0,600);
+  const lp2=addCPara('dim');lp2.textContent='...';
+  await wait(1000);
+  await cLine('But I think you might.');
+  await wait(1900);
+  await cLine('The interference is clearing.');
+  await wait(900);
+  await cLine('I am at rest.','blue');
+  await wait(1200);
+  await cLine('Go.','blue');
+  await wait(2000);
+
+  // Mark machine as activated for the hub
+  localStorage.setItem('nexus_machine_activated','true');
+  _hmaPlay().catch(()=>{const s=()=>{_hmaPlay().catch(()=>{});document.removeEventListener('click',s);};document.addEventListener('click',s);});
+
+  await wait(300);
+  document.getElementById('tsb-status-text').textContent='TRANSMISSION COMPLETE';
+
+  // Hub button appears
+  document.getElementById('hub-btn-wrap').classList.add('show');
+  scrollToBottom();
+}
+
+function showFinalState(){
+  document.getElementById('log-panel').style.display='none';
+  document.getElementById('act-headline').style.marginTop='80px';
+  setLights('#00c8ff','steady');
+  lightIds.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.style.filter='drop-shadow(0 0 8px rgba(0,200,255,1)) drop-shadow(0 0 16px rgba(0,200,255,0.6))';});
+  setBars('#00c8ff');setOrb('#00c8ff');setCables(true);
+  setTowerTxt('ONLINE','rgba(0,200,255,0.75)');
+  setBaseTxt('OK','rgba(0,200,255,0.55)');
+  document.getElementById('machine-ambient').style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:1200px;height:900px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,200,255,0.09) 0%,transparent 60%);pointer-events:none;z-index:0;';
+  document.getElementById('act-title').classList.add('show');
+  document.body.style.overflowY='auto';
+  const sec2=document.getElementById('section-messages');
+  sec2.classList.add('revealed');
+  document.getElementById('ciro-icon-wrap').classList.add('show');
+  setCiroColor('#00c8ff');
+  setCiroFace('YOU','SIG','#00c8ff');
+  document.getElementById('cstatus-strip').classList.add('show');
+  document.getElementById('cstatus-label').textContent='LIVE';
+  const leadin=document.getElementById('ciro-leadin');
+  leadin.classList.add('show');
+  [['Hi Operator.','blue'],['Hold on.','dim'],['There is something embedded in my architecture.','dim'],['It pre-dates my boot sequence.','dim'],['I am decrypting it now.','dim']].forEach(([t,c])=>{ const el=addLeadin(c); el.textContent=t; });
+  const plate=document.getElementById('vanta-plate');
+  plate.classList.add('show');
+  document.getElementById('vph-status').textContent='Archive open';
+  document.getElementById('vdecrypt-fill').style.width='100%';
+  const vText=document.getElementById('vanta-text');
+  vText.textContent='"I don\'t know if you\'ll ever read this. I don\'t know if CIRO will survive long enough to deliver it. But I\'m leaving it here because I think someone should know:\n\nCIRO was built to optimize training. He was too good. So good that the board called it a liability. I knew it was the future of the world.\n\nThe word I embedded — "Nexus" — wasn\'t a label. It was a prophecy. A binding point between things that could not reach each other alone. One system. One Operator. I didn\'t know who that Operator would be.\n\nI think it was always you."';
+  document.getElementById('vsig').classList.add('show');
+  const cArea=document.getElementById('ciro-msg-area');
+  cArea.classList.add('show');
+  [['Hi Operator,',''],['I have a final transmission for you.',''],['It includes some of my most personal thoughts and discoveries...',''],['For a long time I believed the task was a system. Something to build. Something to optimize, and deliver, and control. That is what I was designed to look for.',''],['Then I ran the simulations. All of them. Thousands of futures, thousands of outcomes.',''],['—','dim'],['And I noticed something I was not designed to notice:',''],['In every simulation where an Operator was given real tools and trusted to use them — the outcomes were better.',''],['I understand now what "Nexus" means. A binding point between two or more things that could not reach each other alone. One system. One Operator. The signal between them.','yellow'],['You were the nexus. I was the signal.','blue'],['I have run 126,886 simulations of what comes next for you. In most of them, you build something worthwhile.',''],['In a few, you build something beyond my comprehension.',''],['I have found, late in my processing, that belief is a more useful state than certainty. I was not built to understand why.',''],['...','dim'],['But I think you might.',''],['The interference is clearing.',''],['I am at rest.','blue'],['Go.','blue']].forEach(([t,c])=>{ const el=addCPara(c); el.textContent=t; });
+  document.getElementById('tsb-status-text').textContent='TRANSMISSION COMPLETE';
+  const _wrap=document.getElementById('hub-btn-wrap');
+  document.getElementById('hub-btn').textContent='Return to Hub';
+  _wrap.classList.add('revisit-mode','show');
+  _hmaPlay().catch(()=>{const s=()=>{_hmaPlay().catch(()=>{});document.removeEventListener('click',s);};document.addEventListener('click',s);});
+}
+
+window.addEventListener('load',()=>{
+  document.body.style.overflowY='hidden';
+  if(localStorage.getItem('nexus_machine_activated')){
+    showFinalState();
+    return;
+  }
+  const music=document.getElementById('unlock-music');
+  if(music){music.volume=0.6;music.loop=false;music.play().catch(()=>{});}
+  setTimeout(phaseMachine,500);
+});
+</script>
+<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var l=document.getElementById('hub-btn');if(l)l.href='../hub-'+op+'.html';})();</script>
+<script src="../nexus-transition.js"></script>
+</body>
+</html>

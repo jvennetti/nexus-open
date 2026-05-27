@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Academy — Signal Not Found</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08101f;--card:#0d1628;--blue:#00c8ff;--blue-dim:rgba(0,200,255,0.07);
+  --blue-border:rgba(0,200,255,0.22);--border:#1a2d45;--white:#ffffff;
+  --offwhite:#eaf3fb;--body-text:#cce2f2;--muted:#5a8aaa;
+}
+html,body{background:var(--bg);color:var(--white);font-family:'Lexend',sans-serif;min-height:100vh}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,200,255,0.007) 3px,rgba(0,200,255,0.007) 4px);pointer-events:none;z-index:999}
+.wrap{max-width:680px;width:100%;text-align:center}
+.code{font-family:'Orbitron',sans-serif;font-size:120px;font-weight:900;letter-spacing:0.08em;color:var(--blue);text-shadow:0 0 40px rgba(0,200,255,0.35),0 0 80px rgba(0,200,255,0.15);line-height:1;margin-bottom:4px;opacity:0;animation:fade-in 0.7s ease 0.2s forwards}
+.label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.4em;color:var(--muted);text-transform:uppercase;margin-bottom:52px;opacity:0;animation:fade-in 0.6s ease 0.5s forwards}
+.ciro-widget{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 32px;display:flex;gap:24px;align-items:flex-start;margin-bottom:36px;text-align:left;opacity:0;animation:fade-in 0.7s ease 0.8s forwards}
+.ciro-col{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.ciro-ver{color:#1a5060;font-size:9px;letter-spacing:2px;font-weight:500;font-family:'IBM Plex Mono',monospace}
+.ciro-msg{flex:1;min-width:0}
+.ciro-tag{color:#1a5060;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.3em;margin-bottom:12px;text-transform:uppercase}
+.ciro-text{color:#a8c8e0;font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.9}
+.ciro-cursor{display:inline-block;width:8px;height:1em;background:var(--blue);margin-left:2px;vertical-align:middle;animation:blink .8s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes dp{0%,100%{opacity:.9}50%{opacity:.15}}
+.da{animation:dp 2s infinite}.db{animation:dp 2s .65s infinite}.dc{animation:dp 2s 1.3s infinite}
+.hub-btn{display:inline-flex;align-items:center;gap:10px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--bg);background:var(--blue);border:none;border-radius:4px;padding:15px 40px;cursor:pointer;text-decoration:none;transition:opacity .2s,transform .15s;opacity:0;animation:fade-in 0.6s ease 1.4s forwards}
+.hub-btn:hover{opacity:0.88;transform:translateY(-1px)}
+@keyframes fade-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="code">404</div>
+  <div class="label">Signal Not Found</div>
+
+  <div class="ciro-widget">
+    <div class="ciro-col">
+      <svg width="72" height="148" viewBox="0 0 86 178">
+        <line x1="43" y1="3" x2="43" y2="14" stroke="#00c8ff" stroke-width="1.5"/>
+        <circle cx="43" cy="2" r="2.5" fill="#00c8ff"/>
+        <rect x="10" y="14" width="66" height="50" rx="4" fill="#0d1a2e" stroke="#00c8ff" stroke-width="1.2"/>
+        <rect x="16" y="20" width="54" height="38" rx="2" fill="#050f1c"/>
+        <line x1="18" y1="28" x2="70" y2="28" stroke="#00c8ff" stroke-width="0.5" opacity="0.55"/>
+        <line x1="18" y1="35" x2="60" y2="35" stroke="#00c8ff" stroke-width="0.5" opacity="0.35"/>
+        <line x1="18" y1="42" x2="66" y2="42" stroke="#00c8ff" stroke-width="0.5" opacity="0.25"/>
+        <line x1="18" y1="49" x2="52" y2="49" stroke="#00c8ff" stroke-width="0.5" opacity="0.18"/>
+        <rect x="31" y="64" width="24" height="7" rx="2" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="4" y="71" width="78" height="74" rx="5" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1.2"/>
+        <rect x="15" y="82" width="56" height="32" rx="2" fill="#050f1c" stroke="#1e3a5a" stroke-width="1"/>
+        <circle cx="31" cy="96" r="4" fill="#00c8ff" class="da"/>
+        <circle cx="43" cy="96" r="4" fill="#00c8ff" class="db"/>
+        <circle cx="55" cy="96" r="4" fill="#00c8ff" class="dc"/>
+        <rect x="22" y="106" width="42" height="4" rx="2" fill="#1e3a5a"/>
+        <rect x="0" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="84" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="16" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="48" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="13" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="45" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+      </svg>
+      <div class="ciro-ver">CIRO v0.7</div>
+    </div>
+    <div class="ciro-msg">
+      <div class="ciro-tag">NEXUS ACADEMY · TRANSMISSION ERROR</div>
+      <div class="ciro-text" id="ciro-text"><span class="ciro-cursor"></span></div>
+    </div>
+  </div>
+
+  <a href="hub-operator.html" id="hub-link" class="hub-btn">← Return to Hub</a>
+</div>
+
+<script>
+// Build absolute hub URL so relative link doesn't re-trigger 404 from any path depth
+(function(){
+  const op = localStorage.getItem('nexus_current_operator') || 'operator';
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  const root = parts.length > 1 ? '/' + parts[0] + '/' : '/';
+  const link = document.getElementById('hub-link');
+  if(link) link.href = root + 'hub-' + op + '.html';
+})();
+
+const LINES = [
+  { text: "This transmission doesn't exist.", pause: 700 },
+  { text: "No signal at this address.", pause: 600 },
+  { text: "Return to the hub and continue.", pause: 0 },
+];
+
+(function(){
+  const el = document.getElementById('ciro-text');
+  let li = 0, ci = 0, out = '';
+  function type(){
+    if(li >= LINES.length){ el.innerHTML = out + '<span class="ciro-cursor"></span>'; return; }
+    const line = LINES[li];
+    if(ci < line.text.length){
+      out += line.text[ci++];
+      el.innerHTML = out + '<span class="ciro-cursor"></span>';
+      setTimeout(type, 30);
+    } else {
+      li++; ci = 0;
+      if(li < LINES.length){ out += ' '; setTimeout(type, line.pause); }
+      else { el.innerHTML = out + '<span class="ciro-cursor"></span>'; }
+    }
+  }
+  setTimeout(type, 1200);
+})();
+</script>
+</body>
+</html>
