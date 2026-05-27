@@ -71,7 +71,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     </div>
   </div>
 
-  <a href="hub-operator.html" id="hub-link" class="hub-btn">← Return to Hub</a>
+  <a href="hub.html" id="hub-link" class="hub-btn">← Return to Hub</a>
 </div>
 
 <script>
@@ -81,7 +81,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   const parts = window.location.pathname.split('/').filter(Boolean);
   const root = parts.length > 1 ? '/' + parts[0] + '/' : '/';
   const link = document.getElementById('hub-link');
-  if(link) link.href = root + 'hub-' + op + '.html';
+  if(link) link.href = 'hub.html';
 })();
 
 const LINES = [

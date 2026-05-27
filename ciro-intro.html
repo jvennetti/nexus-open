@@ -1045,7 +1045,7 @@ function enterHub(){
   localStorage.setItem('nexus_intro_seen_'+_introOp,'true');
   localStorage.removeItem('nexus_hub_visited_'+_introOp);
   playS('audio/sfx/password-confirm.mp3', 0.1);
-  var dest='hub-'+_introOp+'.html';
+  var dest='hub.html';
   if(window.nxTransit){ window.nxTransit(dest); }
   else { setTimeout(function(){ window.location.href=dest; }, 380); }
 }

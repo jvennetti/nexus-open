@@ -455,7 +455,7 @@ body::after{
 
     <button class="restore-btn" id="restore-btn" onclick="attemptActivation()">Restore Machine</button>
     <div class="error-line" id="error-line">Authentication failed — verify passcode and retry</div>
-    <a class="hub-return-link" id="hub-return-link" href="../hub-operator.html">Return to Hub</a>
+    <a class="hub-return-link" id="hub-return-link" href="../hub.html">Return to Hub</a>
 
   </div>
 
@@ -618,7 +618,7 @@ load();
   },5000+Math.random()*4000);
 })();
 </script>
-<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var l=document.getElementById('hub-return-link');if(l)l.href='../hub-'+op+'.html';})();</script>
+<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var l=document.getElementById('hub-return-link');if(l)l.href='../hub.html';})();</script>
 <script src="../nexus-transition.js"></script>
 </body>
 </html>

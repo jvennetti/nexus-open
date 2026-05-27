@@ -57,9 +57,9 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 <body>
 
 <nav>
-  <a href="../hub-operator.html" class="wordmark">NEXUS <span>ACADEMY</span></a>
+  <a href="../hub.html" class="wordmark">NEXUS <span>ACADEMY</span></a>
   <div class="nav-lesson-id">Pre-Course — Complete</div>
-  <a href="../hub-operator.html" class="nav-back">← Hub</a>
+  <a href="../hub.html" class="nav-back">← Hub</a>
 </nav>
 
 <div class="browser-shell">
@@ -107,7 +107,7 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
   </div>
 
   <div class="hub-cta" id="hub-cta">
-    <a href="../hub-operator.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
+    <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
   </div>
 
@@ -198,7 +198,7 @@ pingHub();
 runReveal();
 function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
 </script>
-<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var hu='../hub-'+op+'.html';document.querySelectorAll('a[href*="hub-operator.html"]').forEach(function(a){a.href=hu;});})();</script>
+<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var hu='../hub.html';document.querySelectorAll('a[href*="hub.html"]').forEach(function(a){a.href=hu;});})();</script>
 <script src="../nexus-transition.js"></script>
 </body>
 </html>
