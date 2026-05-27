@@ -370,7 +370,7 @@ const DEV_UNLOCK    = false;
 const MODULES = [
   { key:'precourse', label:'Pre-Course', title:'BEFORE YOU BEGIN',
     locked:'images/modules/m1-locked.png', unlocked:'images/modules/m1-unlocked.png',
-    url:'pre-course/ciro-intro.html', badge:'system_online',
+    url:'pre-course/module-intro.html', badge:'system_online',
     next:{ mod:'Pre-Course', title:'7 Years of Building a Learning System in 12 Minutes', url:'pre-course/lesson-0-1.html' } },
   { key:'mod1', label:'Module 1', title:'BOOT UP',
     locked:'images/modules/m2-locked.png', unlocked:'images/modules/m2-unlocked.png',
@@ -724,6 +724,8 @@ function confirmReset(){
   localStorage.removeItem('nexus_hub_visited_'+OPERATOR);
   localStorage.removeItem('nexus_last_page_'+OPERATOR);
   localStorage.removeItem('nexus_machine_activated');
+  localStorage.removeItem('nexus_machine_inputs');
+  localStorage.removeItem('nexus_machine_unlocked');
   render(); showFlash('SYSTEM RESET');
 }
 function resetProgress(){
@@ -733,6 +735,8 @@ function resetProgress(){
     localStorage.removeItem('nexus_hub_visited_'+OPERATOR);
     localStorage.removeItem('nexus_last_page_'+OPERATOR);
     localStorage.removeItem('nexus_machine_activated');
+    localStorage.removeItem('nexus_machine_inputs');
+    localStorage.removeItem('nexus_machine_unlocked');
     render(); showFlash('SYSTEM RESET');
   }
 }
