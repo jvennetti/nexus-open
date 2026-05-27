@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>NEXUS Academy — Module 5 Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08101f;--card:#0d1628;--card2:#111d30;--box:#16213a;
+  --blue:#00c8ff;--blue-dim:rgba(0,200,255,0.07);--blue-border:rgba(0,200,255,0.22);
+  --border:#1a2d45;--white:#ffffff;--offwhite:#eaf3fb;--body-text:#cce2f2;
+  --muted:#5a8aaa;--label:#2a5a7a;
+}
+html{background:var(--bg);color:var(--white);font-size:16px;line-height:1.7}
+body{background:var(--bg);min-height:100vh;font-family:'Lexend',sans-serif}
+nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;position:sticky;top:0;z-index:100;width:100%}
+.wordmark{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;letter-spacing:4px;color:var(--white);text-decoration:none}
+.wordmark span{color:var(--blue)}
+.nav-lesson-id{font-family:'Lexend',sans-serif;font-size:13px;font-weight:300;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.nav-back{font-family:'Lexend',sans-serif;font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:8px 18px;border-radius:3px;transition:color .2s,border-color .2s}
+.nav-back:hover{color:var(--blue);border-color:var(--blue-border)}
+.banner{width:100%;height:420px;position:relative;overflow:hidden;background:#0d1628}
+.banner-img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;filter:brightness(0.72)}
+.banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom, transparent 30%, var(--bg) 100%)}
+.banner-label{position:absolute;bottom:44px;left:0;right:0;text-align:center}
+.banner-title{font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;letter-spacing:3px;color:var(--white);text-transform:uppercase;text-shadow:0 2px 24px rgba(0,0,0,0.7)}
+.browser-shell{width:1280px;margin:0 auto}
+.content-col{max-width:860px;margin:0 auto;padding:0 0 100px}
+.section-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--white);text-transform:uppercase;margin-bottom:18px;text-align:center}
+.body-copy{font-family:'Lexend',sans-serif;font-size:15px;font-weight:300;line-height:1.85;color:var(--body-text)}
+.body-copy p+p{margin-top:14px}
+.body-copy strong{font-weight:500;color:var(--offwhite)}
+.scenario-box{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:36px 40px;margin-bottom:36px}
+.setup-strip{background:var(--box);border:1px solid var(--border);border-left:3px solid rgba(0,200,255,0.5);border-radius:0 6px 6px 0;padding:22px 28px;margin-bottom:36px}
+.setup-label{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+.challenge-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:36px 40px;margin-bottom:36px}
+.challenge-title{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;color:var(--white);text-transform:uppercase;margin-bottom:28px;text-align:center}
+.step-list{list-style:none;display:flex;flex-direction:column;gap:20px}
+.step-item{display:flex;align-items:flex-start;gap:20px}
+.step-num{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--blue-border);background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--blue);margin-top:2px}
+.step-text{font-family:'Lexend',sans-serif;font-size:15px;font-weight:300;line-height:1.75;color:var(--body-text)}
+.step-text strong{font-weight:500;color:var(--offwhite)}
+.step-text ul{margin:10px 0 4px 18px;display:flex;flex-direction:column;gap:6px}
+.step-text em{color:var(--muted);font-style:italic}
+.deliverable-box{background:var(--bg);border:1px solid var(--blue-border);border-radius:8px;padding:32px 40px;margin-bottom:36px;position:relative;overflow:hidden}
+.deliverable-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.deliverable-text{font-family:'Lexend',sans-serif;font-size:15px;font-weight:400;line-height:1.8;color:var(--body-text);text-align:left}
+.deliverable-text ul{margin:10px 0 4px 18px;display:flex;flex-direction:column;gap:6px}
+.extension-box{background:var(--box);border:1px solid var(--border);border-radius:8px;padding:28px 40px;margin-bottom:36px}
+.extension-text{font-family:'Lexend',sans-serif;font-size:15px;font-weight:300;line-height:1.8;color:var(--muted);text-align:left}
+.integration-note{background:rgba(0,200,255,0.04);border:1px solid var(--border);border-left:2px solid rgba(0,200,255,0.3);border-radius:0 6px 6px 0;padding:20px 26px;margin-bottom:48px}
+.integration-text{font-family:'Lexend',sans-serif;font-size:13px;font-weight:300;line-height:1.8;color:var(--muted)}
+.integration-text strong{font-weight:500;color:var(--body-text)}
+.cta-row{display:flex;flex-direction:column;align-items:center;gap:18px;padding-top:8px;margin-bottom:52px}
+.mark-complete-btn{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--bg);background:var(--blue);border:none;border-radius:4px;padding:18px 52px;cursor:pointer;transition:opacity .2s,transform .15s;text-decoration:none;display:inline-block}
+.mark-complete-btn:hover{opacity:0.88;transform:translateY(-1px)}
+.mark-complete-btn:active{transform:translateY(0)}
+.cta-sub{font-family:'Lexend',sans-serif;font-size:12px;font-weight:300;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.prev-nav{border-top:1px solid var(--border);padding-top:40px;display:flex;justify-content:flex-start}
+.nav-btn{padding:18px 24px;background:var(--card);border:1px solid var(--border);border-radius:6px;text-decoration:none;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,background .2s;max-width:280px}
+.nav-btn:hover{border-color:var(--blue-border);background:var(--blue-dim)}
+.nav-dir{font-family:'Lexend',sans-serif;font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.nav-name{font-family:'Lexend',sans-serif;font-size:14px;font-weight:500;color:var(--white);line-height:1.4}
+.prompt-block{background:#060e1a;border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.75;color:#a8c8e0;margin:12px 0}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../hub-joshua.html" class="wordmark">NEXUS <span>ACADEMY</span></a>
+  <div class="nav-lesson-id">Module 5 — Challenge</div>
+  <a href="../hub-joshua.html" class="nav-back">← Hub</a>
+</nav>
+
+<div class="banner">
+  <img class="banner-img" src="../images/modules/m5-challenge.png" alt="Module 5 Challenge">
+  <div class="banner-overlay"></div>
+  <div class="banner-label">
+    <div class="banner-title">The Challenge</div>
+  </div>
+</div>
+
+<div class="browser-shell">
+<div class="content-col">
+
+  <div class="scenario-box">
+    <div class="section-title">Real-World Scenario</div>
+    <div class="body-copy">
+      <p>Module 5 is about building the system that fills your pipeline — research, enrichment, and outreach — running with minimal manual input. This challenge teaches you every step of that system without requiring paid tools, live email sends, or real prospect data. You're building the full pipeline using fictional leads and your own inbox as the only destination. Every tool you touch in this challenge is either free or something you already have. When this is done, you'll understand exactly how a real deployment works — and you'll be able to build it for a client in an afternoon.</p>
+    </div>
+  </div>
+
+  <div class="setup-strip">
+    <div class="setup-label">Step 1 — Generate your environment</div>
+    <div class="body-copy">
+      <p>Open Claude and ask it to generate a complete working environment for a fictional boutique real estate investment firm called <strong>Summit Properties</strong>: an ICP brief describing Summit's ideal client (job title, company size, geography, three problems Summit solves), a prospect list of 15 fictional people matching that ICP with name, title, company, location, and a one-line fit reason, one sample cold outreach email written in Summit's voice, and a Cowork Skill document. Paste the prospect list into a Google Sheet with columns: Name, Title, Company, Location, Fit Reason, Draft Email. Leave Draft Email blank.</p>
+    </div>
+  </div>
+
+  <div class="challenge-box">
+    <div class="challenge-title">Your Challenge</div>
+    <ol class="step-list">
+      <li class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Build your prospecting playbook.</strong> Use Claude's Research mode with the ICP brief as input. Ask it to return: where Summit's ideal investors spend time and congregate online, the language they use to describe their own problems, what signals someone is actively looking for deals right now, and how you'd filter for them on Apollo (free tier) or LinkedIn. This becomes your reference every time you add new leads.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Build the Outreach Skill and draft the emails.</strong> Load your Summit Cowork Skill. Create a task that takes the prospect sheet and writes a personalized cold email for each lead using their title, company, and fit reason as context. Run it against all 15 fictional leads. Read every draft: does it sound like Summit wrote it, or like AI? Refine your Skill until you'd be comfortable putting your name on these. Write the drafted emails into the Draft Email column.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Stage the campaign.</strong> Using Zapier MCP or a Cowork task wired to Gmail, take the five strongest emails and create Gmail drafts — not sends — in your own account. Open Gmail and review them. They should appear exactly as they would before hitting send on a real campaign. This is the staging layer — in a real deployment, you'd review here before pushing to your sending tool.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Schedule one step.</strong> Set up one automated step that runs without you triggering it: every Monday morning, your Cowork task pulls the first five rows from the sheet where Draft Email is blank, writes personalized emails for each, and either fills in the column or drops them into Gmail drafts. Confirm it ran by checking the output the next time it triggers. This is the difference between a task you built and a system you operate.</div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="deliverable-box">
+    <div class="section-title">Your Deliverable</div>
+    <div class="deliverable-text">
+      <ul>
+        <li>A Cowork Skill for Summit that produces emails you'd be willing to send</li>
+        <li>A Google Sheet with 15 drafted emails written by the system, not by you</li>
+        <li>At least five Gmail drafts staged in your own inbox</li>
+        <li>One step running on a schedule autonomously</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="extension-box">
+    <div class="section-title" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;text-align:left">Extension</div>
+    <div class="extension-text">Build a call prep Skill for Summit. When you paste a prospect's name and company into a Cowork task, the Skill uses web research to pull their LinkedIn summary, company description, and any recent news — then produces a one-page call prep brief: company overview, likely problems, three questions to open with, and which part of Summit's offer to lead with. Run it against two of your fictional prospects.</div>
+  </div>
+
+  <div class="integration-note">
+    <div class="integration-text"><strong>Integration note:</strong> All outreach in this challenge goes to your own inbox only. Building drafts in Gmail is the professional way to test any outreach system before it touches real contacts — it lets you see the output, catch formatting issues, and verify the personalization actually worked. Every serious operator tests this way.</div>
+  </div>
+
+  <div class="cta-row">
+    <a href="complete.html" class="mark-complete-btn" onclick="markComplete()">Mark Complete</a>
+    <div class="cta-sub">Routes to module completion</div>
+  </div>
+
+  <div class="prev-nav">
+    <a href="lesson-5-7.html" class="nav-btn">
+      <span class="nav-dir">← Previous</span>
+      <span class="nav-name">Claude Code Just Changed Lead Generation Forever</span>
+    </a>
+  </div>
+
+</div>
+</div>
+
+<script>
+function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
+localStorage.setItem('nexus_last_page_'+(localStorage.getItem('nexus_current_operator')||'joshua'),JSON.stringify({url:location.pathname,title:'Module 5 — Challenge'}));
+function markComplete() {
+  playS('../audio/sfx/password-confirm.mp3',0.1);
+  localStorage.setItem('nexus_module_5_complete', 'true');
+  fetch('https://nexus-academy.netlify.app/.netlify/functions/mark-complete', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({folder: 'module-5'})
+  }).catch(function(){});
+}
+</script>
+<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'joshua';var hu='../hub-'+op+'.html';document.querySelectorAll('a[href*="hub-joshua.html"]').forEach(function(a){a.href=hu;});})();</script>
+<script src="../nexus-transition.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>NEXUS Academy — Lesson 3.12</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08101f;--card:#0d1628;--card2:#111d30;--box:#16213a;
+  --blue:#00c8ff;--blue-dim:rgba(0,200,255,0.07);--blue-border:rgba(0,200,255,0.22);
+  --border:#1a2d45;--white:#ffffff;--offwhite:#eaf3fb;--body-text:#cce2f2;
+  --muted:#5a8aaa;--placeholder:#3a6888;
+}
+html{background:var(--bg);color:var(--white);font-size:16px;line-height:1.7}
+body{background:var(--bg);min-height:100vh;font-family:'Lexend',sans-serif}
+nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;position:sticky;top:0;z-index:100;width:100%}
+.wordmark{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;letter-spacing:4px;color:var(--white);text-decoration:none}
+.wordmark span{color:var(--blue)}
+.nav-lesson-id{font-family:'Lexend',sans-serif;font-size:13px;font-weight:300;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.nav-back{font-family:'Lexend',sans-serif;font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:8px 18px;border-radius:3px;transition:color .2s,border-color .2s}
+.nav-back:hover{color:var(--blue);border-color:var(--blue-border)}
+.browser-shell{width:1280px;margin:0 auto;background:var(--bg);min-height:calc(100vh - 64px)}
+.content-col{max-width:860px;margin:0 auto;padding:52px 0 100px}
+.section{margin-bottom:36px}
+.lesson-box{background:var(--box);border:1px solid var(--border);border-radius:8px;padding:36px 40px}
+h1.lesson-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:700;letter-spacing:1.5px;color:var(--white);line-height:1.4;text-align:center;margin-bottom:24px}
+.context-copy{font-family:'Lexend',sans-serif;font-size:15px;font-weight:300;line-height:1.85;color:var(--body-text)}
+.context-copy p+p{margin-top:14px}
+.ts-bar{background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:0 24px;height:52px;display:flex;align-items:center;gap:20px}
+.ts-label{font-family:'Lexend',sans-serif;font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.ts-input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border);padding:4px 0;font-family:'Lexend',sans-serif;font-size:14px;color:var(--white);outline:none;transition:border-color .2s}
+.ts-input::placeholder{color:var(--placeholder);font-weight:300;font-size:13px}
+.ts-input:focus{border-bottom-color:var(--blue-border)}
+.ts-saved-inline{font-family:'Lexend',sans-serif;font-size:13px;color:var(--muted);white-space:nowrap;flex-shrink:0;display:none}
+.ts-saved-inline span{color:var(--offwhite);font-weight:500}
+.ts-btn{font-family:'Lexend',sans-serif;font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--blue);background:transparent;border:1px solid var(--blue-border);border-radius:3px;padding:7px 16px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .2s}
+.ts-btn:hover{background:var(--blue-dim)}
+.video-wrapper{position:relative;padding-bottom:56.25%;height:0;background:#000;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.video-wrapper iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.takeaways-box{background:var(--box);border:1px solid var(--border);border-radius:8px;padding:32px 40px}
+.takeaways-title{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--white);text-transform:uppercase;text-align:center;margin-bottom:22px}
+.takeaway-item{display:flex;align-items:flex-start;gap:14px;padding:7px 0;font-family:'Lexend',sans-serif;font-size:15px;font-weight:300;line-height:1.65;color:var(--body-text)}
+.t-bullet{flex-shrink:0;width:7px;height:7px;border-radius:50%;background:var(--white);margin-top:8px;opacity:0.85}
+.lesson-nav{display:flex;justify-content:space-between;gap:16px;padding-top:40px;border-top:1px solid var(--border)}
+.nav-btn{flex:1;padding:18px 24px;background:var(--card);border:1px solid var(--border);border-radius:6px;text-decoration:none;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,background .2s}
+.nav-btn:hover{border-color:var(--blue-border);background:var(--blue-dim)}
+.nav-btn.next{align-items:flex-end;text-align:right}
+.nav-dir{font-family:'Lexend',sans-serif;font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.nav-name{font-family:'Lexend',sans-serif;font-size:14px;font-weight:500;color:var(--white);line-height:1.4}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../hub-joshua.html" class="wordmark">NEXUS <span>ACADEMY</span></a>
+  <div class="nav-lesson-id">Lesson 3.12</div>
+  <a href="../hub-joshua.html" class="nav-back">← Hub</a>
+</nav>
+<div class="browser-shell">
+<div class="content-col">
+  <div class="lesson-box section">
+    <h1 class="lesson-title">What Is n8n?</h1>
+    <div class="context-copy">
+      <p>n8n is an automation platform — like Zapier, but built differently.</p>
+    </div>
+  </div>
+  <div class="video-wrapper section">
+    <iframe src="https://www.youtube.com/embed/DRqvtMFq0y8" title="What Is n8n?" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="takeaways-box section">
+    <div class="takeaways-title">Key Takeaways</div>
+    <div class="takeaway-item"><div class="t-bullet"></div><div>n8n is open-source and self-hostable; Zapier is cloud-based with a free tier and paid scale.</div></div>
+    <div class="takeaway-item"><div class="t-bullet"></div><div>Both connect apps and automate workflows — the difference is where the logic lives and who controls the infrastructure.</div></div>
+  </div>
+  <div class="lesson-nav">
+    <a href="lesson-3-11.html" class="nav-btn">
+      <span class="nav-dir">← Previous</span>
+      <span class="nav-name">Zapier MCP: The Unlock</span>
+    </a>
+    <a href="lesson-3-13.html" class="nav-btn next">
+      <span class="nav-dir">Next →</span>
+      <span class="nav-name">n8n vs Zapier: Pick Your Tool</span>
+    </a>
+  </div>
+</div>
+</div>
+<script>
+window.addEventListener('load',()=>{
+  const title=document.querySelector('h1.lesson-title')?.textContent||'';
+  localStorage.setItem('nexus_last_page_'+(localStorage.getItem('nexus_current_operator')||'joshua'),JSON.stringify({url:location.pathname,title}));
+});
+</script>
+<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'joshua';var hu='../hub-'+op+'.html';document.querySelectorAll('a[href*="hub-joshua.html"]').forEach(function(a){a.href=hu;});})();</script>
+<script src="../nexus-transition.js"></script>
+</body>
+</html>

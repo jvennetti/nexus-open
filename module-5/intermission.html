@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>NEXUS Academy — INTERMISSION · Module 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04080f;--blue:#00c8ff;--blue-dim:rgba(0,200,255,0.06);
+  --border:#152030;--white:#ffffff;--offwhite:#deedf8;--muted:#4a7090;
+}
+html,body{background:var(--bg);color:var(--white);font-family:'Lexend',sans-serif;height:100%;overflow:hidden;}
+#scanlines{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.1) 3px,rgba(0,0,0,0.1) 4px);pointer-events:none;z-index:9999;}
+.viewport{width:100vw;height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;}
+.ciro-col{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--border);overflow:hidden;background:radial-gradient(ellipse at 50% 55%, rgba(0,200,255,0.055) 0%, transparent 62%);}
+.floor-grid{position:absolute;bottom:0;left:0;right:0;height:280px;background:repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(0,200,255,0.03) 59px,rgba(0,200,255,0.03) 60px),repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(0,200,255,0.03) 59px,rgba(0,200,255,0.03) 60px);pointer-events:none;}
+.floor-line{position:absolute;bottom:18%;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 5%,rgba(0,200,255,0.22) 25%,rgba(0,200,255,0.22) 75%,transparent 95%);}
+.ciro-ambient{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,255,0.07) 0%,transparent 65%);pointer-events:none;}
+.ciro-shadow{position:absolute;bottom:17%;left:50%;transform:translateX(-50%);width:240px;height:18px;background:radial-gradient(ellipse,rgba(0,0,0,0.55) 0%,transparent 70%);pointer-events:none;animation:shadow-breathe 4s ease-in-out infinite;}
+@keyframes shadow-breathe{0%,100%{transform:translateX(-50%) scaleX(1);opacity:0.55}50%{transform:translateX(-50%) scaleX(0.72);opacity:0.3}}
+.ciro-figure{position:relative;z-index:10;margin-top:40px;animation:ciro-float 4s ease-in-out infinite;opacity:0;transition:opacity 0.8s ease 0.2s;}
+.ciro-figure.show{opacity:1}
+@keyframes ciro-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.da{animation:bl 2s infinite}.db{animation:bl 2s .65s infinite}.dc{animation:bl 2s 1.3s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0.15}}
+.bracket{position:absolute;width:22px;height:22px;opacity:0.18;}
+.br-tl{top:24px;left:24px;border-top:1px solid var(--blue);border-left:1px solid var(--blue)}
+.br-tr{top:24px;right:24px;border-top:1px solid var(--blue);border-right:1px solid var(--blue)}
+.br-bl{bottom:24px;left:24px;border-bottom:1px solid var(--blue);border-left:1px solid var(--blue)}
+.br-br{bottom:24px;right:24px;border-bottom:1px solid var(--blue);border-right:1px solid var(--blue)}
+.intermission-stamp{position:absolute;top:36px;left:0;right:0;text-align:center;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;letter-spacing:0.55em;color:rgba(0,200,255,0.22);text-transform:uppercase;opacity:0;transition:opacity 0.8s ease 0.4s;}
+.intermission-stamp.show{opacity:1}
+/* subtle static flicker on CIRO for module 5 — signal degrading */
+@keyframes static-flicker{0%,95%,100%{opacity:1}96%{opacity:0.7}97%{opacity:1}98%{opacity:0.5}99%{opacity:0.9}}
+.ciro-figure.show{animation:ciro-float 4s ease-in-out infinite, static-flicker 8s ease-in-out infinite;}
+.text-col{display:flex;flex-direction:column;padding:0;position:relative;overflow:hidden;}
+.text-col-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,200,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.018) 1px,transparent 1px);background-size:52px 52px;animation:grid-drift 24s linear infinite;pointer-events:none;}
+
+@keyframes grid-drift{from{background-position:0 0}to{background-position:52px 52px}}
+.static-block{display:flex;flex-direction:column;justify-content:flex-start;padding:32px 72px 0;position:relative;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.45em;color:rgba(0,200,255,0.38);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;opacity:0;transform:translateY(-10px);transition:opacity 0.6s ease 0.3s,transform 0.6s ease 0.3s;}
+.eyebrow.show{opacity:1;transform:translateY(0)}
+.eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--blue);opacity:0.45;flex-shrink:0;}
+.big-title{font-family:'Orbitron',sans-serif;font-size:76px;font-weight:900;letter-spacing:-1px;line-height:0.92;color:var(--white);margin-bottom:20px;opacity:0;transform:translateX(24px);transition:opacity 0.8s ease 0.45s,transform 0.8s ease 0.45s;}
+.big-title.show{opacity:1;transform:translateX(0)}
+.big-title .accent{color:var(--blue)}
+.tagline{font-family:'Lexend',sans-serif;font-size:15px;font-weight:300;letter-spacing:0.08em;color:rgba(255,255,255,0.32);margin-bottom:44px;opacity:0;transform:translateX(16px);transition:opacity 0.7s ease 0.55s,transform 0.7s ease 0.55s;}
+.tagline.show{opacity:1;transform:translateX(0)}
+.progress-wrap{opacity:0;transform:translateY(10px);transition:opacity 0.7s ease 0.65s,transform 0.7s ease 0.65s;}
+.progress-wrap.show{opacity:1;transform:translateY(0)}
+.pip-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.4em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;}
+.pip-meta span{color:rgba(0,200,255,0.6)}
+.pip-row{display:flex;gap:7px;align-items:center;}
+.pip{width:30px;height:6px;border-radius:2px;background:rgba(255,255,255,0.05);border:1px solid rgba(0,200,255,0.07);}
+.pip.done{background:rgba(0,200,255,0.45);border-color:rgba(0,200,255,0.55);box-shadow:0 0 5px rgba(0,200,255,0.3);}
+.pip.now{background:rgba(0,200,255,0.18);border-color:rgba(0,200,255,1);box-shadow:0 0 10px rgba(0,200,255,0.7);animation:pip-pulse 1.8s ease-in-out infinite;}
+@keyframes pip-pulse{0%,100%{box-shadow:0 0 5px rgba(0,200,255,0.4)}50%{box-shadow:0 0 14px rgba(0,200,255,1)}}
+.pip-mid{width:14px;height:1px;background:rgba(0,200,255,0.18);flex-shrink:0;}
+.tx-zone{padding:28px 72px 0;display:flex;flex-direction:column;}
+.tx-header{display:flex;align-items:center;gap:10px;padding:18px 0 14px;flex-shrink:0;}
+.tx-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);box-shadow:0 0 6px var(--blue);animation:dot-live 1.5s ease-in-out infinite;}
+@keyframes dot-live{0%,100%{opacity:1}50%{opacity:0.35}}
+.tx-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.4em;color:rgba(0,200,255,0.4);text-transform:uppercase;}
+.tx-lines-area{flex:0 0 160px;overflow:hidden;}
+.tx-line{font-family:'IBM Plex Mono',monospace;font-size:19.5px;line-height:1.9;color:var(--offwhite);min-height:1.7em;}
+.tx-line.dim{color:var(--muted)}.tx-line.blue{color:var(--blue)}.tx-line.static{color:rgba(0,200,255,0.45);letter-spacing:0.05em;}
+@keyframes cur{0%,100%{opacity:1}50%{opacity:0}}
+.btn-row{flex:1;display:flex;align-items:center;gap:24px;padding-bottom:20px;}
+.breathe-wrap{position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.8s ease;flex-shrink:0;}
+.breathe-wrap.show{opacity:1}
+.b-ring{position:absolute;border-radius:50%;pointer-events:none;border:1px solid rgba(0,200,255,0.3);width:64px;height:64px;animation:ring-slow 3.5s ease-in-out infinite;}
+.b-ring.r2{width:80px;height:80px;border-color:rgba(0,200,255,0.13);animation:ring-slow 3.5s ease-in-out 1.1s infinite;}
+.b-ring.r3{width:96px;height:96px;border-color:rgba(0,200,255,0.06);animation:ring-slow 3.5s ease-in-out 2.2s infinite;}
+@keyframes ring-slow{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
+#breathe-progress{position:absolute;width:64px;height:64px;transform:rotate(-90deg);pointer-events:none;opacity:0;transition:opacity 0.3s ease;top:50%;left:50%;margin-top:-32px;margin-left:-32px;}
+#breathe-progress.show{opacity:1}
+#progress-arc{stroke-dasharray:163.4;stroke-dashoffset:163.4;}
+#breathe-btn{position:relative;z-index:2;width:52px;height:52px;border-radius:50%;background:rgba(0,200,255,0.08);border:1.5px solid rgba(0,200,255,0.45);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 10s cubic-bezier(0.25,0.1,0.25,1),background 0.4s ease,border-color 0.4s ease;transform:scale(1);transform-origin:center center;user-select:none;-webkit-user-select:none;outline:none;-webkit-tap-highlight-color:transparent;appearance:none;}
+#breathe-btn:focus{outline:none;}
+#breathe-btn.holding{transform:scale(1.32);background:rgba(0,200,255,0.18);border-color:rgba(0,200,255,0.9);}
+#breathe-btn.done{transform:scale(1.32);background:rgba(0,200,255,0.25);border-color:var(--blue);transition:background 0.3s ease,border-color 0.3s ease;}
+.breathe-icon{width:16px;height:16px;stroke:rgba(0,200,255,0.65);stroke-width:1.5;fill:none;pointer-events:none;transition:stroke 0.4s ease;}
+#breathe-btn.holding .breathe-icon,#breathe-btn.done .breathe-icon{stroke:rgba(0,200,255,1);}
+.breathe-instruction{font-family:'IBM Plex Mono',monospace;font-size:18px;letter-spacing:0.35em;color:rgba(0,200,255,0.35);text-transform:uppercase;line-height:1.9;opacity:0;transition:opacity 0.8s ease;}
+.breathe-instruction.show{opacity:1}
+.hold-line{font-size:16px;color:rgba(0,200,255,0.2);display:block;margin-top:2px;}
+</style>
+</head>
+<body>
+<div id="scanlines"></div>
+<div class="viewport">
+  <div class="ciro-col">
+    <div class="bracket br-tl"></div><div class="bracket br-tr"></div>
+    <div class="bracket br-bl"></div><div class="bracket br-br"></div>
+    <div class="intermission-stamp" id="stamp">· Intermission ·</div>
+    <div class="ciro-ambient"></div>
+    <div class="ciro-figure" id="ciro-figure">
+      <svg width="220" height="454" viewBox="0 0 86 178">
+        <line x1="43" y1="3" x2="43" y2="14" stroke="#00c8ff" stroke-width="1.5"/>
+        <circle cx="43" cy="2" r="2.5" fill="#00c8ff"/>
+        <g style="transform-origin:43px 39px">
+          <rect x="10" y="14" width="66" height="50" rx="4" fill="#0d1a2e" stroke="#00c8ff" stroke-width="1.2"/>
+          <rect x="16" y="19" width="54" height="40" rx="2" fill="#020810"/>
+          <text x="43" y="32" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="5.5" fill="#00c8ff" opacity="0.9">SIGNAL</text>
+          <text x="43" y="41" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="5" fill="#00c8ff" opacity="0.65">STEADY</text>
+          <text x="43" y="51" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="4.5" fill="#00c8ff" opacity="0.4">4 / 7</text>
+          <line x1="18" y1="27" x2="70" y2="27" stroke="#00c8ff" stroke-width="0.4" opacity="0.35"/>
+          <line x1="18" y1="35" x2="58" y2="35" stroke="#00c8ff" stroke-width="0.4" opacity="0.2"/>
+          <line x1="18" y1="43" x2="64" y2="43" stroke="#00c8ff" stroke-width="0.4" opacity="0.14"/>
+        </g>
+        <rect x="31" y="64" width="24" height="7" rx="2" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="4" y="71" width="78" height="74" rx="5" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1.2"/>
+        <rect x="15" y="82" width="56" height="32" rx="2" fill="#020810" stroke="#1e3a5a" stroke-width="1"/>
+        <circle cx="31" cy="96" r="4" fill="#00c8ff" class="da"/>
+        <circle cx="43" cy="96" r="4" fill="#00c8ff" class="db"/>
+        <circle cx="55" cy="96" r="4" fill="#00c8ff" class="dc"/>
+        <rect x="22" y="106" width="42" height="4" rx="2" fill="#0a1525"/>
+        <rect x="22" y="106" width="24" height="4" rx="2" fill="#00c8ff" opacity="0.7"/>
+        <rect x="0" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="84" y="75" width="2" height="44" rx="1" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="16" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="48" y="145" width="22" height="26" rx="3" fill="#0d1a2e" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="13" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+        <rect x="45" y="165" width="28" height="6" rx="3" fill="#0a1525" stroke="#1e3a5a" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="ciro-shadow"></div>
+    <div class="floor-grid"></div>
+    <div class="floor-line"></div>
+  </div>
+  <div class="text-col">
+    <div class="text-col-grid"></div>
+
+    <div class="static-block">
+      <div class="eyebrow" id="eyebrow">Module 5 · Lead Generation Machine</div>
+      <div class="big-title" id="big-title">INTER<br><span class="accent">MISSION</span></div>
+      <div class="tagline" id="tagline">Halfway through. The pipeline is taking shape.</div>
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="pip-meta"><span>Lesson Progress</span><span>4 of 7</span></div>
+        <div class="pip-row" id="pip-row"></div>
+      </div>
+    </div>
+    <div class="tx-zone">
+      <div class="tx-header">
+        <div class="tx-dot"></div>
+        <div class="tx-label">CIRO · Transmission</div>
+      </div>
+      <div class="tx-lines-area" id="tx-lines"></div>
+      <div class="btn-row">
+        <div class="breathe-wrap" id="breathe-wrap">
+          <div class="b-ring"></div><div class="b-ring r2"></div><div class="b-ring r3"></div>
+          <svg id="breathe-progress" viewBox="0 0 56 56">
+            <circle cx="28" cy="28" r="26" fill="none" stroke="#00c8ff" stroke-width="1.5" id="progress-arc" stroke-linecap="round"/>
+          </svg>
+          <button id="breathe-btn" aria-label="Hold to continue">
+            <svg class="breathe-icon" viewBox="0 0 16 16"><path d="M2 8 Q5 3 8 8 Q11 13 14 8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="breathe-instruction" id="breathe-instruction">
+          Breathe.<span class="hold-line">Hold to continue →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const txLinesEl=document.getElementById('tx-lines');
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+(function(){
+  const row=document.getElementById('pip-row');
+  for(let i=0;i<7;i++){
+    if(i===4){const d=document.createElement('div');d.className='pip-mid';row.appendChild(d);}
+    const p=document.createElement('div');
+    p.className='pip '+(i<4?'done':i===4?'now':'');
+    row.appendChild(p);
+  }
+})();
+(async function(){
+  await wait(200);
+  document.getElementById('stamp').classList.add('show');
+  document.getElementById('ciro-figure').classList.add('show');
+  await wait(300);
+  document.getElementById('eyebrow').classList.add('show');
+  await wait(150);
+  document.getElementById('big-title').classList.add('show');
+  await wait(150);
+  document.getElementById('tagline').classList.add('show');
+  await wait(200);
+  document.getElementById('progress-wrap').classList.add('show');
+  await wait(700);
+  runTransmission();
+})();
+async function typeLine(el,text,speed=26){
+  const cur=document.createElement('span');
+  cur.style.cssText='display:inline-block;width:7px;height:11px;background:currentColor;vertical-align:middle;margin-left:2px;animation:cur .7s step-end infinite;opacity:0.8';
+  el.appendChild(cur);
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];el.insertBefore(document.createTextNode(ch),cur);
+    let d=speed;
+    if(ch==='.')d+=100;else if(ch===',')d+=50;else if(ch==='—')d+=75;
+    await wait(d);
+  }
+  cur.remove();
+}
+function addLine(cls=''){const el=document.createElement('div');el.className='tx-line'+(cls?' '+cls:'');txLinesEl.appendChild(el);return el;}
+async function runTransmission(){
+  let l1=addLine('static');await typeLine(l1,"[SIGNAL STEADY] — I am present.");await wait(500);
+  let l2=addLine('dim');await typeLine(l2,"Every pipeline requires the right inputs.");await wait(400);
+  let l3=addLine('blue');await typeLine(l3,"You have those. Hold steady. Keep going.");await wait(700);
+  let l4=addLine('dim');await typeLine(l4,"Hold the button when you're ready.");await wait(400);
+  document.getElementById('breathe-wrap').classList.add('show');
+  document.getElementById('breathe-instruction').classList.add('show');
+}
+const btn=document.getElementById('breathe-btn');
+const arcEl=document.getElementById('progress-arc');
+const progressSvg=document.getElementById('breathe-progress');
+const HOLD_MS=10000;
+const C=2*Math.PI*26;
+arcEl.style.strokeDasharray=C;arcEl.style.strokeDashoffset=C;
+let holdStart=null,holdTimer=null,raf=null,holding=false;
+function startHold(){
+  if(holding)return;
+  holding=true;holdStart=performance.now();
+  btn.classList.add('holding');
+  progressSvg.classList.add('show');
+  tickProgress();
+  holdTimer=setTimeout(completeHold,HOLD_MS);
+}
+function endHold(){
+  if(!holding)return;
+  holding=false;
+  btn.classList.remove('holding');
+  clearTimeout(holdTimer);cancelAnimationFrame(raf);
+  btn.style.transition='transform 0.35s cubic-bezier(0.25,0.1,0.25,1),background 0.3s ease,border-color 0.3s ease';
+  arcEl.style.strokeDashoffset=C;
+  progressSvg.classList.remove('show');
+  setTimeout(()=>{btn.style.transition='';},400);
+}
+function tickProgress(){
+  const pct=Math.min((performance.now()-holdStart)/HOLD_MS,1);
+  arcEl.style.strokeDashoffset=C*(1-pct);
+  if(pct<1)raf=requestAnimationFrame(tickProgress);
+}
+function completeHold(){
+  holding=false;
+  btn.classList.remove('holding');btn.classList.add('done');
+  cancelAnimationFrame(raf);arcEl.style.strokeDashoffset=0;
+  new Audio('../audio/sfx/wait-sound.wav').play().catch(()=>{});
+  if(window.nxTransit) window.nxTransit('../module-5/lesson-5-5.html',true);
+  else setTimeout(()=>{ window.location.href='../module-5/lesson-5-5.html'; },700);
+}
+btn.addEventListener('mousedown',startHold);
+btn.addEventListener('touchstart',e=>{e.preventDefault();startHold();},{passive:false});
+window.addEventListener('mouseup',endHold);
+window.addEventListener('touchend',endHold);
+window.addEventListener('mouseleave',endHold);
+(function(){window._ciroSong=new Audio("../audio/music/ciro-intro.mp3");window._ciroSong.loop=true;window._ciroSong.volume=0.18;window._ciroSong.play().catch(function(){document.addEventListener("click",function h(){window._ciroSong.play().catch(function(){});document.removeEventListener("click",h);});});window.addEventListener("pageshow",function(e){if(e.persisted)window._ciroSong.play().catch(function(){});});})();
+</script>
+<script src="../nexus-transition.js"></script>
+</body>
+</html>

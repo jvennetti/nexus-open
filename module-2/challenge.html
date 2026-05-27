@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>NEXUS Academy — Module 2 Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08101f;--card:#0d1628;--card2:#111d30;--box:#16213a;
+  --blue:#00c8ff;--blue-dim:rgba(0,200,255,0.07);--blue-border:rgba(0,200,255,0.22);
+  --border:#1a2d45;--white:#ffffff;--offwhite:#eaf3fb;--body-text:#cce2f2;
+  --muted:#5a8aaa;--label:#2a5a7a;
+}
+html{background:var(--bg);color:var(--white);font-size:16px;line-height:1.7}
+body{background:var(--bg);min-height:100vh;font-family:'Lexend',sans-serif}
+nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;position:sticky;top:0;z-index:100;width:100%}
+.wordmark{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;letter-spacing:4px;color:var(--white);text-decoration:none}
+.wordmark span{color:var(--blue)}
+.nav-lesson-id{font-family:'Lexend',sans-serif;font-size:13px;font-weight:300;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.nav-back{font-family:'Lexend',sans-serif;font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:8px 18px;border-radius:3px;transition:color .2s,border-color .2s}
+.nav-back:hover{color:var(--blue);border-color:var(--blue-border)}
+.banner{width:100%;height:420px;position:relative;overflow:hidden;background:#0d1628}
+.banner-img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;filter:brightness(0.72)}
+.banner-overlay{position:absolute;inset:0;background:linear-gradient(to bottom, transparent 30%, var(--bg) 100%)}
+.banner-label{position:absolute;bottom:44px;left:0;right:0;text-align:center}
+.banner-title{font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;letter-spacing:3px;color:var(--white);text-transform:uppercase;text-shadow:0 2px 24px rgba(0,0,0,0.7)}
+.browser-shell{width:1280px;margin:0 auto}
+.content-col{max-width:860px;margin:0 auto;padding:0 0 100px}
+.section-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--white);text-transform:uppercase;margin-bottom:18px;text-align:center}
+.body-copy{font-family:'Lexend',sans-serif;font-size:15px;font-weight:300;line-height:1.85;color:var(--body-text)}
+.body-copy p+p{margin-top:14px}
+.body-copy strong{font-weight:500;color:var(--offwhite)}
+.scenario-box{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:36px 40px;margin-bottom:36px}
+.challenge-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:36px 40px;margin-bottom:36px}
+.challenge-title{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;color:var(--white);text-transform:uppercase;margin-bottom:28px;text-align:center}
+.step-list{list-style:none;display:flex;flex-direction:column;gap:20px}
+.step-item{display:flex;align-items:flex-start;gap:20px}
+.step-num{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--blue-border);background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--blue);margin-top:2px}
+.step-text{font-family:'Lexend',sans-serif;font-size:15px;font-weight:300;line-height:1.75;color:var(--body-text)}
+.step-text strong{font-weight:500;color:var(--offwhite)}
+.step-text ul{margin:10px 0 4px 18px;display:flex;flex-direction:column;gap:6px}
+.prompt-block{background:#060e1a;border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.75;color:#a8c8e0;margin:12px 0}
+.deliverable-box{background:var(--bg);border:1px solid var(--blue-border);border-radius:8px;padding:32px 40px;margin-bottom:36px;position:relative;overflow:hidden}
+.deliverable-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.deliverable-text{font-family:'Lexend',sans-serif;font-size:15px;font-weight:400;line-height:1.8;color:var(--body-text);text-align:left}
+.deliverable-text ul{margin:10px 0 4px 18px;display:flex;flex-direction:column;gap:6px}
+.cta-row{display:flex;flex-direction:column;align-items:center;gap:18px;padding-top:8px;margin-bottom:52px}
+.mark-complete-btn{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--bg);background:var(--blue);border:none;border-radius:4px;padding:18px 52px;cursor:pointer;transition:opacity .2s,transform .15s;text-decoration:none;display:inline-block}
+.mark-complete-btn:hover{opacity:0.88;transform:translateY(-1px)}
+.mark-complete-btn:active{transform:translateY(0)}
+.cta-sub{font-family:'Lexend',sans-serif;font-size:12px;font-weight:300;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.prev-nav{border-top:1px solid var(--border);padding-top:40px;display:flex;justify-content:flex-start}
+.nav-btn{padding:18px 24px;background:var(--card);border:1px solid var(--border);border-radius:6px;text-decoration:none;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,background .2s;max-width:280px}
+.nav-btn:hover{border-color:var(--blue-border);background:var(--blue-dim)}
+.nav-dir{font-family:'Lexend',sans-serif;font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.nav-name{font-family:'Lexend',sans-serif;font-size:14px;font-weight:500;color:var(--white);line-height:1.4}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../hub-joshua.html" class="wordmark">NEXUS <span>ACADEMY</span></a>
+  <div class="nav-lesson-id">Module 2 — Challenge</div>
+  <a href="../hub-joshua.html" class="nav-back">← Hub</a>
+</nav>
+
+<div class="banner">
+  <img class="banner-img" src="../images/modules/m2-challenge.png" alt="Module 2 Challenge">
+  <div class="banner-overlay"></div>
+  <div class="banner-label">
+    <div class="banner-title">The Challenge</div>
+  </div>
+</div>
+
+<div class="browser-shell">
+<div class="content-col">
+
+  <div class="scenario-box">
+    <div class="section-title">Real-World Scenario</div>
+    <div class="body-copy">
+      <p>Module 2 gave you two things: the skill of prompting well, and the foundational tools that make every future session faster. This challenge locks both in. You're not solving a client problem yet — you're building the cockpit you'll operate from for the rest of the course.</p>
+      <p>Everything you create here gets used in Modules 3 through 6. Don't rush it.</p>
+    </div>
+  </div>
+
+  <div class="challenge-box">
+    <div class="challenge-title">Your Challenge</div>
+    <ol class="step-list">
+      <li class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Start the interview.</strong> Open Claude. In a fresh conversation, paste this prompt:
+          <div class="prompt-block">"I'm going to give you information about myself. Your job is to help me write a personal Operator Profile — a document I'll paste into every Claude Project I create for the rest of a course I'm taking. It should include: my name, what I do or am training to do, my communication style (how I like to write and be written to), the kinds of tasks I'll most often be working on, and three things I want Claude to always do when working with me and two things I never want it to do. Interview me with one question at a time until you have everything you need. Then write the document."</div>
+          Let Claude interview you. Answer honestly.
+        </div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Edit until it's yours.</strong> When Claude delivers the Operator Profile, edit it until it sounds exactly like you — specific, not generic. This is your voice and your operating context. Save it somewhere permanent. You'll paste this into every Project you build.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Create your first Claude Project.</strong> Call it <strong>Operator Training — Module 2.</strong> Paste your Operator Profile into the Project Instructions. Inside the Project, ask Claude to generate the following fictional scenario: a boutique financial advisory firm called Halcyon Wealth — 12 employees, focused on retirement planning for business owners aged 50–65. Include their communication tone, the kinds of clients they serve, and three recurring tasks their team handles manually every week. Upload that scenario document into the Project knowledge base.</div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Produce the meeting prep document.</strong> Inside the same Project, ask Claude to generate a structured client meeting prep document for a fictional Halcyon client: a 58-year-old business owner considering selling his company in the next three years and transitioning into retirement. The document should include a client overview, the key questions to address, relevant talking points, and suggested next steps. Read it. Ask yourself: <em>Would an advisor actually use this?</em> If the answer is no, iterate until the answer is yes. That's the standard for every deliverable in this course.</div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="deliverable-box">
+    <div class="section-title">Your Deliverable</div>
+    <div class="deliverable-text">
+      <ul>
+        <li>Your Operator Profile — written, edited, and saved</li>
+        <li>A functioning Claude Project with the Halcyon scenario in the knowledge base</li>
+        <li>A completed meeting prep document that passes the "would an advisor use this?" test</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <a href="complete.html" class="mark-complete-btn" onclick="markComplete()">Mark Complete</a>
+    <div class="cta-sub">Routes to module completion</div>
+  </div>
+
+  <div class="prev-nav">
+    <a href="lesson-2-7.html" class="nav-btn">
+      <span class="nav-dir">← Previous</span>
+      <span class="nav-name">Perplexity Computer for Beginners: Everything You Need to Know</span>
+    </a>
+  </div>
+
+</div>
+</div>
+
+<script>
+function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
+localStorage.setItem('nexus_last_page_'+(localStorage.getItem('nexus_current_operator')||'joshua'),JSON.stringify({url:location.pathname,title:'Module 2 — Challenge'}));
+function markComplete(){
+  playS('../audio/sfx/password-confirm.mp3',0.1);
+  localStorage.setItem('nexus_module_2_complete', 'true');
+  const keysToRemove = [];
+  for(let i = 0; i < localStorage.length; i++){
+    const k = localStorage.key(i);
+    if(k && k.startsWith('nexus_ts_') && k.includes('module-2')){
+      keysToRemove.push(k);
+    }
+  }
+  keysToRemove.forEach(k => localStorage.removeItem(k));
+}
+</script>
+<script>(function(){var op=localStorage.getItem('nexus_current_operator')||'joshua';var hu='../hub-'+op+'.html';document.querySelectorAll('a[href*="hub-joshua.html"]').forEach(function(a){a.href=hu;});})();</script>
+<script src="../nexus-transition.js"></script>
+</body>
+</html>

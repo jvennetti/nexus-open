@@ -742,9 +742,8 @@ function resetProgress(){
 }
 
 document.addEventListener('keydown', function(e) {
-  if (e.shiftKey && e.altKey && e.key === 'R') {
-    var btn = document.querySelector('.reset-btn');
-    if (btn) btn.style.display = btn.style.display === 'block' ? 'none' : 'block';
+  if (e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && e.key === 'R') {
+    showResetModal();
   }
 });
 
