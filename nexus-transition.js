@@ -74,7 +74,7 @@
     if(m){ document.title='Lesson '+m[1]+'.'+m[2]+' · NEXUS Academy'; return; }
     var mi=p.match(/module-(\d+)\/intro/);
     if(mi){ document.title='Module '+mi[1]+' Intro · NEXUS Academy'; return; }
-    if(/pre-course\/module-intro/.test(p)||/pre-course\/ciro-intro/.test(p)){ document.title='Pre-Course Intro · NEXUS Academy'; return; }
+    if(/pre-course\/module-intro/.test(p)||/pre-course\/ciro-intro/.test(p)||/\/ciro-intro/.test(p)){ document.title='Pre-Course Intro · NEXUS Academy'; return; }
     var mc=p.match(/module-(\d+)\/complete/);
     if(mc){ document.title='Module '+mc[1]+' Complete · NEXUS Academy'; return; }
     if(/pre-course\/complete/.test(p)){ document.title='Pre-Course Complete · NEXUS Academy'; return; }

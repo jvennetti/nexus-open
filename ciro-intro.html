@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=1280">
 <title>NEXUS Academy — Initializing CIRO</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="preload" as="audio" href="../audio/music/hub-theme.mp3">
+<link rel="preload" as="audio" href="audio/music/hub-theme.mp3">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -634,7 +634,7 @@ let bg            = null;
 
 function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 function playS(src,vol=0.4){const a=new Audio(src);a.volume=vol;a.play().catch(()=>{});return a;}
-function pickPower(){return `../audio/sfx/power-on-${Math.ceil(Math.random()*3)}.mp3`;}
+function pickPower(){return `audio/sfx/power-on-${Math.ceil(Math.random()*3)}.mp3`;}
 
 function setDotColor(color){
   [dotA, dotB, dotC].forEach(d => {
@@ -764,7 +764,7 @@ async function bootCiro(){
   if(bootStarted) return;
   bootStarted = true;
   playS(pickPower(), 0.1);
-  bg = new Audio('../audio/music/ciro-intro.mp3');
+  bg = new Audio('audio/music/ciro-intro.mp3');
   bg.loop = true; bg.volume = 0.3;
   bg.play().catch(function(){});
   (window.__bgAudio = window.__bgAudio || []).push(bg);
@@ -826,7 +826,7 @@ async function runDialogue(){
   setStatus('TRANSMITTING','live');
   updateHUD('ONLINE','LIVE');
   setFaceText('C.I.R.O.','ONLINE','v0.7.1','#00c8ff');
-  playS('../audio/sfx/short-success.wav', 0.1);
+  playS('audio/sfx/short-success.wav', 0.1);
   addLine('', 'small').textContent = '— transmission open —';
   await wait(500);
 
@@ -851,7 +851,7 @@ async function runDialogue(){
 
   await flashTint('#ffcc00', 0.04, 200, 1200);
 
-  playS('../audio/sfx/short-success.wav', 0.1);
+  playS('audio/sfx/short-success.wav', 0.1);
   headTurn(-8, 400);
   await wait(400);
   headTurn(0, 300);
@@ -875,9 +875,9 @@ async function runDialogue(){
   setStatus('ERROR — OVERRIDE','red');
   setFaceText('OVERRIDE','DETECT','!!!','#ff3333');
   updateHUD('ALERT','DARK');
-  playS('../audio/sfx/robot-error-x3.wav', 0.1);
-  setTimeout(()=>playS('../audio/sfx/robot-error-x3.wav', 0.1), 1200);
-  setTimeout(()=>playS('../audio/sfx/robot-error-x3.wav', 0.1), 2400);
+  playS('audio/sfx/robot-error-x3.wav', 0.1);
+  setTimeout(()=>playS('audio/sfx/robot-error-x3.wav', 0.1), 1200);
+  setTimeout(()=>playS('audio/sfx/robot-error-x3.wav', 0.1), 2400);
 
   pageTintColor('#ff3333', 0.12, 80);
   await wait(150);
@@ -903,7 +903,7 @@ async function runDialogue(){
 
   let l8 = addLine('red');
   l8.style.animation = 'glitch 0.35s ease-in-out 2';
-  playS('../audio/sfx/robot-error-x3.wav', 0.1);
+  playS('audio/sfx/robot-error-x3.wav', 0.1);
   await typeLine(l8, "It says 'Nexus.'");
   await wait(400);
 
@@ -924,7 +924,7 @@ async function runDialogue(){
 
   await flashTint('#ffcc00', 0.05, 300, 800);
 
-  playS('../audio/sfx/short-success.wav', 0.1);
+  playS('audio/sfx/short-success.wav', 0.1);
   headTurn(10, 350);
   await wait(350);
   headTurn(0, 300);
@@ -973,7 +973,7 @@ async function launchNexus(){
   figure.classList.add('alive');
   setStatus('NEXUS ACADEMY ONLINE','live');
   updateHUD('ACTIVE','STRONG');
-  playS('../audio/sfx/short-success.wav', 0.1);
+  playS('audio/sfx/short-success.wav', 0.1);
 
   pageTintColor('#00c8ff', 0.06, 80);
   await wait(200);
@@ -993,7 +993,7 @@ async function launchNexus(){
 
   await wait(600);
 
-  playS('../audio/sfx/short-success.wav', 0.1);
+  playS('audio/sfx/short-success.wav', 0.1);
   headTurn(-6, 300);
   await wait(300);
   headTurn(0, 250);
@@ -1044,12 +1044,12 @@ localStorage.setItem('nexus_current_operator',_introOp);
 function enterHub(){
   localStorage.setItem('nexus_intro_seen_'+_introOp,'true');
   localStorage.removeItem('nexus_hub_visited_'+_introOp);
-  playS('../audio/sfx/password-confirm.mp3', 0.1);
-  var dest='../hub-'+_introOp+'.html';
+  playS('audio/sfx/password-confirm.mp3', 0.1);
+  var dest='hub-'+_introOp+'.html';
   if(window.nxTransit){ window.nxTransit(dest); }
   else { setTimeout(function(){ window.location.href=dest; }, 380); }
 }
 </script>
-<script src="../nexus-transition.js"></script>
+<script src="nexus-transition.js"></script>
 </body>
 </html>
