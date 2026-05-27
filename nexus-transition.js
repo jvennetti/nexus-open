@@ -14,7 +14,7 @@
     var el=document.createElement('audio');
     el.src=_base+f;
     el.preload='auto';
-    el.volume=0.06;
+    el.volume=0.036;
     document.head.appendChild(el);
     return el;
   });
