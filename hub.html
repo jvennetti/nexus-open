@@ -67,14 +67,14 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .module-card.unlocked:hover{transform:translateY(-1px);border-color:rgba(0,200,255,0.38);box-shadow:0 4px 32px rgba(0,200,255,0.14)}
 .module-wrap{display:flex;flex-direction:column}
 .module-card.has-lessons{border-radius:10px 10px 0 0!important;border-bottom-color:transparent!important}
-.lesson-toggle{background:var(--panel2);border:1px solid rgba(0,200,255,0.28);border-top:none;border-radius:0 0 10px 10px;padding:10px 20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,box-shadow .2s;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.3em;color:var(--blue);text-transform:uppercase;gap:10px;user-select:none;box-shadow:0 0 12px rgba(0,200,255,0.08)}
+.lesson-toggle{background:var(--panel2);border:1px solid rgba(0,200,255,0.28);border-top:2px solid rgba(0,200,255,0.4);border-radius:0 0 10px 10px;padding:10px 20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,box-shadow .2s;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.3em;color:var(--blue);text-transform:uppercase;gap:10px;user-select:none;box-shadow:0 0 12px rgba(0,200,255,0.08)}
 .lesson-toggle:not(.open){animation:toggle-breathe 3.5s ease-in-out infinite}
 @keyframes toggle-breathe{0%,100%{box-shadow:0 0 10px rgba(0,200,255,0.07)}50%{box-shadow:0 0 18px rgba(0,200,255,0.22)}}
 .lesson-toggle:hover{background:var(--blue-lo);border-color:var(--blue);box-shadow:0 0 20px rgba(0,200,255,0.2)}
 .lesson-toggle.open{border-radius:0;border-color:rgba(0,200,255,0.22);border-bottom:none;animation:none}
 .lesson-toggle.open:hover{background:var(--panel2);border-color:rgba(0,200,255,0.22)}
-.lesson-tray{background:var(--panel2);border:1px solid rgba(0,200,255,0.22);border-top:none;border-radius:0 0 10px 10px;overflow:hidden;max-height:0;transition:max-height .38s cubic-bezier(0.4,0,0.2,1)}
-.lesson-tray.open{max-height:1400px}
+.lesson-tray{background:var(--panel2);border:1px solid transparent;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;max-height:0;transition:max-height .38s cubic-bezier(0.4,0,0.2,1),border-color .2s}
+.lesson-tray.open{max-height:1400px;border-color:rgba(0,200,255,0.22)}
 .lesson-row{display:flex;align-items:center;gap:14px;padding:11px 20px;text-decoration:none;transition:background .15s;border-bottom:1px solid rgba(0,200,255,0.05)}
 .lesson-row:last-child{border-bottom:none}
 .lesson-row:hover{background:var(--blue-lo)}
@@ -116,8 +116,8 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .bonus-card .bv-divider{width:1px;height:24px;background:rgba(180,140,0,0.25);flex-shrink:0}
 .bonus-card .bv-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.28em;color:rgba(180,140,0,0.55);text-transform:uppercase;white-space:nowrap}
 .bonus-card .card-status{background:rgba(160,120,0,0.1)!important;border-color:rgba(160,120,0,0.28)!important;color:#a07820!important;z-index:2;top:50%;transform:translateY(-50%)}
-.module-card.complete{animation:mod-done-pulse 4s ease-in-out infinite}
-@keyframes mod-done-pulse{0%,100%{box-shadow:0 0 0 rgba(0,200,255,0)}50%{box-shadow:0 0 16px rgba(0,200,255,0.18)}}
+.module-card.newest-complete{animation:mod-done-pulse 4s ease-in-out infinite}
+@keyframes mod-done-pulse{0%,100%{box-shadow:0 0 0 rgba(0,200,255,0)}50%{box-shadow:0 0 24px rgba(0,200,255,0.28)}}
 .achievements-section{margin-bottom:40px}
 .badges-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
 .badge-item{display:flex;flex-direction:column;align-items:center;text-align:center;transition:all 0.4s ease}
@@ -600,6 +600,7 @@ function renderContinue(s){
 function renderModules(s){
   const g = document.getElementById('modules-grid');
   g.innerHTML = '';
+  const moduleCards = [];
   MODULES.forEach((m, idx)=>{
     const isAccessible = DEV_UNLOCK || idx === 0 || !!s[MODULES[idx-1].key+'_complete'];
     const isComplete   = !!s[m.key+'_complete'];
@@ -608,6 +609,7 @@ function renderModules(s){
     wrap.className = 'module-wrap';
     const card = document.createElement('div');
     card.className = 'module-card'+(isAccessible?' unlocked':'')+(hasLessons?' has-lessons':'')+(isComplete?' complete':'');
+    moduleCards.push({card, isComplete});
     const imgSrc = isAccessible ? m.unlocked : m.locked;
     card.innerHTML = `
       <img src="${imgSrc}" alt="${m.title}" loading="lazy">
@@ -632,30 +634,21 @@ function renderModules(s){
       const inner = document.createElement('div');
       const notesBase = location.pathname.substring(0,location.pathname.lastIndexOf('/')+1);
       m.lessons.forEach(l=>{
-        if(l.takeaways){
-          const savedNotes = localStorage.getItem('nexus_notes_'+notesBase+l.url)||'';
-          const notesBlock = savedNotes
-            ? `<div class="le-lbl">Your Notes</div><div class="le-notes">${savedNotes.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
-            : `<div class="le-lbl">Your Notes</div><div class="le-no-notes">No notes taken for this lesson.</div>`;
-          const taItems = l.takeaways.map(t=>`<li>${t}</li>`).join('');
-          const row = document.createElement('div');
-          row.className = 'lesson-row expandable';
-          row.innerHTML = `<div class="lesson-row-head"><span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">+</span></div><div class="lesson-expand"><div class="le-inner">${notesBlock}<div class="le-goto"><a href="${l.url}">Go to Lesson →</a></div></div></div>`;
-          row.querySelector('.lesson-row-head').addEventListener('click',e=>{
-            e.stopPropagation();
-            const exp=row.querySelector('.lesson-expand');
-            const arr=row.querySelector('.l-arr');
-            const open=exp.classList.toggle('open');
-            arr.textContent=open?'−':'+';
-          });
-          inner.appendChild(row);
-        } else {
-          const row = document.createElement('a');
-          row.className = 'lesson-row';
-          row.href = l.url;
-          row.innerHTML = `<span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">→</span>`;
-          inner.appendChild(row);
-        }
+        const savedNotes = localStorage.getItem('nexus_notes_'+notesBase+l.url)||'';
+        const notesBlock = savedNotes
+          ? `<div class="le-lbl">Your Notes</div><div class="le-notes">${savedNotes.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
+          : `<div class="le-lbl">Your Notes</div><div class="le-no-notes">No notes taken for this lesson.</div>`;
+        const row = document.createElement('div');
+        row.className = 'lesson-row expandable';
+        row.innerHTML = `<div class="lesson-row-head"><span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">+</span></div><div class="lesson-expand"><div class="le-inner">${notesBlock}<div class="le-goto"><a href="${l.url}">Go to Lesson →</a></div></div></div>`;
+        row.querySelector('.lesson-row-head').addEventListener('click',e=>{
+          e.stopPropagation();
+          const exp=row.querySelector('.lesson-expand');
+          const arr=row.querySelector('.l-arr');
+          const open=exp.classList.toggle('open');
+          arr.textContent=open?'−':'+';
+        });
+        inner.appendChild(row);
       });
       tray.appendChild(inner);
       toggle.addEventListener('click', e=>{
@@ -669,6 +662,8 @@ function renderModules(s){
     }
     g.appendChild(wrap);
   });
+  const lastCI = moduleCards.reduce((acc,{isComplete},idx)=>isComplete?idx:acc,-1);
+  if(lastCI>=0) moduleCards[lastCI].card.classList.add('newest-complete');
   const bv = document.createElement('div');
   bv.className = 'module-card unlocked bonus-card';
   bv.innerHTML = `
