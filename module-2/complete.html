@@ -55,6 +55,7 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 
 .study-doc-btn{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,0.22);border-radius:4px;padding:12px 26px;cursor:pointer;transition:all 0.2s;margin-top:10px}
 .study-doc-btn:hover{background:rgba(0,200,255,0.06);border-color:rgba(0,200,255,0.45)}
+.study-doc-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin-top:6px}
 </style>
 </head>
 <body>
@@ -112,7 +113,8 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
   <div class="hub-cta" id="hub-cta">
     <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
     <br>
-    <button class="study-doc-btn" onclick="openStudyDoc()">Download Study Doc →</button>
+    <button class="study-doc-btn" onclick="openStudyDoc()">Download Study Doc</button>
+    <div class="study-doc-sub">Includes your notes and key takeaways from every lesson</div>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
   </div>
 
@@ -204,65 +206,106 @@ runReveal();
 
 const STUDY_MODULE = 'Module 2 — The Prompt Engineer';
 const STUDY_LESSONS = [{n:'2.1',title:'Claude vs ChatGPT — Which One\'s Actually Better?',file:'lesson-2-1.html',takeaways:['Claude and ChatGPT are built on meaningfully different philosophies — the distinction matters for the kind of work this course trains you for.','For nuanced, long-context, and reasoning-heavy tasks, Claude holds a consistent edge.','Knowing why you\'re using a tool is the first step to using it well.']},{n:'2.2',title:'Getting Started with Claude.ai',file:'lesson-2-2.html',takeaways:['Get your account live and oriented before moving forward.','The free plan is functional, but if you\'re using Claude regularly, the paid plan is worth it.','Know where things are before you start prompting — first impressions of the interface matter.']},{n:'2.3',title:'How to Use Wispr Flow — Full Guide',file:'lesson-2-3.html',takeaways:['Works in any text field on your computer: browsers, Claude, email, documents — anywhere.','It cleans up filler words and punctuation automatically, so your prompts come out polished without editing.','This is not a one-video setup — it runs across the entire course. Install it now.']},{n:'2.4',title:'Full Claude Tutorial: Beginner to Advanced in 19 Minutes',file:'lesson-2-4.html',takeaways:['Projects give Claude persistent memory and context about your work — they\'re how you move from one-off prompts to an actual system.','Artifacts are Claude\'s way of producing standalone deliverables (documents, code, HTML) separate from the conversation.','Skills let you package repeatable processes so Claude executes them the same way every time.','Cowork is introduced here as a concept — it gets its own module later. Note it, don\'t dive in yet.']},{n:'2.5',title:'Stop Wasting Your Claude Tokens',file:'lesson-2-5.html',takeaways:['Every message Claude receives, it re-reads the entire conversation from the beginning. Costs compound — they don\'t add.','Think of the context window like short-term memory. When it fills, output quality drops and early instructions get deprioritized.','Start fresh conversations intentionally. Long, sprawling threads are one of the most common reasons Claude degrades mid-session.','Using Projects with well-structured knowledge files is the core fix — context that lives in the project doesn\'t eat your conversation window.']},{n:'2.6',title:'AI Prompt Engineering: A Deep Dive',file:'lesson-2-6.html',takeaways:['Prompt engineering is clear communication — the same principles that make human instructions work make prompts work.','Context, role, format, and examples are the four levers that move output quality more than anything else.','The people in this video built the model — their framing of what prompting is (and isn\'t) is the closest thing to a ground truth you\'ll find.','Iteration is the method. A first prompt is a hypothesis. You refine it the same way you\'d refine any professional communication.','System prompts (used in Projects) are fundamentally different from conversational prompts — understand the distinction early.']},{n:'2.7',title:'Perplexity Computer for Beginners: Everything You Need to Know',file:'lesson-2-7.html',takeaways:['Perplexity Computer orchestrates multiple AI models simultaneously — it\'s an agent framework, not a chatbot.','The right question isn\'t "which AI is best?" — it\'s "which AI is best for this specific job?" Tool selection is a skill.','Claude is your primary environment. Perplexity serves complementary functions, primarily research and multi-model orchestration.']}];
+const STUDY_CIRO = 'The prompt is the product.<br>You understand that now. Most never do.<br><br>— CIRO';
 
 function openStudyDoc(){
-  const dir = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
-  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  var sections = '';
+  var dir=location.pathname.substring(0,location.pathname.lastIndexOf('/')+1);
+  var baseUrl=location.origin+dir;
+  var date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var slug=STUDY_MODULE.toLowerCase().replace(/[\s—–]+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  var filename='nexus-study-doc-'+slug+'.html';
+  function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+  var sections='';
   STUDY_LESSONS.forEach(function(l){
-    var raw = localStorage.getItem('nexus_notes_' + dir + l.file) || '';
-    var escaped = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-    var taHtml = l.takeaways.map(function(t){return '<li>'+t+'</li>';}).join('');
-    sections += '<section class="ls"><div class="ls-head"><span class="ls-num">Lesson '+l.n+'</span><h2 class="ls-title">'+l.title+'</h2></div><div class="ls-body"><h3 class="ls-lbl">KEY TAKEAWAYS</h3><ul class="ls-ta">'+taHtml+'</ul><h3 class="ls-lbl">YOUR NOTES</h3><div class="ls-notes" contenteditable="true">'+(escaped||'<span style="color:#6a8eaa;font-style:italic">No notes taken for this lesson.</span>')+'</div></div></section>';
+    var raw=localStorage.getItem('nexus_notes_'+dir+l.file)||'';
+    var notesHtml=raw?escHtml(raw):'<em style="color:#6a8eaa;font-style:italic">No notes taken for this lesson.</em>';
+    var taHtml=l.takeaways.map(function(t){return '<li>'+t+'</li>';}).join('');
+    var lessonUrl=baseUrl+l.file;
+    sections+=''
+      +'<section class="ls">'
+        +'<div class="ls-head">'
+          +'<span class="ls-num">Lesson '+l.n+'</span>'
+          +'<h2 class="ls-title">'+l.title+'</h2>'
+        +'</div>'
+        +'<div class="ls-body">'
+          +'<h3 class="ls-lbl">Key Takeaways</h3>'
+          +'<ul class="ls-ta">'+taHtml+'</ul>'
+          +'<h3 class="ls-lbl">Your Notes</h3>'
+          +'<div class="ls-notes" contenteditable="true">'+notesHtml+'</div>'
+          +'<div class="ls-rev"><a href="'+lessonUrl+'" class="ls-rev-lnk" target="_blank">↩ Revisit this lesson →</a></div>'
+        +'</div>'
+      +'</section>';
   });
-  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>NEXUS Academy — '+STUDY_MODULE+' Study Doc<\/title><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><style>'
-    +'*{box-sizing:border-box;margin:0;padding:0}'
-    +':root{--bg:#08101f;--card:#0d1628;--blue:#00c8ff;--text:#cce2f2;--white:#fff;--muted:#5a8aaa;--border:#1a2d45}'
-    +'body{background:var(--bg);color:var(--text);font-family:Lexend,sans-serif;font-size:15px;line-height:1.75;max-width:860px;margin:0 auto;padding:48px 36px 80px}'
-    +'.dh{text-align:center;padding:0 0 36px;border-bottom:1px solid var(--border);margin-bottom:44px}'
-    +'.dw{font-family:Orbitron,sans-serif;font-size:22px;font-weight:900;letter-spacing:5px;color:var(--white);margin-bottom:8px}'
-    +'.dw span{color:var(--blue)}'
-    +'.dm{font-family:Orbitron,sans-serif;font-size:12px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}'
-    +'.dd{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:20px}'
-    +'.pb{display:flex;align-items:center;gap:14px;justify-content:center}'
-    +'.pbtn{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,.3);border-radius:4px;padding:10px 24px;cursor:pointer;transition:all .2s}'
-    +'.pbtn:hover{background:rgba(0,200,255,.07);border-color:rgba(0,200,255,.55)}'
-    +'.ph{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--muted);letter-spacing:.15em}'
-    +'.ls{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px}'
-    +'.ls-head{padding:22px 28px 18px;border-bottom:1px solid var(--border);background:#0a1220}'
-    +'.ls-num{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px}'
-    +'.ls-title{font-family:Orbitron,sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:.04em;line-height:1.35}'
-    +'.ls-body{padding:22px 28px}'
-    +'.ls-lbl{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:20px}'
-    +'.ls-lbl:first-child{margin-top:0}'
-    +'.ls-ta{list-style:none;display:flex;flex-direction:column;gap:8px}'
-    +'.ls-ta li{padding-left:18px;position:relative;font-size:14px;font-weight:300;color:var(--text);line-height:1.65}'
-    +".ls-ta li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--muted)}"
-    +'.ls-notes{min-height:80px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:14px;font-weight:300;line-height:1.75;color:var(--text);outline:none;transition:border-color .2s,background .2s}'
-    +'.ls-notes:focus{border-color:rgba(0,200,255,.2);background:rgba(255,255,255,.038)}'
-    +'@media print{body{background:#fff;color:#1a1a1a;padding:20px 28px;max-width:none}'
-    +'.dw{color:#000}.dw span{color:#0066aa}'
-    +'.pb{display:none}'
-    +'.dh{border-bottom:1px solid #ddd;margin-bottom:28px;padding-bottom:20px}'
-    +'.ls{background:#fff;border:1px solid #ddd;margin-bottom:20px;page-break-inside:avoid}'
-    +'.ls-head{background:#f5f7fa;border-bottom:1px solid #ddd}'
-    +'.ls-num{color:#888}.ls-title{color:#111}'
-    +'.ls-lbl{color:#888}'
-    +'.ls-ta li{color:#333}'
-    +".ls-ta li::before{background:#999}"
-    +'.ls-notes{background:#fafafa;border:1px solid #ddd;color:#1a1a1a;min-height:40px}'
-    +'.dm{color:#666}.dd{color:#888}}'
-    +'<\/style><\/head><body>'
-    +'<div class="dh"><div class="dw">NEXUS <span>ACADEMY<\/span><\/div>'
-    +'<div class="dm">'+STUDY_MODULE+'<\/div>'
-    +'<div class="dd">Study Document &nbsp;&middot;&nbsp; Generated '+date+'<\/div>'
-    +'<div class="pb"><button class="pbtn" onclick="window.print()">Print \/ Save as PDF &rarr;<\/button>'
-    +'<span class="ph">File &rarr; Print &rarr; Save as PDF in Chrome\/Edge\/Firefox<\/span><\/div><\/div>'
+  var css=[
+    '*{box-sizing:border-box;margin:0;padding:0}',
+    ':root{--bg:#08101f;--card:#0d1628;--blue:#00c8ff;--text:#cce2f2;--white:#fff;--muted:#5a8aaa;--border:#1a2d45}',
+    "body{background:var(--bg);color:var(--text);font-family:'Lexend',sans-serif;font-size:15px;line-height:1.75;max-width:860px;margin:0 auto;padding:48px 36px 80px}",
+    '.dh{text-align:center;padding:0 0 36px;border-bottom:1px solid var(--border);margin-bottom:44px}',
+    ".dw{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;letter-spacing:5px;color:var(--white);margin-bottom:8px}",
+    '.dw span{color:var(--blue)}',
+    ".dm{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}",
+    ".dd{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:20px}",
+    '.pb{display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}',
+    ".pbtn{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,.3);border-radius:4px;padding:10px 24px;cursor:pointer;transition:all .2s}",
+    '.pbtn:hover{background:rgba(0,200,255,.07);border-color:rgba(0,200,255,.55)}',
+    ".ph{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.12em;text-align:center}",
+    '.ls{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px}',
+    '.ls-head{padding:24px 28px 20px;border-bottom:1px solid var(--border);background:#0a1220;text-align:center}',
+    ".ls-num{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.28em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:8px}",
+    ".ls-title{font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:var(--white);line-height:1.3}",
+    '.ls-body{padding:22px 28px}',
+    ".ls-lbl{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:24px;text-align:center;display:block}",
+    '.ls-lbl:first-child{margin-top:0}',
+    '.ls-ta{list-style:none;display:flex;flex-direction:column;gap:8px}',
+    '.ls-ta li{padding-left:18px;position:relative;font-size:14px;font-weight:300;color:var(--text);line-height:1.65}',
+    ".ls-ta li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--muted)}",
+    '.ls-notes{min-height:80px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:14px;font-weight:300;line-height:1.75;color:var(--text);outline:none;transition:border-color .2s,background .2s}',
+    '.ls-notes:focus{border-color:rgba(0,200,255,.2);background:rgba(255,255,255,.038)}',
+    '.ls-rev{text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,200,255,.06)}',
+    ".ls-rev-lnk{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding-bottom:2px;border-bottom:1px solid rgba(90,138,170,.3);transition:color .2s,border-color .2s}",
+    '.ls-rev-lnk:hover{color:var(--blue);border-color:var(--blue)}',
+    ".ciro-note{text-align:center;margin-top:52px;padding:28px 32px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.9;color:var(--muted);font-style:italic}",
+    '@media print{',
+    'body{background:#fff;color:#1a1a1a;padding:20px 28px;max-width:none}',
+    '.dw{color:#000}.dw span{color:#0066aa}',
+    '.dm,.dd{color:#666}',
+    '.pb{display:none}',
+    '.dh{border-bottom:1px solid #ddd;margin-bottom:28px;padding-bottom:20px}',
+    '.ls{background:#fff;border:1px solid #ddd;margin-bottom:24px;page-break-inside:avoid}',
+    '.ls-head{background:#f5f7fa;border-bottom:1px solid #ddd}',
+    '.ls-num{color:#888}.ls-title{color:#111}',
+    '.ls-lbl{color:#888}',
+    '.ls-ta li{color:#333}',
+    ".ls-ta li::before{background:#bbb}",
+    '.ls-notes{background:#fafafa;border:1px solid #ddd;color:#1a1a1a}',
+    '.ls-rev-lnk{color:#888}',
+    '.ciro-note{color:#888;border-top:1px solid #ddd}}',
+  ].join('');
+  var html='<!DOCTYPE html><html lang="en">'
+    +'<head><meta charset="UTF-8">'
+    +'<title>NEXUS Academy — '+STUDY_MODULE+' Study Doc</title>'
+    +'<link rel="preconnect" href="https://fonts.googleapis.com">'
+    +'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+    +'<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:wght@600;700;800&family=Lexend:wght@300;400&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">'
+    +'<style>'+css+'</style>'
+    +'</head><body>'
+    +'<div class="dh">'
+    +'<div class="dw">NEXUS <span>ACADEMY</span></div>'
+    +'<div class="dm">'+STUDY_MODULE+'</div>'
+    +'<div class="dd">'+date+'</div>'
+    +'<div class="pb">'
+    +'<button class="pbtn" onclick="window.print()">Print / Save as PDF &rarr;</button>'
+    +'<span class="ph">In print dialog, uncheck &ldquo;Headers and footers&rdquo; for a cleaner PDF</span>'
+    +'</div></div>'
     +sections
-    +'<\/body><\/html>';
-  var w = window.open('','_blank');
-  if(w){ w.document.write(html); w.document.close(); }
-  else{ alert('Allow pop-ups for this page to open your Study Doc.'); }
+    +'<div class="ciro-note">'+STUDY_CIRO+'</div>'
+    +'</body></html>';
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},60000);
 }
 function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
 </script>
