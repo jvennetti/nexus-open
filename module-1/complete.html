@@ -53,9 +53,7 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 .hub-btn:active{transform:translateY(0)}
 .hub-cta-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:12px}
 
-.study-doc-btn{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,0.22);border-radius:4px;padding:12px 26px;cursor:pointer;transition:all 0.2s;margin-top:10px}
-.study-doc-btn:hover{background:rgba(0,200,255,0.06);border-color:rgba(0,200,255,0.45)}
-.study-doc-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin-top:6px}
+.hub-btn-gap{margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -111,10 +109,9 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
   </div>
 
   <div class="hub-cta" id="hub-cta">
-    <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
+    <button class="hub-btn hub-btn-gap" onclick="openStudyDoc()">Download Study Doc (This Module's Notes)</button>
     <br>
-    <button class="study-doc-btn" onclick="openStudyDoc()">Download Study Doc</button>
-    <div class="study-doc-sub">Includes your notes and key takeaways from every lesson</div>
+    <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
   </div>
 
@@ -255,7 +252,7 @@ function openStudyDoc(){
   var css=[
     '*{box-sizing:border-box;margin:0;padding:0}',
     ':root{--bg:#08101f;--card:#0d1628;--blue:#00c8ff;--text:#cce2f2;--white:#fff;--muted:#5a8aaa;--border:#1a2d45}',
-    "body{background:var(--bg);color:var(--text);font-family:'Lexend',sans-serif;font-size:15px;line-height:1.75;max-width:860px;margin:0 auto;padding:48px 36px 80px}",
+    "body{background:var(--bg);color:var(--text);font-family:'Lexend',sans-serif;font-size:15px;line-height:1.75;max-width:860px;margin:0 auto;padding:48px 36px 110px}",
     '.dh{text-align:center;padding:0 0 36px;border-bottom:1px solid var(--border);margin-bottom:44px}',
     ".dw{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;letter-spacing:5px;color:var(--white);margin-bottom:8px}",
     '.dw span{color:var(--blue)}',
@@ -280,7 +277,7 @@ function openStudyDoc(){
     '.ls-rev{text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,200,255,.06)}',
     ".ls-rev-lnk{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding-bottom:2px;border-bottom:1px solid rgba(90,138,170,.3);transition:color .2s,border-color .2s}",
     '.ls-rev-lnk:hover{color:var(--blue);border-color:var(--blue)}',
-    ".ciro-note{text-align:center;margin-top:52px;padding:28px 32px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.9;color:var(--muted);font-style:italic}",
+    ".ciro-note{position:fixed;bottom:0;left:0;right:0;text-align:center;padding:13px 32px;background:var(--bg);border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.75;color:var(--muted);font-style:italic;z-index:100}",
     '@media print{',
     'body{background:#fff;color:#1a1a1a;padding:20px 28px;max-width:none}',
     '.dw{color:#000}.dw span{color:#0066aa}',
@@ -295,11 +292,11 @@ function openStudyDoc(){
     ".ls-ta li::before{background:#bbb}",
     '.ls-notes{background:#fafafa;border:1px solid #ddd;color:#1a1a1a}',
     '.ls-rev-lnk{color:#888}',
-    '.ciro-note{color:#888;border-top:1px solid #ddd}}',
+    '.ciro-note{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;color:#888;padding:10px 28px;margin-top:0}}',
   ].join('');
   var html='<!DOCTYPE html><html lang="en">'
     +'<head><meta charset="UTF-8">'
-    +'<title>NEXUS Academy — '+STUDY_MODULE+' Study Doc</title>'
+    +'<title>NEXUS Academy — Study Doc</title>'
     +'<link rel="preconnect" href="https://fonts.googleapis.com">'
     +'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
     +'<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:wght@600;700;800&family=Lexend:wght@300;400&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">'
@@ -316,10 +313,10 @@ function openStudyDoc(){
     +sections
     +'<div class="ciro-note">'+STUDY_CIRO+'</div>'
     +'</body></html>';
-  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var blob=new Blob([html],{type:'application/octet-stream'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download=filename;
+  a.href=url;a.download=filename;a.setAttribute('data-no-transit','');
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},60000);
 }
