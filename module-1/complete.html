@@ -32,7 +32,7 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 .completion-badge.animate-in::before{opacity:1}
 .completion-badge::after{content:'';position:absolute;inset:-18px;border-radius:50%;border:1px dashed rgba(255,255,255,0.12);animation:ring-spin 18s linear infinite}
 @keyframes ring-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.achievement-unlocked{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;letter-spacing:2px;color:var(--white);text-transform:uppercase;margin-bottom:10px;opacity:0;transform:translateY(12px);transition:opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s}
+.achievement-unlocked{font-family:'Orbitron',sans-serif;font-size:19px;font-weight:900;letter-spacing:1px;color:var(--white);text-transform:uppercase;margin-bottom:10px;opacity:0;transform:translateY(12px);transition:opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s}
 .achievement-unlocked.animate-in{opacity:1;transform:translateY(0)}
 .completion-module-name{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;opacity:0;transform:translateY(8px);transition:opacity 0.6s ease 0.65s, transform 0.6s ease 0.65s}
 .completion-module-name.animate-in{opacity:1;transform:translateY(0)}
@@ -54,6 +54,10 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 .hub-cta-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:12px}
 
 .hub-btn-gap{margin-bottom:14px}
+.study-doc-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;text-transform:uppercase;color:var(--blue);background:transparent;border:1px solid var(--blue-border);border-radius:4px;padding:14px 52px;cursor:pointer;transition:border-color .2s,color .2s,background .2s;text-decoration:none;gap:5px;margin-bottom:14px}
+.study-doc-btn:hover{border-color:var(--blue);background:var(--blue-dim)}
+.study-doc-btn-main{font-size:13px;font-weight:700;letter-spacing:4px}
+.study-doc-btn-sub{font-size:10px;font-weight:400;letter-spacing:2px;opacity:0.7}
 </style>
 </head>
 <body>
@@ -109,7 +113,7 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
   </div>
 
   <div class="hub-cta" id="hub-cta">
-    <button class="hub-btn hub-btn-gap" onclick="openStudyDoc()">Download Study Doc (This Module's Notes)</button>
+    <button class="study-doc-btn" onclick="openStudyDoc()"><span class="study-doc-btn-main">Download Study Doc</span><span class="study-doc-btn-sub">(This Module's Notes)</span></button>
     <br>
     <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
