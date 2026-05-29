@@ -67,9 +67,12 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .module-card.unlocked:hover{transform:translateY(-1px);border-color:rgba(0,200,255,0.38);box-shadow:0 4px 32px rgba(0,200,255,0.14)}
 .module-wrap{display:flex;flex-direction:column}
 .module-card.has-lessons{border-radius:10px 10px 0 0!important;border-bottom-color:transparent!important}
-.lesson-toggle{background:var(--panel2);border:1px solid var(--bord2);border-top:none;border-radius:0 0 10px 10px;padding:9px 20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;gap:8px;user-select:none}
-.lesson-toggle:hover{background:var(--blue-lo);color:var(--blue);border-color:rgba(0,200,255,0.22)}
-.lesson-toggle.open{border-radius:0;color:var(--blue);border-color:rgba(0,200,255,0.22);border-bottom:none}
+.lesson-toggle{background:var(--panel2);border:1px solid rgba(0,200,255,0.28);border-top:none;border-radius:0 0 10px 10px;padding:10px 20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s,box-shadow .2s;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.3em;color:var(--blue);text-transform:uppercase;gap:10px;user-select:none;box-shadow:0 0 12px rgba(0,200,255,0.08)}
+.lesson-toggle:not(.open){animation:toggle-breathe 3.5s ease-in-out infinite}
+@keyframes toggle-breathe{0%,100%{box-shadow:0 0 10px rgba(0,200,255,0.07)}50%{box-shadow:0 0 18px rgba(0,200,255,0.22)}}
+.lesson-toggle:hover{background:var(--blue-lo);border-color:var(--blue);box-shadow:0 0 20px rgba(0,200,255,0.2)}
+.lesson-toggle.open{border-radius:0;border-color:rgba(0,200,255,0.22);border-bottom:none;animation:none}
+.lesson-toggle.open:hover{background:var(--panel2);border-color:rgba(0,200,255,0.22)}
 .lesson-tray{background:var(--panel2);border:1px solid rgba(0,200,255,0.22);border-top:none;border-radius:0 0 10px 10px;overflow:hidden;max-height:0;transition:max-height .38s cubic-bezier(0.4,0,0.2,1)}
 .lesson-tray.open{max-height:1400px}
 .lesson-row{display:flex;align-items:center;gap:14px;padding:11px 20px;text-decoration:none;transition:background .15s;border-bottom:1px solid rgba(0,200,255,0.05)}
@@ -85,17 +88,17 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .lesson-row.expandable:hover .lesson-row-head .l-arr,.lesson-row.expandable:hover .lesson-row-head .l-name{color:var(--offwhite)}
 .lesson-expand{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(0.4,0,0.2,1)}
 .lesson-expand.open{max-height:900px}
-.le-inner{padding:14px 20px 18px;border-top:1px solid rgba(0,200,255,0.07);background:rgba(5,12,24,0.6)}
-.le-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:14px}
+.le-inner{padding:22px 26px 26px;border-top:1px solid rgba(0,200,255,0.1);background:rgba(5,12,24,0.75)}
+.le-lbl{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--blue);text-transform:uppercase;margin-bottom:12px;margin-top:22px;padding-bottom:8px;border-bottom:1px solid rgba(0,200,255,0.18);display:block}
 .le-lbl:first-child{margin-top:0}
-.le-notes{font-family:'Lexend',sans-serif;font-size:12.5px;font-weight:300;color:var(--body-text);line-height:1.7;white-space:pre-wrap}
-.le-no-notes{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);font-style:italic}
-.le-ta{list-style:none;display:flex;flex-direction:column;gap:5px}
-.le-ta li{padding-left:14px;position:relative;font-family:'Lexend',sans-serif;font-size:12.5px;font-weight:300;color:var(--body-text);line-height:1.6}
-.le-ta li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--muted)}
-.le-goto{text-align:right;margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,200,255,0.07)}
-.le-goto a{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--blue);text-decoration:none;transition:opacity .15s}
-.le-goto a:hover{opacity:0.7}
+.le-notes{font-family:'Lexend',sans-serif;font-size:16px;font-weight:300;color:var(--body-text);line-height:1.8;white-space:pre-wrap}
+.le-no-notes{font-family:'Lexend',sans-serif;font-size:14px;color:var(--muted);font-style:italic}
+.le-ta{list-style:none;display:flex;flex-direction:column;gap:10px}
+.le-ta li{padding-left:18px;position:relative;font-family:'Lexend',sans-serif;font-size:16px;font-weight:300;color:var(--body-text);line-height:1.65}
+.le-ta li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--blue);opacity:0.7}
+.le-goto{display:flex;justify-content:flex-end;margin-top:22px;padding-top:16px;border-top:1px solid rgba(0,200,255,0.1)}
+.le-goto a{display:inline-flex;align-items:center;gap:8px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);text-decoration:none;border:1px solid rgba(0,200,255,0.35);border-radius:4px;padding:10px 20px;transition:background .2s,border-color .2s}
+.le-goto a:hover{background:rgba(0,200,255,0.07);border-color:var(--blue)}
 .module-card img{width:100%;height:100%;object-fit:cover;display:block}
 .card-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:14px 18px;background:linear-gradient(to right,rgba(0,0,0,0.6) 0%,transparent 65%)}
 .card-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.32em;color:var(--blue);text-transform:uppercase;margin-bottom:3px;opacity:0.85}
@@ -611,7 +614,7 @@ function renderModules(s){
     if(hasLessons){
       const toggle = document.createElement('div');
       toggle.className = 'lesson-toggle';
-      toggle.innerHTML = `<span class="tog-arr">▼</span><span>${m.lessons.length} LESSONS</span>`;
+      toggle.innerHTML = `<span class="tog-arr">▼</span><span>REVIEW THIS MODULE</span>`;
       const tray = document.createElement('div');
       tray.className = 'lesson-tray';
       const inner = document.createElement('div');
@@ -625,7 +628,7 @@ function renderModules(s){
           const taItems = l.takeaways.map(t=>`<li>${t}</li>`).join('');
           const row = document.createElement('div');
           row.className = 'lesson-row expandable';
-          row.innerHTML = `<div class="lesson-row-head"><span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">+</span></div><div class="lesson-expand"><div class="le-inner">${notesBlock}<div class="le-lbl">Key Takeaways</div><ul class="le-ta">${taItems}</ul><div class="le-goto"><a href="${l.url}">Go to lesson →</a></div></div></div>`;
+          row.innerHTML = `<div class="lesson-row-head"><span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">+</span></div><div class="lesson-expand"><div class="le-inner">${notesBlock}<div class="le-lbl">Key Takeaways</div><ul class="le-ta">${taItems}</ul><div class="le-goto"><a href="${l.url}">Go to Lesson →</a></div></div></div>`;
           row.querySelector('.lesson-row-head').addEventListener('click',e=>{
             e.stopPropagation();
             const exp=row.querySelector('.lesson-expand');
