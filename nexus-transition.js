@@ -141,7 +141,7 @@
     document.head.appendChild(_smCSS);
     var _smAudio=new Audio(_base+'audio/music/study-music.mp3');
     _smAudio.loop=true;
-    _smAudio.volume=0.28;
+    _smAudio.volume=0;
     function _smBeep(on){
       try{
         var ac=new(window.AudioContext||window.webkitAudioContext)();
@@ -154,19 +154,49 @@
         setTimeout(function(){ac.close();},300);
       }catch(e){}
     }
+    function _smPlay(){
+      function doStart(){
+        var dur=_smAudio.duration||0;
+        var roll=Math.floor(Math.random()*3);
+        if(roll===0||dur<10){
+          _smAudio.currentTime=0;
+          _smAudio.volume=0.6;
+          _smAudio.play().catch(function(){});
+        } else {
+          _smAudio.currentTime=roll===1?dur/3:dur*2/3;
+          _smAudio.volume=0;
+          _smAudio.play().catch(function(){});
+          var t0=Date.now();
+          var fi=setInterval(function(){
+            var p=Math.min((Date.now()-t0)/3000,1);
+            _smAudio.volume=p*0.6;
+            if(p>=1)clearInterval(fi);
+          },50);
+        }
+      }
+      if(_smAudio.readyState>=1){doStart();}
+      else{_smAudio.addEventListener('loadedmetadata',doStart,{once:true});}
+    }
     var _smBtn=document.createElement('div');
     _smBtn.id='nx-sm-btn';
     _smBtn.innerHTML='<span class="sm-icon">♪</span><span class="sm-text">Want study music? Click here</span>';
-    var _smIcon=_smBtn.querySelector('.sm-icon');
     var _smTxt=_smBtn.querySelector('.sm-text');
+    // Session persistence: music stays on between lesson/challenge pages within same tab
+    if(sessionStorage.getItem('nexus_study_music')==='1'){
+      _smBtn.setAttribute('data-on','');
+      _smTxt.textContent='Study music — on';
+      _smPlay();
+    }
     _smBtn.addEventListener('click',function(){
       if(_smBtn.hasAttribute('data-on')){
         _smAudio.pause();_smBtn.removeAttribute('data-on');
         _smTxt.textContent='Want study music? Click here';
+        sessionStorage.removeItem('nexus_study_music');
         _smBeep(false);
       } else {
-        _smAudio.play().catch(function(){});_smBtn.setAttribute('data-on','');
+        _smPlay();_smBtn.setAttribute('data-on','');
         _smTxt.textContent='Study music — on';
+        sessionStorage.setItem('nexus_study_music','1');
         _smBeep(true);
       }
     });
