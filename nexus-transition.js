@@ -134,6 +134,31 @@
 
   window.nxTransit=runTransition;
 
+  // ── Study music toggle (lesson pages only) ──
+  if(/\/lesson-\d+-\d+/.test(window.location.pathname)){
+    var _smCSS=document.createElement('style');
+    _smCSS.textContent='#nx-sm-btn{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:rgba(13,22,40,0.92);border:1px solid rgba(0,200,255,0.18);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#4a7a9a;font-size:20px;z-index:980;transition:color .25s,border-color .25s,box-shadow .25s;user-select:none;line-height:1;box-shadow:0 2px 12px rgba(0,0,0,0.4);}#nx-sm-btn[data-on]{color:#00c8ff;border-color:rgba(0,200,255,0.55);animation:sm-pulse 2.2s ease-in-out infinite;}@keyframes sm-pulse{0%,100%{box-shadow:0 0 14px rgba(0,200,255,0.22),0 2px 12px rgba(0,0,0,0.4);}50%{box-shadow:0 0 28px rgba(0,200,255,0.42),0 2px 12px rgba(0,0,0,0.4);}}#nx-sm-btn::after{content:"STUDY MUSIC";position:absolute;right:52px;top:50%;transform:translateY(-50%);font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.18em;color:rgba(0,200,255,0.4);text-transform:uppercase;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;}#nx-sm-btn:hover::after{opacity:1;}';
+    document.head.appendChild(_smCSS);
+    var _smAudio=new Audio(_base+'audio/music/study-music-1.mp3');
+    _smAudio.loop=true;
+    _smAudio.volume=0.28;
+    var _smBtn=document.createElement('div');
+    _smBtn.id='nx-sm-btn';
+    _smBtn.textContent='♪';
+    var _smOn=localStorage.getItem('nexus_study_music')==='1';
+    if(_smOn){_smBtn.setAttribute('data-on','');_smAudio.play().catch(function(){});}
+    _smBtn.addEventListener('click',function(){
+      if(_smBtn.hasAttribute('data-on')){
+        _smAudio.pause();_smBtn.removeAttribute('data-on');
+        localStorage.setItem('nexus_study_music','0');
+      } else {
+        _smAudio.play().catch(function(){});_smBtn.setAttribute('data-on','');
+        localStorage.setItem('nexus_study_music','1');
+      }
+    });
+    document.body.appendChild(_smBtn);
+  }
+
   // ── Intercept anchor clicks ──
   document.addEventListener('click',function(ev){
     var a=ev.target.closest('a[href]');
