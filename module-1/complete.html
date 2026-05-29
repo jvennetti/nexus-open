@@ -113,7 +113,7 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
   </div>
 
   <div class="hub-cta" id="hub-cta">
-    <button class="study-doc-btn" onclick="openStudyDoc()"><span class="study-doc-btn-main">Download Study Doc</span><span class="study-doc-btn-sub">(This Module's Notes)</span></button>
+    <button class="study-doc-btn" onclick="openStudyDoc()"><span class="study-doc-btn-main">Save Your Study Guide</span><span class="study-doc-btn-sub">Your notes & every takeaway</span></button>
     <br>
     <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
@@ -229,8 +229,6 @@ function openStudyDoc(){
   var dir=location.pathname.substring(0,location.pathname.lastIndexOf('/')+1);
   var baseUrl=location.origin+dir;
   var date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  var slug=STUDY_MODULE.toLowerCase().replace(/[\s—–]+/g,'-').replace(/[^a-z0-9-]/g,'').replace(/-+/g,'-').replace(/^-|-$/g,'');
-  var filename='nexus-study-doc-'+slug+'.html';
   function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
   var sections='';
   STUDY_LESSONS.forEach(function(l){
@@ -311,18 +309,16 @@ function openStudyDoc(){
     +'<div class="dm">'+STUDY_MODULE+'</div>'
     +'<div class="dd">'+date+'</div>'
     +'<div class="pb">'
-    +'<button class="pbtn" onclick="window.print()">Print / Save as PDF &rarr;</button>'
-    +'<span class="ph">In print dialog, uncheck &ldquo;Headers and footers&rdquo; for a cleaner PDF</span>'
+    +'<button class="pbtn" onclick="window.print()">Save as PDF / Print &rarr;</button>'
+    +'<span class="ph">In print dialog, uncheck &ldquo;Headers and footers&rdquo; for a cleaner output</span>'
     +'</div></div>'
     +sections
     +'<div class="ciro-note">'+STUDY_CIRO+'</div>'
+    +'<script>window.addEventListener(\'load\',function(){setTimeout(function(){window.print();},700);});<\/script>'
     +'</body></html>';
-  var blob=new Blob([html],{type:'application/octet-stream'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;a.download=filename;a.setAttribute('data-no-transit','');
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(function(){URL.revokeObjectURL(url);},60000);
+  var w=window.open('','_blank');
+  if(!w){alert('Allow popups for this site to open your study guide.');return;}
+  w.document.open();w.document.write(html);w.document.close();
 }
 function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
 </script>
