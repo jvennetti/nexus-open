@@ -65,6 +65,20 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .module-card{position:relative;border-radius:10px;overflow:hidden;cursor:default;border:1px solid var(--bord2);aspect-ratio:4/1;background:var(--panel2);transition:border-color 0.3s,transform 0.2s,box-shadow 0.3s}
 .module-card.unlocked{cursor:pointer}
 .module-card.unlocked:hover{transform:translateY(-1px);border-color:rgba(0,200,255,0.38);box-shadow:0 4px 32px rgba(0,200,255,0.14)}
+.module-wrap{display:flex;flex-direction:column}
+.module-card.has-lessons{border-radius:10px 10px 0 0!important;border-bottom-color:transparent!important}
+.lesson-toggle{background:var(--panel2);border:1px solid var(--bord2);border-top:none;border-radius:0 0 10px 10px;padding:9px 20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,border-color .2s;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;gap:8px;user-select:none}
+.lesson-toggle:hover{background:var(--blue-lo);color:var(--blue);border-color:rgba(0,200,255,0.22)}
+.lesson-toggle.open{border-radius:0;color:var(--blue);border-color:rgba(0,200,255,0.22);border-bottom:none}
+.lesson-tray{background:var(--panel2);border:1px solid rgba(0,200,255,0.22);border-top:none;border-radius:0 0 10px 10px;overflow:hidden;max-height:0;transition:max-height .38s cubic-bezier(0.4,0,0.2,1)}
+.lesson-tray.open{max-height:1400px}
+.lesson-row{display:flex;align-items:center;gap:14px;padding:11px 20px;text-decoration:none;transition:background .15s;border-bottom:1px solid rgba(0,200,255,0.05)}
+.lesson-row:last-child{border-bottom:none}
+.lesson-row:hover{background:var(--blue-lo)}
+.l-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;min-width:28px}
+.l-name{font-family:'Lexend',sans-serif;font-size:13px;font-weight:400;color:var(--white);flex:1;line-height:1.35}
+.l-arr{color:var(--muted);font-size:11px;flex-shrink:0;transition:color .15s}
+.lesson-row:hover .l-arr,.lesson-row:hover .l-name{color:var(--offwhite)}
 .module-card img{width:100%;height:100%;object-fit:cover;display:block}
 .card-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:14px 18px;background:linear-gradient(to right,rgba(0,0,0,0.6) 0%,transparent 65%)}
 .card-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.32em;color:var(--blue);text-transform:uppercase;margin-bottom:3px;opacity:0.85}
@@ -371,31 +385,91 @@ const MODULES = [
   { key:'precourse', label:'Pre-Course', title:'BEFORE YOU BEGIN',
     locked:'images/modules/m1-locked.png', unlocked:'images/modules/m1-unlocked.png',
     url:'pre-course/module-intro.html', badge:'system_online',
-    next:{ mod:'Pre-Course', title:'7 Years of Building a Learning System in 12 Minutes', url:'pre-course/lesson-0-1.html' } },
+    next:{ mod:'Pre-Course', title:'7 Years of Building a Learning System in 12 Minutes', url:'pre-course/lesson-0-1.html' },
+    lessons:[
+      {n:'0.1',title:'7 Years of Building a Learning System in 12 Minutes',url:'pre-course/lesson-0-1.html'},
+      {n:'0.2',title:'Getting Started with Notion',url:'pre-course/lesson-0-2.html'},
+    ]},
   { key:'mod1', label:'Module 1', title:'BOOT UP',
     locked:'images/modules/m2-locked.png', unlocked:'images/modules/m2-unlocked.png',
     url:'module-1/intro.html', badge:'boot_sequence',
-    next:{ mod:'Module 1', title:"The Only AI Tools You'll Ever Need to Get Rich in 2026", url:'module-1/lesson-1-1.html' } },
+    next:{ mod:'Module 1', title:"The Only AI Tools You'll Ever Need to Get Rich in 2026", url:'module-1/lesson-1-1.html' },
+    lessons:[
+      {n:'1.1',title:"The Only AI Tools You'll Ever Need to Get Rich in 2026",url:'module-1/lesson-1-1.html'},
+      {n:'1.2',title:'The One-Person Startup Era Has Officially Begun',url:'module-1/lesson-1-2.html'},
+      {n:'1.3',title:'How to Win With AI in 2026',url:'module-1/lesson-1-3.html'},
+      {n:'1.4',title:'When AIs Act Emotional',url:'module-1/lesson-1-4.html'},
+    ]},
   { key:'mod2', label:'Module 2', title:'THE PROMPT ENGINEER',
     locked:'images/modules/m3-locked.png', unlocked:'images/modules/m3-unlocked.png',
     url:'module-2/intro.html', badge:'signal_steady',
-    next:{ mod:'Module 2', title:"Claude vs ChatGPT — Which One's Actually Better?", url:'module-2/lesson-2-1.html' } },
+    next:{ mod:'Module 2', title:"Claude vs ChatGPT — Which One's Actually Better?", url:'module-2/lesson-2-1.html' },
+    lessons:[
+      {n:'2.1',title:"Claude vs ChatGPT — Which One's Actually Better?",url:'module-2/lesson-2-1.html'},
+      {n:'2.2',title:'Getting Started with Claude.ai',url:'module-2/lesson-2-2.html'},
+      {n:'2.3',title:'How to Use Wispr Flow — Full Guide',url:'module-2/lesson-2-3.html'},
+      {n:'2.4',title:'Full Claude Tutorial: Beginner to Advanced in 19 Minutes',url:'module-2/lesson-2-4.html'},
+      {n:'2.5',title:'Stop Wasting Your Claude Tokens',url:'module-2/lesson-2-5.html'},
+      {n:'2.6',title:'AI Prompt Engineering: A Deep Dive',url:'module-2/lesson-2-6.html'},
+      {n:'2.7',title:'Perplexity Computer for Beginners: Everything You Need to Know',url:'module-2/lesson-2-7.html'},
+    ]},
   { key:'mod3', label:'Module 3', title:'THE AUTOMATION LAYER',
     locked:'images/modules/m4-locked.png', unlocked:'images/modules/m4-unlocked.png',
     url:'module-3/intro.html', badge:'commander',
-    next:{ mod:'Module 3', title:'Introducing Cowork', url:'module-3/lesson-3-1.html' } },
+    next:{ mod:'Module 3', title:'Introducing Cowork', url:'module-3/lesson-3-1.html' },
+    lessons:[
+      {n:'3.1',title:'Introducing Cowork',url:'module-3/lesson-3-1.html'},
+      {n:'3.2',title:'Let Claude Handle Work in Your Browser',url:'module-3/lesson-3-2.html'},
+      {n:'3.3',title:'Claude Now Controls Your Entire Computer',url:'module-3/lesson-3-3.html'},
+      {n:'3.4',title:'Getting Started with Connectors',url:'module-3/lesson-3-4.html'},
+      {n:'3.5',title:'What Is MCP?',url:'module-3/lesson-3-5.html'},
+      {n:'3.6',title:'The Model Context Protocol (Deep Dive)',url:'module-3/lesson-3-6.html'},
+      {n:'3.7',title:'Full Claude Cowork Tutorial',url:'module-3/lesson-3-7.html'},
+      {n:'3.8',title:'Set Up Cowork Better Than 99% of People',url:'module-3/lesson-3-8.html'},
+      {n:'3.9',title:'Scheduled Tasks: Working While You Sleep',url:'module-3/lesson-3-9.html'},
+      {n:'3.10',title:'Automate 90% of Your Social Media with Cowork',url:'module-3/lesson-3-10.html'},
+      {n:'3.11',title:'Zapier MCP: The Unlock',url:'module-3/lesson-3-11.html'},
+      {n:'3.12',title:'What Is n8n?',url:'module-3/lesson-3-12.html'},
+      {n:'3.13',title:'n8n vs Zapier: Pick Your Tool',url:'module-3/lesson-3-13.html'},
+      {n:'3.14',title:'Zapier AI Agents: Step-by-Step',url:'module-3/lesson-3-14.html'},
+    ]},
   { key:'mod4', label:'Module 4', title:'THE AGENT BLUEPRINT',
     locked:'images/modules/m5-locked.png', unlocked:'images/modules/m5-unlocked.png',
     url:'module-4/intro.html', badge:'architect',
-    next:{ mod:'Module 4', title:'How to Build AI Agents in 2026', url:'module-4/lesson-4-1.html' } },
+    next:{ mod:'Module 4', title:'How to Build AI Agents in 2026', url:'module-4/lesson-4-1.html' },
+    lessons:[
+      {n:'4.1',title:"You're Not Behind (Yet): How to Build AI Agents in 2026",url:'module-4/lesson-4-1.html'},
+      {n:'4.2',title:'Tips for Building AI Agents',url:'module-4/lesson-4-2.html'},
+      {n:'4.3',title:'Claude Ran a Business in Our Office',url:'module-4/lesson-4-3.html'},
+      {n:'4.4',title:'I Built a Marketing Team with 1 AI Agent and No Code',url:'module-4/lesson-4-4.html'},
+      {n:'4.5',title:'Every Claude Code Concept Explained for Normal People',url:'module-4/lesson-4-5.html'},
+      {n:'4.6',title:'Claude Design Basics: Master 95% in 10 Minutes',url:'module-4/lesson-4-6.html'},
+      {n:'4.7',title:'I Built 5 Websites in 18 Minutes with Claude',url:'module-4/lesson-4-7.html'},
+      {n:'4.8',title:'Claude Works with You on Slides, Spreadsheets, and Contract Redlines',url:'module-4/lesson-4-8.html'},
+    ]},
   { key:'mod5', label:'Module 5', title:'LEAD GENERATION MACHINE',
     locked:'images/modules/m6-locked.png', unlocked:'images/modules/m6-unlocked.png',
     url:'module-5/intro.html', badge:'pipeline_inventor',
-    next:{ mod:'Module 5', title:'Getting Started with Research in Claude.ai', url:'module-5/lesson-5-1.html' } },
+    next:{ mod:'Module 5', title:'Getting Started with Research in Claude.ai', url:'module-5/lesson-5-1.html' },
+    lessons:[
+      {n:'5.1',title:'Getting Started with Research in Claude.ai',url:'module-5/lesson-5-1.html'},
+      {n:'5.2',title:'Getting Started with Projects in Claude.ai',url:'module-5/lesson-5-2.html'},
+      {n:'5.3',title:'What Is Clay?',url:'module-5/lesson-5-3.html'},
+      {n:'5.4',title:'How to Use Apollo.io — Full Tutorial',url:'module-5/lesson-5-4.html'},
+      {n:'5.5',title:'AI Sales Automation with Claude: Full Lead Gen System (No Code)',url:'module-5/lesson-5-5.html'},
+      {n:'5.6',title:'Claude Cowork Just Changed Sales Forever',url:'module-5/lesson-5-6.html'},
+      {n:'5.7',title:'Claude Code Just Changed Lead Generation Forever',url:'module-5/lesson-5-7.html'},
+    ]},
   { key:'mod6', label:'Module 6', title:'CLIENT READY',
     locked:'images/modules/m7-locked.png', unlocked:'images/modules/m7-unlocked.png',
     url:'module-6/intro.html', badge:'operator',
-    next:{ mod:'Module 6', title:'How to Build a $10M Solo AI Business (Zero Code)', url:'module-6/lesson-6-1.html' } },
+    next:{ mod:'Module 6', title:'How to Build a $10M Solo AI Business (Zero Code)', url:'module-6/lesson-6-1.html' },
+    lessons:[
+      {n:'6.1',title:'How to Build a $10M Solo AI Business (Zero Code)',url:'module-6/lesson-6-1.html'},
+      {n:'6.2',title:'Claude Skills: SOPs For Agents',url:'module-6/lesson-6-2.html'},
+      {n:'6.3',title:'How I Sold These 4 AI Agents for $23,000 (as a Beginner)',url:'module-6/lesson-6-3.html'},
+      {n:'6.4',title:"What I'd Learn Instead of Automation in 2026",url:'module-6/lesson-6-4.html'},
+    ]},
 ];
 
 const BADGES = [
@@ -497,8 +571,11 @@ function renderModules(s){
   MODULES.forEach((m, idx)=>{
     const isAccessible = DEV_UNLOCK || idx === 0 || !!s[MODULES[idx-1].key+'_complete'];
     const isComplete   = !!s[m.key+'_complete'];
+    const hasLessons   = isComplete && m.lessons && m.lessons.length > 0;
+    const wrap = document.createElement('div');
+    wrap.className = 'module-wrap';
     const card = document.createElement('div');
-    card.className = 'module-card'+(isAccessible?' unlocked':'');
+    card.className = 'module-card'+(isAccessible?' unlocked':'')+(hasLessons?' has-lessons':'');
     const imgSrc = isAccessible ? m.unlocked : m.locked;
     card.innerHTML = `
       <img src="${imgSrc}" alt="${m.title}" loading="lazy">
@@ -513,7 +590,32 @@ function renderModules(s){
       localStorage.setItem('nexus_sfx_nav',JSON.stringify({file:sfxFile,ts:Date.now()}));
       setTimeout(()=>{ window.location.href = m.url; },60);
     });
-    g.appendChild(card);
+    wrap.appendChild(card);
+    if(hasLessons){
+      const toggle = document.createElement('div');
+      toggle.className = 'lesson-toggle';
+      toggle.innerHTML = `<span class="tog-arr">▼</span><span>${m.lessons.length} LESSONS</span>`;
+      const tray = document.createElement('div');
+      tray.className = 'lesson-tray';
+      const inner = document.createElement('div');
+      m.lessons.forEach(l=>{
+        const row = document.createElement('a');
+        row.className = 'lesson-row';
+        row.href = l.url;
+        row.innerHTML = `<span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">→</span>`;
+        inner.appendChild(row);
+      });
+      tray.appendChild(inner);
+      toggle.addEventListener('click', e=>{
+        e.stopPropagation();
+        const open = tray.classList.toggle('open');
+        toggle.classList.toggle('open', open);
+        toggle.querySelector('.tog-arr').textContent = open ? '▲' : '▼';
+      });
+      wrap.appendChild(toggle);
+      wrap.appendChild(tray);
+    }
+    g.appendChild(wrap);
   });
   const bv = document.createElement('div');
   bv.className = 'module-card unlocked';

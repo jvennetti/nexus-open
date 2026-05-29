@@ -52,6 +52,9 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 .hub-btn:hover{opacity:0.88;transform:translateY(-1px)}
 .hub-btn:active{transform:translateY(0)}
 .hub-cta-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:12px}
+
+.study-doc-btn{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,0.22);border-radius:4px;padding:12px 26px;cursor:pointer;transition:all 0.2s;margin-top:10px}
+.study-doc-btn:hover{background:rgba(0,200,255,0.06);border-color:rgba(0,200,255,0.45)}
 </style>
 </head>
 <body>
@@ -108,6 +111,8 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 
   <div class="hub-cta" id="hub-cta">
     <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
+    <br>
+    <button class="study-doc-btn" onclick="openStudyDoc()">Download Study Doc →</button>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
   </div>
 
@@ -196,6 +201,69 @@ async function runCiro(){
 writeComplete();
 pingHub();
 runReveal();
+
+const STUDY_MODULE = 'Pre-Course — Before You Begin';
+const STUDY_LESSONS = [{n:'0.1',title:'7 Years of Building a Learning System in 12 Minutes',file:'lesson-0-1.html',takeaways:['Your brain filters information based on relevance — what you do <em>before</em> a lesson determines what sticks.','Priming is the highest-leverage part of the system. Most people skip it entirely.','Overlearning (re-reading, flashcards, repetition) only works after priming and encoding are solid — most people use it as a substitute, which is why they forget everything.']},{n:'0.2',title:'Getting Started with Notion',file:'lesson-0-2.html',takeaways:['The <code>/</code> command unlocks every block type — checklists, headers, toggles, databases. Learn it first.','The <code>@</code> symbol links between pages — the foundation of how you\'ll organize client and team workspaces.','Databases are the real power: think Excel that links to full pages, with board, calendar, and table views.']}];
+
+function openStudyDoc(){
+  const dir = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var sections = '';
+  STUDY_LESSONS.forEach(function(l){
+    var raw = localStorage.getItem('nexus_notes_' + dir + l.file) || '';
+    var escaped = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    var taHtml = l.takeaways.map(function(t){return '<li>'+t+'</li>';}).join('');
+    sections += '<section class="ls"><div class="ls-head"><span class="ls-num">Lesson '+l.n+'</span><h2 class="ls-title">'+l.title+'</h2></div><div class="ls-body"><h3 class="ls-lbl">KEY TAKEAWAYS</h3><ul class="ls-ta">'+taHtml+'</ul><h3 class="ls-lbl">YOUR NOTES</h3><div class="ls-notes" contenteditable="true">'+(escaped||'<span style="color:#6a8eaa;font-style:italic">No notes taken for this lesson.</span>')+'</div></div></section>';
+  });
+  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>NEXUS Academy — '+STUDY_MODULE+' Study Doc<\/title><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><style>'
+    +'*{box-sizing:border-box;margin:0;padding:0}'
+    +':root{--bg:#08101f;--card:#0d1628;--blue:#00c8ff;--text:#cce2f2;--white:#fff;--muted:#5a8aaa;--border:#1a2d45}'
+    +'body{background:var(--bg);color:var(--text);font-family:Lexend,sans-serif;font-size:15px;line-height:1.75;max-width:860px;margin:0 auto;padding:48px 36px 80px}'
+    +'.dh{text-align:center;padding:0 0 36px;border-bottom:1px solid var(--border);margin-bottom:44px}'
+    +'.dw{font-family:Orbitron,sans-serif;font-size:22px;font-weight:900;letter-spacing:5px;color:var(--white);margin-bottom:8px}'
+    +'.dw span{color:var(--blue)}'
+    +'.dm{font-family:Orbitron,sans-serif;font-size:12px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}'
+    +'.dd{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:20px}'
+    +'.pb{display:flex;align-items:center;gap:14px;justify-content:center}'
+    +'.pbtn{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,.3);border-radius:4px;padding:10px 24px;cursor:pointer;transition:all .2s}'
+    +'.pbtn:hover{background:rgba(0,200,255,.07);border-color:rgba(0,200,255,.55)}'
+    +'.ph{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--muted);letter-spacing:.15em}'
+    +'.ls{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px}'
+    +'.ls-head{padding:22px 28px 18px;border-bottom:1px solid var(--border);background:#0a1220}'
+    +'.ls-num{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px}'
+    +'.ls-title{font-family:Orbitron,sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:.04em;line-height:1.35}'
+    +'.ls-body{padding:22px 28px}'
+    +'.ls-lbl{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:20px}'
+    +'.ls-lbl:first-child{margin-top:0}'
+    +'.ls-ta{list-style:none;display:flex;flex-direction:column;gap:8px}'
+    +'.ls-ta li{padding-left:18px;position:relative;font-size:14px;font-weight:300;color:var(--text);line-height:1.65}'
+    +".ls-ta li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--muted)}"
+    +'.ls-notes{min-height:80px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:14px;font-weight:300;line-height:1.75;color:var(--text);outline:none;transition:border-color .2s,background .2s}'
+    +'.ls-notes:focus{border-color:rgba(0,200,255,.2);background:rgba(255,255,255,.038)}'
+    +'@media print{body{background:#fff;color:#1a1a1a;padding:20px 28px;max-width:none}'
+    +'.dw{color:#000}.dw span{color:#0066aa}'
+    +'.pb{display:none}'
+    +'.dh{border-bottom:1px solid #ddd;margin-bottom:28px;padding-bottom:20px}'
+    +'.ls{background:#fff;border:1px solid #ddd;margin-bottom:20px;page-break-inside:avoid}'
+    +'.ls-head{background:#f5f7fa;border-bottom:1px solid #ddd}'
+    +'.ls-num{color:#888}.ls-title{color:#111}'
+    +'.ls-lbl{color:#888}'
+    +'.ls-ta li{color:#333}'
+    +".ls-ta li::before{background:#999}"
+    +'.ls-notes{background:#fafafa;border:1px solid #ddd;color:#1a1a1a;min-height:40px}'
+    +'.dm{color:#666}.dd{color:#888}}'
+    +'<\/style><\/head><body>'
+    +'<div class="dh"><div class="dw">NEXUS <span>ACADEMY<\/span><\/div>'
+    +'<div class="dm">'+STUDY_MODULE+'<\/div>'
+    +'<div class="dd">Study Document &nbsp;&middot;&nbsp; Generated '+date+'<\/div>'
+    +'<div class="pb"><button class="pbtn" onclick="window.print()">Print \/ Save as PDF &rarr;<\/button>'
+    +'<span class="ph">File &rarr; Print &rarr; Save as PDF in Chrome\/Edge\/Firefox<\/span><\/div><\/div>'
+    +sections
+    +'<\/body><\/html>';
+  var w = window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); }
+  else{ alert('Allow pop-ups for this page to open your Study Doc.'); }
+}
 function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
 </script>
 <script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var hu='../hub.html';document.querySelectorAll('a[href*="hub.html"]').forEach(function(a){a.href=hu;});})();</script>

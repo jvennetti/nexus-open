@@ -60,6 +60,9 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 .hub-btn{display:inline-flex;align-items:center;font-family:'Lexend',sans-serif;font-size:12px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:4px;padding:12px 32px;cursor:pointer;transition:color .2s,border-color .2s;text-decoration:none}
 .hub-btn:hover{color:var(--blue);border-color:var(--blue-border)}
 .hub-cta-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+
+.study-doc-btn{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,0.22);border-radius:4px;padding:12px 26px;cursor:pointer;transition:all 0.2s;margin-top:10px}
+.study-doc-btn:hover{background:rgba(0,200,255,0.06);border-color:rgba(0,200,255,0.45)}
 </style>
 </head>
 <body>
@@ -122,6 +125,8 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
   <div class="hub-cta" id="hub-cta">
     <a href="../machine/input.html" class="machine-btn">Take to the Machine</a>
     <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
+    <br>
+    <button class="study-doc-btn" onclick="openStudyDoc()">Download Study Doc →</button>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
   </div>
 
@@ -262,6 +267,69 @@ async function runPasscode(){
 writeComplete();
 pingHub();
 runReveal();
+
+const STUDY_MODULE = 'Module 6 — Client Ready';
+const STUDY_LESSONS = [{n:'6.1',title:'How to Build a $10M Solo AI Business (Zero Code)',file:'lesson-6-1.html',takeaways:['Your job isn\'t to do the work — it\'s to design the system that does the work.','Start with the problem, not the tool. Fall in love with what the customer is trying to solve.','Solve the problem manually before you automate it.','Scale by reducing your involvement, not adding people.']},{n:'6.2',title:'Claude Skills: SOPs For Agents',file:'lesson-6-2.html',takeaways:['The quality of an agent\'s output is a direct function of the context it\'s given. Better Skills, more consistent results.','Skills are composable and portable — build once, use across Cowork, Claude Code, and the API.','Writing a Skill is like onboarding someone: what\'s the business, what\'s the task, what does good look like, what do you do when something\'s unclear.','What you hand a client isn\'t the automation. It\'s the system that runs without them.']},{n:'6.3',title:'How I Sold These 4 AI Agents for $23,000 (as a Beginner)',file:'lesson-6-3.html',takeaways:['Price on ROI, not effort — calculate what the problem costs the client, then price as a fraction of what solving it saves them.','Lead with the cost of the problem, not what you can build.','Underpricing, under-scoping, and chasing small retainers too early are the three things that quietly kill this business.']},{n:'6.4',title:'What I\'d Learn Instead of Automation in 2026',file:'lesson-6-4.html',takeaways:['Technical execution skills get invalidated by every major wave of technology. Automation is next.','What replaces it: knowing what a business actually needs and communicating it precisely enough for AI to execute reliably.','The shape of a service business — marketing, sales, onboarding, delivery, reactivation — is the same regardless of what you\'re selling.','Learn the shape. The tools will continue changing.']}];
+
+function openStudyDoc(){
+  const dir = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var sections = '';
+  STUDY_LESSONS.forEach(function(l){
+    var raw = localStorage.getItem('nexus_notes_' + dir + l.file) || '';
+    var escaped = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    var taHtml = l.takeaways.map(function(t){return '<li>'+t+'</li>';}).join('');
+    sections += '<section class="ls"><div class="ls-head"><span class="ls-num">Lesson '+l.n+'</span><h2 class="ls-title">'+l.title+'</h2></div><div class="ls-body"><h3 class="ls-lbl">KEY TAKEAWAYS</h3><ul class="ls-ta">'+taHtml+'</ul><h3 class="ls-lbl">YOUR NOTES</h3><div class="ls-notes" contenteditable="true">'+(escaped||'<span style="color:#6a8eaa;font-style:italic">No notes taken for this lesson.</span>')+'</div></div></section>';
+  });
+  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>NEXUS Academy — '+STUDY_MODULE+' Study Doc<\/title><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><style>'
+    +'*{box-sizing:border-box;margin:0;padding:0}'
+    +':root{--bg:#08101f;--card:#0d1628;--blue:#00c8ff;--text:#cce2f2;--white:#fff;--muted:#5a8aaa;--border:#1a2d45}'
+    +'body{background:var(--bg);color:var(--text);font-family:Lexend,sans-serif;font-size:15px;line-height:1.75;max-width:860px;margin:0 auto;padding:48px 36px 80px}'
+    +'.dh{text-align:center;padding:0 0 36px;border-bottom:1px solid var(--border);margin-bottom:44px}'
+    +'.dw{font-family:Orbitron,sans-serif;font-size:22px;font-weight:900;letter-spacing:5px;color:var(--white);margin-bottom:8px}'
+    +'.dw span{color:var(--blue)}'
+    +'.dm{font-family:Orbitron,sans-serif;font-size:12px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}'
+    +'.dd{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:20px}'
+    +'.pb{display:flex;align-items:center;gap:14px;justify-content:center}'
+    +'.pbtn{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,.3);border-radius:4px;padding:10px 24px;cursor:pointer;transition:all .2s}'
+    +'.pbtn:hover{background:rgba(0,200,255,.07);border-color:rgba(0,200,255,.55)}'
+    +'.ph{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--muted);letter-spacing:.15em}'
+    +'.ls{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px}'
+    +'.ls-head{padding:22px 28px 18px;border-bottom:1px solid var(--border);background:#0a1220}'
+    +'.ls-num{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px}'
+    +'.ls-title{font-family:Orbitron,sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:.04em;line-height:1.35}'
+    +'.ls-body{padding:22px 28px}'
+    +'.ls-lbl{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:20px}'
+    +'.ls-lbl:first-child{margin-top:0}'
+    +'.ls-ta{list-style:none;display:flex;flex-direction:column;gap:8px}'
+    +'.ls-ta li{padding-left:18px;position:relative;font-size:14px;font-weight:300;color:var(--text);line-height:1.65}'
+    +".ls-ta li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--muted)}"
+    +'.ls-notes{min-height:80px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:14px;font-weight:300;line-height:1.75;color:var(--text);outline:none;transition:border-color .2s,background .2s}'
+    +'.ls-notes:focus{border-color:rgba(0,200,255,.2);background:rgba(255,255,255,.038)}'
+    +'@media print{body{background:#fff;color:#1a1a1a;padding:20px 28px;max-width:none}'
+    +'.dw{color:#000}.dw span{color:#0066aa}'
+    +'.pb{display:none}'
+    +'.dh{border-bottom:1px solid #ddd;margin-bottom:28px;padding-bottom:20px}'
+    +'.ls{background:#fff;border:1px solid #ddd;margin-bottom:20px;page-break-inside:avoid}'
+    +'.ls-head{background:#f5f7fa;border-bottom:1px solid #ddd}'
+    +'.ls-num{color:#888}.ls-title{color:#111}'
+    +'.ls-lbl{color:#888}'
+    +'.ls-ta li{color:#333}'
+    +".ls-ta li::before{background:#999}"
+    +'.ls-notes{background:#fafafa;border:1px solid #ddd;color:#1a1a1a;min-height:40px}'
+    +'.dm{color:#666}.dd{color:#888}}'
+    +'<\/style><\/head><body>'
+    +'<div class="dh"><div class="dw">NEXUS <span>ACADEMY<\/span><\/div>'
+    +'<div class="dm">'+STUDY_MODULE+'<\/div>'
+    +'<div class="dd">Study Document &nbsp;&middot;&nbsp; Generated '+date+'<\/div>'
+    +'<div class="pb"><button class="pbtn" onclick="window.print()">Print \/ Save as PDF &rarr;<\/button>'
+    +'<span class="ph">File &rarr; Print &rarr; Save as PDF in Chrome\/Edge\/Firefox<\/span><\/div><\/div>'
+    +sections
+    +'<\/body><\/html>';
+  var w = window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); }
+  else{ alert('Allow pop-ups for this page to open your Study Doc.'); }
+}
 function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
 </script>
 <script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var hu='../hub.html';document.querySelectorAll('a[href*="hub.html"]').forEach(function(a){a.href=hu;});})();</script>

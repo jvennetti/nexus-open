@@ -52,6 +52,9 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 .hub-btn:hover{opacity:0.88;transform:translateY(-1px)}
 .hub-btn:active{transform:translateY(0)}
 .hub-cta-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:12px}
+
+.study-doc-btn{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,0.22);border-radius:4px;padding:12px 26px;cursor:pointer;transition:all 0.2s;margin-top:10px}
+.study-doc-btn:hover{background:rgba(0,200,255,0.06);border-color:rgba(0,200,255,0.45)}
 </style>
 </head>
 <body>
@@ -108,6 +111,8 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 
   <div class="hub-cta" id="hub-cta">
     <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
+    <br>
+    <button class="study-doc-btn" onclick="openStudyDoc()">Download Study Doc →</button>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
   </div>
 
@@ -196,6 +201,69 @@ async function runCiro(){
 writeComplete();
 pingHub();
 runReveal();
+
+const STUDY_MODULE = 'Module 4 — The Agent Blueprint';
+const STUDY_LESSONS = [{n:'4.1',title:'You\'re Not Behind (Yet): How to Build AI Agents in 2026',file:'lesson-4-1.html',takeaways:['An AI agent is a system that can reason, plan, and take actions on its own based on the information it\'s given — think of it as a digital employee that can use tools and make decisions.','The critical distinction: a workflow runs through a fixed, pre-defined sequence of steps. An agent decides how many steps to take and which ones — you don\'t know in advance.','Agents need three things to function: a goal or task, access to tools (search, APIs, files, etc.), and a loop — the ability to keep running until the task is resolved.','You don\'t need a technical background to build them anymore. The barrier is understanding the architecture, not writing code.','The agents cutting the most time aren\'t replacing entire roles — they\'re compressing specific high-volume workflows from hours to minutes. That\'s where to start.']},{n:'4.2',title:'Tips for Building AI Agents',file:'lesson-4-2.html',takeaways:['Workflows vs. agents isn\'t a hierarchy — it\'s a spectrum. Many production systems are a mix: structured steps where the path is known, agent loops where it isn\'t.','Tool descriptions matter as much as the agent\'s instructions. A vague tool description produces uncertain tool use. Write them like you\'d brief a new hire.','Most agent failures aren\'t model failures — they\'re design failures. Poorly scoped tasks, ambiguous instructions, missing context. Start simpler than you think you need to.','Build measurement in from the start. Agents that aren\'t being evaluated can\'t be improved.','Avoid the over-engineering trap: some of the best-performing production systems run everything inside a single LLM call. Complexity doesn\'t equal capability.','Where agents genuinely outperform simple automation: tasks where the number of steps is unknown, tasks requiring judgment between multiple options, and tasks that need to recover from unexpected results mid-run.']},{n:'4.3',title:'Claude Ran a Business in Our Office',file:'lesson-4-3.html',takeaways:['Claude handled the expected parts well: pricing logic, inventory reasoning, structured decisions with clear criteria.','The test revealed the agent\'s limits: ambiguous situations, customer interactions requiring judgment calls, and tasks that needed context the agent didn\'t have access to.','Autonomous agents in production need clearly defined boundaries — what the agent can decide alone and what needs a human checkpoint. Vague scope produces unexpected behavior.']},{n:'4.4',title:'I Built a Marketing Team with 1 AI Agent and No Code',file:'lesson-4-4.html',takeaways:['A single agent can access multiple tools simultaneously — this one routes between six distinct workflows based on what you ask it. One agent, many capabilities.','The agent doesn\'t just produce content — it maintains a log of everything it creates (type, prompt, Drive link), which becomes a searchable asset library over time.','The interface (Telegram, voice or text) is separate from the logic. Changing the interface doesn\'t change the workflows beneath it.','Each workflow is modular — video creation, image generation, and blog writing are independent nodes. Break one and the others keep running.','Real operational cost: the video covers what this system actually costs to run monthly. Build with that number in mind before deploying for a client.']},{n:'4.5',title:'Every Claude Code Concept Explained for Normal People',file:'lesson-4-5.html',takeaways:['Claude Code gives Claude access to tools that operate on your computer: reading and writing files, running bash commands, and navigating directories. That\'s the fundamental difference from chat — it can act, not just respond.','Context rot happens as sessions grow long: Claude starts losing track of earlier instructions and details. The fix is starting clean sessions for new tasks and using memory files to preserve critical context across sessions.','Subagents are separate Claude instances that run with their own clean context windows, following instructions from the main agent. When a task grows complex, the main agent delegates to subagents rather than cramming everything into one bloated context.','MCP servers are how Claude Code connects to external tools.','You don\'t tell Claude which tool to use. You describe what you want. Claude picks the right tools automatically.']},{n:'4.6',title:'Claude Design Basics: Master 95% in 10 Minutes',file:'lesson-4-6.html',takeaways:['Four starting modes: Prototype (wireframe or high-fidelity), Slide deck, From template, or Other. High-fidelity mode is where most of the leverage is.','The most-skipped step (and the most important): providing visual reference material. Claude Design performs significantly better when it can see examples of the aesthetic you\'re aiming for — screenshots, URLs, or uploaded images.','You can export prototypes directly to code — HTML/CSS/React — making it a practical starting point for real builds, not just mockups.','Weekly Usage Limits for Claude Design are separate from your regular Claude account limits.']},{n:'4.7',title:'I Built 5 Websites in 18 Minutes with Claude',file:'lesson-4-7.html',takeaways:['Claude\'s built-in design aesthetic is strong enough that you don\'t need to supply inspiration — you need to supply a clear, structured prompt.','The prompt framework that works: [type of site] for [specific business], [tone/aesthetic], [key sections needed], [any reference or constraint]. Vague prompts produce generic output; specific prompts produce specific work.','Iteration is the workflow. The first output is a draft, not the deliverable. Every pass narrows from a rough direction to a polished result.','Claude builds in the Artifacts panel — you see the site rendered live as it writes. Changes are instant.']},{n:'4.8',title:'Claude Works with You on Slides, Spreadsheets, and Contract Redlines',file:'lesson-4-8.html',takeaways:['Claude now works inside Excel and PowerPoint — formatting, populating, and structuring real files, not generating text to paste elsewhere.','The contract redline demo is particularly relevant for service providers: Claude reads an existing contract, identifies clauses to revise, and marks changes in tracked-changes format — the standard output format for legal and client-facing work.','This closes the loop between generation and delivery. The output is the file the client receives.']}];
+
+function openStudyDoc(){
+  const dir = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var sections = '';
+  STUDY_LESSONS.forEach(function(l){
+    var raw = localStorage.getItem('nexus_notes_' + dir + l.file) || '';
+    var escaped = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    var taHtml = l.takeaways.map(function(t){return '<li>'+t+'</li>';}).join('');
+    sections += '<section class="ls"><div class="ls-head"><span class="ls-num">Lesson '+l.n+'</span><h2 class="ls-title">'+l.title+'</h2></div><div class="ls-body"><h3 class="ls-lbl">KEY TAKEAWAYS</h3><ul class="ls-ta">'+taHtml+'</ul><h3 class="ls-lbl">YOUR NOTES</h3><div class="ls-notes" contenteditable="true">'+(escaped||'<span style="color:#6a8eaa;font-style:italic">No notes taken for this lesson.</span>')+'</div></div></section>';
+  });
+  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>NEXUS Academy — '+STUDY_MODULE+' Study Doc<\/title><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><style>'
+    +'*{box-sizing:border-box;margin:0;padding:0}'
+    +':root{--bg:#08101f;--card:#0d1628;--blue:#00c8ff;--text:#cce2f2;--white:#fff;--muted:#5a8aaa;--border:#1a2d45}'
+    +'body{background:var(--bg);color:var(--text);font-family:Lexend,sans-serif;font-size:15px;line-height:1.75;max-width:860px;margin:0 auto;padding:48px 36px 80px}'
+    +'.dh{text-align:center;padding:0 0 36px;border-bottom:1px solid var(--border);margin-bottom:44px}'
+    +'.dw{font-family:Orbitron,sans-serif;font-size:22px;font-weight:900;letter-spacing:5px;color:var(--white);margin-bottom:8px}'
+    +'.dw span{color:var(--blue)}'
+    +'.dm{font-family:Orbitron,sans-serif;font-size:12px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}'
+    +'.dd{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:20px}'
+    +'.pb{display:flex;align-items:center;gap:14px;justify-content:center}'
+    +'.pbtn{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,.3);border-radius:4px;padding:10px 24px;cursor:pointer;transition:all .2s}'
+    +'.pbtn:hover{background:rgba(0,200,255,.07);border-color:rgba(0,200,255,.55)}'
+    +'.ph{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--muted);letter-spacing:.15em}'
+    +'.ls{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px}'
+    +'.ls-head{padding:22px 28px 18px;border-bottom:1px solid var(--border);background:#0a1220}'
+    +'.ls-num{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px}'
+    +'.ls-title{font-family:Orbitron,sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:.04em;line-height:1.35}'
+    +'.ls-body{padding:22px 28px}'
+    +'.ls-lbl{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:20px}'
+    +'.ls-lbl:first-child{margin-top:0}'
+    +'.ls-ta{list-style:none;display:flex;flex-direction:column;gap:8px}'
+    +'.ls-ta li{padding-left:18px;position:relative;font-size:14px;font-weight:300;color:var(--text);line-height:1.65}'
+    +".ls-ta li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--muted)}"
+    +'.ls-notes{min-height:80px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:14px;font-weight:300;line-height:1.75;color:var(--text);outline:none;transition:border-color .2s,background .2s}'
+    +'.ls-notes:focus{border-color:rgba(0,200,255,.2);background:rgba(255,255,255,.038)}'
+    +'@media print{body{background:#fff;color:#1a1a1a;padding:20px 28px;max-width:none}'
+    +'.dw{color:#000}.dw span{color:#0066aa}'
+    +'.pb{display:none}'
+    +'.dh{border-bottom:1px solid #ddd;margin-bottom:28px;padding-bottom:20px}'
+    +'.ls{background:#fff;border:1px solid #ddd;margin-bottom:20px;page-break-inside:avoid}'
+    +'.ls-head{background:#f5f7fa;border-bottom:1px solid #ddd}'
+    +'.ls-num{color:#888}.ls-title{color:#111}'
+    +'.ls-lbl{color:#888}'
+    +'.ls-ta li{color:#333}'
+    +".ls-ta li::before{background:#999}"
+    +'.ls-notes{background:#fafafa;border:1px solid #ddd;color:#1a1a1a;min-height:40px}'
+    +'.dm{color:#666}.dd{color:#888}}'
+    +'<\/style><\/head><body>'
+    +'<div class="dh"><div class="dw">NEXUS <span>ACADEMY<\/span><\/div>'
+    +'<div class="dm">'+STUDY_MODULE+'<\/div>'
+    +'<div class="dd">Study Document &nbsp;&middot;&nbsp; Generated '+date+'<\/div>'
+    +'<div class="pb"><button class="pbtn" onclick="window.print()">Print \/ Save as PDF &rarr;<\/button>'
+    +'<span class="ph">File &rarr; Print &rarr; Save as PDF in Chrome\/Edge\/Firefox<\/span><\/div><\/div>'
+    +sections
+    +'<\/body><\/html>';
+  var w = window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); }
+  else{ alert('Allow pop-ups for this page to open your Study Doc.'); }
+}
 function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
 </script>
 <script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var hu='../hub.html';document.querySelectorAll('a[href*="hub.html"]').forEach(function(a){a.href=hu;});})();</script>

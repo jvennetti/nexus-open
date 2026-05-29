@@ -52,6 +52,9 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 .hub-btn:hover{opacity:0.88;transform:translateY(-1px)}
 .hub-btn:active{transform:translateY(0)}
 .hub-cta-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:12px}
+
+.study-doc-btn{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,0.22);border-radius:4px;padding:12px 26px;cursor:pointer;transition:all 0.2s;margin-top:10px}
+.study-doc-btn:hover{background:rgba(0,200,255,0.06);border-color:rgba(0,200,255,0.45)}
 </style>
 </head>
 <body>
@@ -108,6 +111,8 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 
   <div class="hub-cta" id="hub-cta">
     <a href="../hub.html" class="hub-btn" onclick="playS('../audio/sfx/password-confirm.mp3',0.1)">Return to Hub</a>
+    <br>
+    <button class="study-doc-btn" onclick="openStudyDoc()">Download Study Doc →</button>
     <div class="hub-cta-sub">Progress saved · Badge recorded</div>
   </div>
 
@@ -196,6 +201,69 @@ async function runCiro(){
 writeComplete();
 pingHub();
 runReveal();
+
+const STUDY_MODULE = 'Module 3 — The Automation Layer';
+const STUDY_LESSONS = [{n:'3.1',title:'Introducing Cowork',file:'lesson-3-1.html',takeaways:['Cowork lives in the Claude desktop app as its own tab, separate from the chat interface.','Requires a paid Claude account (Pro or Max) — not available on the free plan.','The mental shift starting here: you\'re not just prompting anymore, you\'re delegating.']},{n:'3.2',title:'Let Claude Handle Work in Your Browser',file:'lesson-3-2.html',takeaways:['Claude for Chrome is a separate extension that connects browser activity to Cowork.','Install Claude for Chrome now. You\'ll need it for Lesson 3.7.']},{n:'3.3',title:'Claude Now Controls Your Entire Computer',file:'lesson-3-3.html',takeaways:['Computer use is enabled under Claude settings → Computer Use — requires accessibility and screen recording permissions on Mac.','Claude takes screenshots and moves the mouse and keyboard on your behalf. Some actions cannot be undone so enable this deliberately.','When a connector exists for an app (Notion, Gmail), Claude uses the connector. Computer use kicks in for apps with no native connector.','Standout use case: screenshot an idea on your phone → text it to your Mac → Cowork reads it and logs it to your database. Zero manual entry.']},{n:'3.4',title:'Getting Started with Connectors',file:'lesson-3-4.html',takeaways:['Connectors are found under Claude settings → Customize → Connectors.','You choose which connectors are active per task — scope is always your call.','Start with the tools you use every day before exploring anything more advanced.']},{n:'3.5',title:'What Is MCP?',file:'lesson-3-5.html',takeaways:['Before MCP, connecting to external tools required custom code for every integration. MCP standardizes how context moves between AI applications and external services.','One MCP server per service works with every MCP-compatible AI client. Build it once; it\'s compatible everywhere.','MCP doesn\'t enable new capabilities — it makes existing capabilities dramatically easier, compressing hours of setup into minutes.','Anything with a REST API can have an MCP server. Hundreds already exist.']},{n:'3.6',title:'The Model Context Protocol (Deep Dive)',file:'lesson-3-6.html',takeaways:['MCP exposes three things to AI clients: tools (actions the model can take in the world), resources (data and files it can ingest), and prompts (slash-command-triggered prompt templates).','MCP launched open source deliberately — closed ecosystems create friction for builders; open standards lower the barrier for everyone.','At Anthropic\'s internal hackathon, with no mandate to use MCP, every single team gravitated toward building an MCP server.','Current state: 10,000+ MCP servers in existence; major AI clients and model providers have adopted the standard.','What\'s coming: a registry API letting models search for new MCP servers on demand; better infrastructure for long-running tasks; and elicitation — a server\'s ability to ask the user for more information mid-task.']},{n:'3.7',title:'Full Claude Cowork Tutorial',file:'lesson-3-7.html',takeaways:['Three tabs in the Claude desktop app: Chat, Cowork, Code. This module is about Cowork.','A task in Cowork is a multi-step instruction Claude executes end-to-end, not a single conversational exchange.','Skills are reusable instruction sets — the equivalent of SOPs for an employee. Claude draws on them automatically without re-explaining context each time.','The more business context lives in your Skills, the less you have to include in each individual task prompt.','Cowork is not a replacement for Claude chat — it\'s a separate mode built for execution instead of conversation.']},{n:'3.8',title:'Set Up Cowork Better Than 99% of People',file:'lesson-3-8.html',takeaways:['Skills are the core differentiator. Write them like you\'d onboard a new hire: who are you, what\'s the business, what\'s the voice, what does a good output look like.','Permission management matters — configure exactly what Cowork can execute autonomously versus what requires your approval.','A well-built Skill runs better with less input. Time invested here compounds across every task you run going forward.','Before moving to Lesson 3.9: write at least one Skill for your own context — your name, your business or work situation, your communication style, and one recurring task you want Cowork to handle.']},{n:'3.9',title:'Scheduled Tasks: Working While You Sleep',file:'lesson-3-9.html',takeaways:['Scheduled tasks run on a defined cadence — daily, weekly, or custom — without any manual trigger.','Regular Claude starts from zero every conversation. Cowork with Skills starts by knowing your business, your context, and your tone.','Task quality depends directly on the Skill behind it. A vague Skill produces vague output on a schedule.','Use "Always Allow" on permissions you trust — every manual approval you remove is recurring automation for the AI.']},{n:'3.10',title:'Automate 90% of Your Social Media with Cowork',file:'lesson-3-10.html',takeaways:['The system starts with competitor and market research, which feeds the strategy. Claude isn\'t just automating the writing — it\'s also automating the thinking behind what to write.','Each stage of the content pipeline is its own skill — modular, adjustable, replaceable without breaking other skills.','Skills make this architecture portable: the same structure works for any niche, business, or content format.','This is what a solo content operation looks like at scale — no team required.']},{n:'3.11',title:'Zapier MCP: The Unlock',file:'lesson-3-11.html',takeaways:['Native Gmail connector drafts emails but won\'t send without approval. Zapier MCP drafts and sends.','Zapier MCP is a bridge — it extends Claude\'s connectors with broader permissions, not a replacement for them.','Setup: go to zapier.com/mcp → create a Claude MCP server → add tools → connect inside Claude under Connectors → Zapier Custom.','Free plan: 100 tasks/month. Recommended tools to connect first: Gmail, Google Sheets, Asana, Notion.','If a tool has both a native connector and Zapier MCP available, Zapier MCP typically has broader permissions — use that.','Do this now: set up your Zapier MCP server and connect at least one tool you already use via the native connector. Run the same task both ways and observe the difference.']},{n:'3.12',title:'What Is n8n?',file:'lesson-3-12.html',takeaways:['n8n is open-source and self-hostable; Zapier is cloud-based with a free tier and paid scale.','Both connect apps and automate workflows — the difference is where the logic lives and who controls the infrastructure.']},{n:'3.13',title:'n8n vs Zapier: Pick Your Tool',file:'lesson-3-13.html',takeaways:['Zapier: faster setup, cloud-native, 8,000+ integrations, lower technical barrier — best when you need to move quickly and don\'t require infrastructure control.','n8n: more powerful for complex logic, lower cost at scale, more configuration required — best when you need full control, custom workflows, or white-labeled solutions for clients.','Both are used professionally. This isn\'t a beginner vs. advanced split.','If you\'re unsure: start with Zapier. You can migrate logic to n8n when your needs grow and the tradeoffs become real.']},{n:'3.14',title:'Zapier AI Agents: Step-by-Step',file:'lesson-3-14.html',takeaways:['A Zapier Agent = a trigger + connected tools + plain-English instructions + AI. Clear, specific instructions separate an agent that runs cleanly from one that asks too many questions.','Tools give the agent the ability to act — without them, it can reason through steps but can\'t touch your apps.','Test before going live. The test run in this video catches a missing detail that would have broken the live run.','Free tier: 400 activities/month. Pro: 1,500/month. An activity is any single action the agent takes.','Once live and toggled on, Zapier agents run without approvals — fully autonomous on the schedule you define.']}];
+
+function openStudyDoc(){
+  const dir = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var sections = '';
+  STUDY_LESSONS.forEach(function(l){
+    var raw = localStorage.getItem('nexus_notes_' + dir + l.file) || '';
+    var escaped = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    var taHtml = l.takeaways.map(function(t){return '<li>'+t+'</li>';}).join('');
+    sections += '<section class="ls"><div class="ls-head"><span class="ls-num">Lesson '+l.n+'</span><h2 class="ls-title">'+l.title+'</h2></div><div class="ls-body"><h3 class="ls-lbl">KEY TAKEAWAYS</h3><ul class="ls-ta">'+taHtml+'</ul><h3 class="ls-lbl">YOUR NOTES</h3><div class="ls-notes" contenteditable="true">'+(escaped||'<span style="color:#6a8eaa;font-style:italic">No notes taken for this lesson.</span>')+'</div></div></section>';
+  });
+  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>NEXUS Academy — '+STUDY_MODULE+' Study Doc<\/title><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><style>'
+    +'*{box-sizing:border-box;margin:0;padding:0}'
+    +':root{--bg:#08101f;--card:#0d1628;--blue:#00c8ff;--text:#cce2f2;--white:#fff;--muted:#5a8aaa;--border:#1a2d45}'
+    +'body{background:var(--bg);color:var(--text);font-family:Lexend,sans-serif;font-size:15px;line-height:1.75;max-width:860px;margin:0 auto;padding:48px 36px 80px}'
+    +'.dh{text-align:center;padding:0 0 36px;border-bottom:1px solid var(--border);margin-bottom:44px}'
+    +'.dw{font-family:Orbitron,sans-serif;font-size:22px;font-weight:900;letter-spacing:5px;color:var(--white);margin-bottom:8px}'
+    +'.dw span{color:var(--blue)}'
+    +'.dm{font-family:Orbitron,sans-serif;font-size:12px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}'
+    +'.dd{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:20px}'
+    +'.pb{display:flex;align-items:center;gap:14px;justify-content:center}'
+    +'.pbtn{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--blue);background:none;border:1px solid rgba(0,200,255,.3);border-radius:4px;padding:10px 24px;cursor:pointer;transition:all .2s}'
+    +'.pbtn:hover{background:rgba(0,200,255,.07);border-color:rgba(0,200,255,.55)}'
+    +'.ph{font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--muted);letter-spacing:.15em}'
+    +'.ls{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px}'
+    +'.ls-head{padding:22px 28px 18px;border-bottom:1px solid var(--border);background:#0a1220}'
+    +'.ls-num{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px}'
+    +'.ls-title{font-family:Orbitron,sans-serif;font-size:14px;font-weight:700;color:var(--white);letter-spacing:.04em;line-height:1.35}'
+    +'.ls-body{padding:22px 28px}'
+    +'.ls-lbl{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:20px}'
+    +'.ls-lbl:first-child{margin-top:0}'
+    +'.ls-ta{list-style:none;display:flex;flex-direction:column;gap:8px}'
+    +'.ls-ta li{padding-left:18px;position:relative;font-size:14px;font-weight:300;color:var(--text);line-height:1.65}'
+    +".ls-ta li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--muted)}"
+    +'.ls-notes{min-height:80px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:6px;padding:16px 20px;font-size:14px;font-weight:300;line-height:1.75;color:var(--text);outline:none;transition:border-color .2s,background .2s}'
+    +'.ls-notes:focus{border-color:rgba(0,200,255,.2);background:rgba(255,255,255,.038)}'
+    +'@media print{body{background:#fff;color:#1a1a1a;padding:20px 28px;max-width:none}'
+    +'.dw{color:#000}.dw span{color:#0066aa}'
+    +'.pb{display:none}'
+    +'.dh{border-bottom:1px solid #ddd;margin-bottom:28px;padding-bottom:20px}'
+    +'.ls{background:#fff;border:1px solid #ddd;margin-bottom:20px;page-break-inside:avoid}'
+    +'.ls-head{background:#f5f7fa;border-bottom:1px solid #ddd}'
+    +'.ls-num{color:#888}.ls-title{color:#111}'
+    +'.ls-lbl{color:#888}'
+    +'.ls-ta li{color:#333}'
+    +".ls-ta li::before{background:#999}"
+    +'.ls-notes{background:#fafafa;border:1px solid #ddd;color:#1a1a1a;min-height:40px}'
+    +'.dm{color:#666}.dd{color:#888}}'
+    +'<\/style><\/head><body>'
+    +'<div class="dh"><div class="dw">NEXUS <span>ACADEMY<\/span><\/div>'
+    +'<div class="dm">'+STUDY_MODULE+'<\/div>'
+    +'<div class="dd">Study Document &nbsp;&middot;&nbsp; Generated '+date+'<\/div>'
+    +'<div class="pb"><button class="pbtn" onclick="window.print()">Print \/ Save as PDF &rarr;<\/button>'
+    +'<span class="ph">File &rarr; Print &rarr; Save as PDF in Chrome\/Edge\/Firefox<\/span><\/div><\/div>'
+    +sections
+    +'<\/body><\/html>';
+  var w = window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); }
+  else{ alert('Allow pop-ups for this page to open your Study Doc.'); }
+}
 function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
 </script>
 <script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var hu='../hub.html';document.querySelectorAll('a[href*="hub.html"]').forEach(function(a){a.href=hu;});})();</script>
