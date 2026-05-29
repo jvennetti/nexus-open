@@ -83,7 +83,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .l-arr{color:var(--muted);font-size:11px;flex-shrink:0;transition:color .15s}
 .lesson-row:hover .l-arr,.lesson-row:hover .l-name{color:var(--offwhite)}
 .lesson-row.expandable{cursor:pointer;flex-direction:column;align-items:stretch;padding:0;text-decoration:none}
-.lesson-row-head{display:flex;align-items:center;gap:14px;padding:12px 20px;transition:background .15s}
+.lesson-row-head{display:flex;align-items:center;gap:14px;padding:14px 20px 10px;transition:background .15s}
 .lesson-row.expandable:hover .lesson-row-head{background:transparent}
 .lesson-row.expandable:hover .lesson-row-head .l-name,.lesson-row.expandable:hover .lesson-row-head .l-arr{color:var(--blue)}
 .lesson-expand{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(0.4,0,0.2,1)}
@@ -101,11 +101,18 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .le-goto a:hover{opacity:0.65}
 .module-card img{width:100%;height:100%;object-fit:cover;display:block}
 .card-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:14px 18px;background:linear-gradient(to right,rgba(0,0,0,0.6) 0%,transparent 65%)}
-.card-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.32em;color:var(--blue);text-transform:uppercase;margin-bottom:3px;opacity:0.85}
-.card-title{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--white);letter-spacing:0.05em;text-shadow:0 1px 6px rgba(0,0,0,0.8)}
-.card-status{position:absolute;top:12px;right:14px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:0.2em;padding:4px 10px;border-radius:4px;text-transform:uppercase}
+.card-tag{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;letter-spacing:0.32em;color:var(--blue);text-transform:uppercase;margin-bottom:4px;opacity:0.85}
+.card-title{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:700;color:var(--white);letter-spacing:0.05em;text-shadow:0 1px 6px rgba(0,0,0,0.8)}
+.card-status{position:absolute;top:12px;right:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.2em;padding:5px 13px;border-radius:4px;text-transform:uppercase}
 .locked-tag{color:var(--muted);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.07)}
 .unlocked-tag{color:var(--blue);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.25);text-shadow:0 0 6px var(--blue)}
+.bonus-card{border-color:rgba(255,190,0,0.35)!important;animation:bonus-glow 3.2s ease-in-out infinite}
+.bonus-card:hover{border-color:rgba(255,200,0,0.7)!important;box-shadow:0 4px 32px rgba(255,180,0,0.25)!important;transform:translateY(-1px)}
+.bonus-card .card-overlay{background:linear-gradient(to right,rgba(18,8,0,0.82) 0%,transparent 65%)}
+.bonus-card .card-tag{color:#f0b840;letter-spacing:0.48em}
+.bonus-card .card-title{color:#ffe070;text-shadow:0 0 14px rgba(255,200,0,0.45),0 1px 6px rgba(0,0,0,0.9);letter-spacing:0.12em}
+.bonus-card .card-status{background:rgba(255,180,0,0.1)!important;border-color:rgba(255,180,0,0.45)!important;color:#f0b840!important;text-shadow:0 0 8px rgba(255,180,0,0.5)!important}
+@keyframes bonus-glow{0%,100%{box-shadow:0 0 12px rgba(255,180,0,0.08),0 0 0 1px rgba(255,180,0,0.07)}50%{box-shadow:0 0 26px rgba(255,180,0,0.2),0 0 0 1px rgba(255,180,0,0.14)}}
 .achievements-section{margin-bottom:40px}
 .badges-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
 .badge-item{display:flex;flex-direction:column;align-items:center;text-align:center;transition:all 0.4s ease}
@@ -658,7 +665,7 @@ function renderModules(s){
     g.appendChild(wrap);
   });
   const bv = document.createElement('div');
-  bv.className = 'module-card unlocked';
+  bv.className = 'module-card unlocked bonus-card';
   bv.innerHTML = `
     <img src="images/bonus-vault.png" alt="Bonus Vault" loading="lazy">
     <div class="card-overlay">

@@ -159,18 +159,14 @@
     _smBtn.innerHTML='<span class="sm-icon">♪</span><span class="sm-text">Want study music? Click here</span>';
     var _smIcon=_smBtn.querySelector('.sm-icon');
     var _smTxt=_smBtn.querySelector('.sm-text');
-    var _smOn=localStorage.getItem('nexus_study_music')==='1';
-    if(_smOn){_smBtn.setAttribute('data-on','');_smTxt.textContent='Study music — on';_smAudio.play().catch(function(){});}
     _smBtn.addEventListener('click',function(){
       if(_smBtn.hasAttribute('data-on')){
         _smAudio.pause();_smBtn.removeAttribute('data-on');
         _smTxt.textContent='Want study music? Click here';
-        localStorage.setItem('nexus_study_music','0');
         _smBeep(false);
       } else {
         _smAudio.play().catch(function(){});_smBtn.setAttribute('data-on','');
         _smTxt.textContent='Study music — on';
-        localStorage.setItem('nexus_study_music','1');
         _smBeep(true);
       }
     });
