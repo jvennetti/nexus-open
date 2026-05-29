@@ -40,6 +40,9 @@ h1.lesson-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:700
 .nav-btn.next{align-items:flex-end;text-align:right}
 .nav-dir{font-family:'Lexend',sans-serif;font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 .nav-name{font-family:'Lexend',sans-serif;font-size:14px;font-weight:500;color:var(--white);line-height:1.4}
+textarea.notes-field{display:block;width:100%;min-height:130px;background:rgba(255,255,255,0.028);border:1px solid var(--border);border-radius:8px;padding:20px 24px;color:var(--body-text);font-family:'Lexend',sans-serif;font-size:14px;font-weight:300;line-height:1.75;resize:none;overflow:hidden;outline:none;transition:border-color .2s,background .2s;caret-color:var(--blue)}
+textarea.notes-field::placeholder{color:rgba(90,138,170,0.35);font-style:italic}
+textarea.notes-field:focus{border-color:rgba(0,200,255,0.2);background:rgba(255,255,255,0.038)}
 </style>
 </head>
 <body>
@@ -59,6 +62,9 @@ h1.lesson-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:700
   </div>
   <div class="video-wrapper section">
     <iframe src="https://www.youtube.com/embed/D4XTefP3Lsc" title="When AIs Act Emotional" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div style="margin-bottom:36px">
+    <textarea class="notes-field" id="lesson-notes" placeholder="Notes..."></textarea>
   </div>
   <div class="takeaways-box section">
     <div class="takeaways-title">Key Takeaways</div>
@@ -82,6 +88,7 @@ h1.lesson-title{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:700
 window.addEventListener('load',()=>{
   const title = document.querySelector('h1.lesson-title')?.textContent||'';
   localStorage.setItem('nexus_last_page_'+(localStorage.getItem('nexus_current_operator')||'joshua'),JSON.stringify({url:location.pathname,title}));
+const ta=document.getElementById('lesson-notes');function autoGrow(){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}const saved=localStorage.getItem('nexus_notes_'+location.pathname);if(saved){ta.value=saved;autoGrow();}ta.addEventListener('input',function(){autoGrow();localStorage.setItem('nexus_notes_'+location.pathname,ta.value);});
 });
 </script>
 <script>(function(){var op=localStorage.getItem('nexus_current_operator')||'joshua';var hu='../hub.html';document.querySelectorAll('a[href*="hub.html"]').forEach(function(a){a.href=hu;});})();</script>
