@@ -139,7 +139,7 @@
     var _smCSS=document.createElement('style');
     _smCSS.textContent='#nx-sm-btn{position:fixed;bottom:24px;right:24px;display:flex;align-items:center;gap:10px;background:rgba(10,18,34,0.96);border:1px solid rgba(0,200,255,0.28);border-radius:28px;padding:11px 20px 11px 16px;cursor:pointer;z-index:980;transition:all .25s;user-select:none;backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 0 rgba(0,200,255,0);}#nx-sm-btn:hover{border-color:rgba(0,200,255,0.55);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 16px rgba(0,200,255,0.18);}#nx-sm-btn[data-on]{border-color:rgba(0,200,255,0.6);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 22px rgba(0,200,255,0.3);animation:sm-pulse 2.4s ease-in-out infinite;}@keyframes sm-pulse{0%,100%{box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 16px rgba(0,200,255,0.2);}50%{box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 30px rgba(0,200,255,0.38);}}.sm-icon{font-size:18px;line-height:1;color:#4a7a9a;transition:color .25s;flex-shrink:0;}#nx-sm-btn[data-on] .sm-icon{color:#00c8ff;}.sm-text{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#4a7a9a;white-space:nowrap;transition:color .25s;line-height:1.3;}#nx-sm-btn:hover .sm-text{color:#8ab8cc;}#nx-sm-btn[data-on] .sm-text{color:#00c8ff;}';
     document.head.appendChild(_smCSS);
-    var _smAudio=new Audio(_base+'audio/music/study-music-1.mp3');
+    var _smAudio=new Audio(_base+'audio/music/study-music.mp3');
     _smAudio.loop=true;
     _smAudio.volume=0.28;
     function _smBeep(on){
