@@ -79,6 +79,23 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .l-name{font-family:'Lexend',sans-serif;font-size:13px;font-weight:400;color:var(--white);flex:1;line-height:1.35}
 .l-arr{color:var(--muted);font-size:11px;flex-shrink:0;transition:color .15s}
 .lesson-row:hover .l-arr,.lesson-row:hover .l-name{color:var(--offwhite)}
+.lesson-row.expandable{cursor:pointer;flex-direction:column;align-items:stretch;padding:0;text-decoration:none}
+.lesson-row-head{display:flex;align-items:center;gap:14px;padding:11px 20px;transition:background .15s}
+.lesson-row.expandable:hover .lesson-row-head{background:var(--blue-lo)}
+.lesson-row.expandable:hover .lesson-row-head .l-arr,.lesson-row.expandable:hover .lesson-row-head .l-name{color:var(--offwhite)}
+.lesson-expand{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(0.4,0,0.2,1)}
+.lesson-expand.open{max-height:900px}
+.le-inner{padding:14px 20px 18px;border-top:1px solid rgba(0,200,255,0.07);background:rgba(5,12,24,0.6)}
+.le-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.22em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;margin-top:14px}
+.le-lbl:first-child{margin-top:0}
+.le-notes{font-family:'Lexend',sans-serif;font-size:12.5px;font-weight:300;color:var(--body-text);line-height:1.7;white-space:pre-wrap}
+.le-no-notes{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);font-style:italic}
+.le-ta{list-style:none;display:flex;flex-direction:column;gap:5px}
+.le-ta li{padding-left:14px;position:relative;font-family:'Lexend',sans-serif;font-size:12.5px;font-weight:300;color:var(--body-text);line-height:1.6}
+.le-ta li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--muted)}
+.le-goto{text-align:right;margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,200,255,0.07)}
+.le-goto a{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--blue);text-decoration:none;transition:opacity .15s}
+.le-goto a:hover{opacity:0.7}
 .module-card img{width:100%;height:100%;object-fit:cover;display:block}
 .card-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:14px 18px;background:linear-gradient(to right,rgba(0,0,0,0.6) 0%,transparent 65%)}
 .card-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.32em;color:var(--blue);text-transform:uppercase;margin-bottom:3px;opacity:0.85}
@@ -383,7 +400,7 @@ const DEV_UNLOCK    = false;
 
 const MODULES = [
   { key:'precourse', label:'Pre-Course', title:'BEFORE YOU BEGIN',
-    locked:'images/modules/m1-locked.png', unlocked:'images/modules/m1-challenge.png',
+    locked:'images/modules/m1-locked.png', unlocked:'images/modules/m1-unlocked.png',
     url:'pre-course/module-intro.html', badge:'system_online',
     next:{ mod:'Pre-Course', title:'7 Years of Building a Learning System in 12 Minutes', url:'pre-course/lesson-0-1.html' },
     lessons:[
@@ -391,17 +408,17 @@ const MODULES = [
       {n:'0.2',title:'Getting Started with Notion',url:'pre-course/lesson-0-2.html'},
     ]},
   { key:'mod1', label:'Module 1', title:'BOOT UP',
-    locked:'images/modules/m2-locked.png', unlocked:'images/modules/m2-challenge.png',
+    locked:'images/modules/m2-locked.png', unlocked:'images/modules/m1-challenge.png',
     url:'module-1/intro.html', badge:'boot_sequence',
     next:{ mod:'Module 1', title:"The Only AI Tools You'll Ever Need to Get Rich in 2026", url:'module-1/lesson-1-1.html' },
     lessons:[
-      {n:'1.1',title:"The Only AI Tools You'll Ever Need to Get Rich in 2026",url:'module-1/lesson-1-1.html'},
-      {n:'1.2',title:'The One-Person Startup Era Has Officially Begun',url:'module-1/lesson-1-2.html'},
-      {n:'1.3',title:'How to Win With AI in 2026',url:'module-1/lesson-1-3.html'},
-      {n:'1.4',title:'When AIs Act Emotional',url:'module-1/lesson-1-4.html'},
+      {n:'1.1',title:"The Only AI Tools You'll Ever Need to Get Rich in 2026",url:'module-1/lesson-1-1.html',takeaways:['Claude lands at the top of the stack (S tier) — the course is built around it for good reason.','The tools that generate real leverage complete the last step for you, not just draft it.','Voice input (Wispr Flow) and AI memory systems (Notion) are infrastructure, not optional extras — implement them now.','Automation tools like n8n and Zapier belong later in your stack. Get the foundation right first.']},
+      {n:'1.2',title:'The One-Person Startup Era Has Officially Begun',url:'module-1/lesson-1-2.html',takeaways:["Revenue per employee = $2M at Gamma ($100M revenue, ~50 people, $2.1B valuation). The math has changed.","The logic isn't about being solo forever — it's about hiring what AI can't do.",'Claude Code changed who can build: non-technical founders can now direct product without waiting on developers.',"AI still can't replace strategic judgment, high-trust relationships, and knowing when to pivot."]},
+      {n:'1.3',title:'How to Win With AI in 2026',url:'module-1/lesson-1-3.html',takeaways:['The most flexible system survives — this is business Darwinism in real time.','Starting a new company AI-first is easier than converting an existing one. There is no legacy structure to fight.','The skill stack compounds: every AI capability you add gives disproportionate leverage over competitors.',"Revenue per employee is the new metric to watch. Hormozi's companies are running in the millions per head."]},
+      {n:'1.4',title:'When AIs Act Emotional',url:'module-1/lesson-1-4.html',takeaways:['Claude is designed to be genuinely helpful, not just superficially agreeable.','Understanding the model\'s design philosophy makes you a more effective operator of it.','There\'s a difference between a tool that performs compliance and one designed with coherent values — and that difference shows up in quality of output.']},
     ]},
   { key:'mod2', label:'Module 2', title:'THE PROMPT ENGINEER',
-    locked:'images/modules/m3-locked.png', unlocked:'images/modules/m3-challenge.png',
+    locked:'images/modules/m3-locked.png', unlocked:'images/modules/m2-challenge.png',
     url:'module-2/intro.html', badge:'signal_steady',
     next:{ mod:'Module 2', title:"Claude vs ChatGPT — Which One's Actually Better?", url:'module-2/lesson-2-1.html' },
     lessons:[
@@ -414,7 +431,7 @@ const MODULES = [
       {n:'2.7',title:'Perplexity Computer for Beginners: Everything You Need to Know',url:'module-2/lesson-2-7.html'},
     ]},
   { key:'mod3', label:'Module 3', title:'THE AUTOMATION LAYER',
-    locked:'images/modules/m4-locked.png', unlocked:'images/modules/m4-challenge.png',
+    locked:'images/modules/m4-locked.png', unlocked:'images/modules/m3-challenge.png',
     url:'module-3/intro.html', badge:'commander',
     next:{ mod:'Module 3', title:'Introducing Cowork', url:'module-3/lesson-3-1.html' },
     lessons:[
@@ -434,7 +451,7 @@ const MODULES = [
       {n:'3.14',title:'Zapier AI Agents: Step-by-Step',url:'module-3/lesson-3-14.html'},
     ]},
   { key:'mod4', label:'Module 4', title:'THE AGENT BLUEPRINT',
-    locked:'images/modules/m5-locked.png', unlocked:'images/modules/m5-challenge.png',
+    locked:'images/modules/m5-locked.png', unlocked:'images/modules/m4-challenge.png',
     url:'module-4/intro.html', badge:'architect',
     next:{ mod:'Module 4', title:'How to Build AI Agents in 2026', url:'module-4/lesson-4-1.html' },
     lessons:[
@@ -448,7 +465,7 @@ const MODULES = [
       {n:'4.8',title:'Claude Works with You on Slides, Spreadsheets, and Contract Redlines',url:'module-4/lesson-4-8.html'},
     ]},
   { key:'mod5', label:'Module 5', title:'LEAD GENERATION MACHINE',
-    locked:'images/modules/m6-locked.png', unlocked:'images/modules/m6-challenge.png',
+    locked:'images/modules/m6-locked.png', unlocked:'images/modules/m5-challenge.png',
     url:'module-5/intro.html', badge:'pipeline_inventor',
     next:{ mod:'Module 5', title:'Getting Started with Research in Claude.ai', url:'module-5/lesson-5-1.html' },
     lessons:[
@@ -461,7 +478,7 @@ const MODULES = [
       {n:'5.7',title:'Claude Code Just Changed Lead Generation Forever',url:'module-5/lesson-5-7.html'},
     ]},
   { key:'mod6', label:'Module 6', title:'CLIENT READY',
-    locked:'images/modules/m7-locked.png', unlocked:'images/modules/m7-unlocked.png',
+    locked:'images/modules/m7-locked.png', unlocked:'images/modules/m6-challenge.png',
     url:'module-6/intro.html', badge:'operator',
     next:{ mod:'Module 6', title:'How to Build a $10M Solo AI Business (Zero Code)', url:'module-6/lesson-6-1.html' },
     lessons:[
@@ -598,12 +615,32 @@ function renderModules(s){
       const tray = document.createElement('div');
       tray.className = 'lesson-tray';
       const inner = document.createElement('div');
+      const notesBase = location.pathname.substring(0,location.pathname.lastIndexOf('/')+1);
       m.lessons.forEach(l=>{
-        const row = document.createElement('a');
-        row.className = 'lesson-row';
-        row.href = l.url;
-        row.innerHTML = `<span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">→</span>`;
-        inner.appendChild(row);
+        if(l.takeaways){
+          const savedNotes = localStorage.getItem('nexus_notes_'+notesBase+l.url)||'';
+          const notesBlock = savedNotes
+            ? `<div class="le-lbl">Your Notes</div><div class="le-notes">${savedNotes.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
+            : `<div class="le-lbl">Your Notes</div><div class="le-no-notes">No notes taken for this lesson.</div>`;
+          const taItems = l.takeaways.map(t=>`<li>${t}</li>`).join('');
+          const row = document.createElement('div');
+          row.className = 'lesson-row expandable';
+          row.innerHTML = `<div class="lesson-row-head"><span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">+</span></div><div class="lesson-expand"><div class="le-inner">${notesBlock}<div class="le-lbl">Key Takeaways</div><ul class="le-ta">${taItems}</ul><div class="le-goto"><a href="${l.url}">Go to lesson →</a></div></div></div>`;
+          row.querySelector('.lesson-row-head').addEventListener('click',e=>{
+            e.stopPropagation();
+            const exp=row.querySelector('.lesson-expand');
+            const arr=row.querySelector('.l-arr');
+            const open=exp.classList.toggle('open');
+            arr.textContent=open?'−':'+';
+          });
+          inner.appendChild(row);
+        } else {
+          const row = document.createElement('a');
+          row.className = 'lesson-row';
+          row.href = l.url;
+          row.innerHTML = `<span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">→</span>`;
+          inner.appendChild(row);
+        }
       });
       tray.appendChild(inner);
       toggle.addEventListener('click', e=>{
