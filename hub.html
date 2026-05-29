@@ -83,7 +83,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .l-arr{color:var(--muted);font-size:11px;flex-shrink:0;transition:color .15s}
 .lesson-row:hover .l-arr,.lesson-row:hover .l-name{color:var(--offwhite)}
 .lesson-row.expandable{cursor:pointer;flex-direction:column;align-items:stretch;padding:0;text-decoration:none}
-.lesson-row-head{display:flex;align-items:center;gap:14px;padding:0 20px;min-height:44px;transition:background .15s}
+.lesson-row-head{display:flex;align-items:center;gap:14px;padding:0 20px;height:44px;box-sizing:border-box;transition:background .15s}
 .lesson-row.expandable:hover .lesson-row-head{background:transparent}
 .lesson-row.expandable:hover .lesson-row-head .l-name,.lesson-row.expandable:hover .lesson-row-head .l-arr{color:var(--blue)}
 .lesson-expand{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(0.4,0,0.2,1)}
@@ -468,7 +468,7 @@ const MODULES = [
       {n:'4.8',title:'Claude Works with You on Slides, Spreadsheets, and Contract Redlines',url:'module-4/lesson-4-8.html'},
     ]},
   { key:'mod5', label:'Module 5', title:'LEAD GENERATION MACHINE',
-    locked:'images/modules/m6-locked.png', unlocked:'images/modules/mod5-unlocked.png',
+    locked:'images/modules/mod5-locked.png', unlocked:'images/modules/mod5-unlocked.png',
     url:'module-5/intro.html', badge:'pipeline_inventor',
     next:{ mod:'Module 5', title:'Getting Started with Research in Claude.ai', url:'module-5/lesson-5-1.html' },
     lessons:[
@@ -481,7 +481,7 @@ const MODULES = [
       {n:'5.7',title:'Claude Code Just Changed Lead Generation Forever',url:'module-5/lesson-5-7.html'},
     ]},
   { key:'mod6', label:'Module 6', title:'CLIENT READY',
-    locked:'images/modules/mod6-locked.png', unlocked:'images/modules/m6-challenge.png',
+    locked:'images/modules/mod6-locked.png', unlocked:'images/modules/mod6-unlocked.png',
     url:'module-6/intro.html', badge:'operator',
     next:{ mod:'Module 6', title:'How to Build a $10M Solo AI Business (Zero Code)', url:'module-6/lesson-6-1.html' },
     lessons:[
@@ -628,7 +628,7 @@ function renderModules(s){
           const taItems = l.takeaways.map(t=>`<li>${t}</li>`).join('');
           const row = document.createElement('div');
           row.className = 'lesson-row expandable';
-          row.innerHTML = `<div class="lesson-row-head"><span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">+</span></div><div class="lesson-expand"><div class="le-inner">${notesBlock}<div class="le-lbl">Key Takeaways</div><ul class="le-ta">${taItems}</ul><div class="le-goto"><a href="${l.url}">Go to Lesson →</a></div></div></div>`;
+          row.innerHTML = `<div class="lesson-row-head"><span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">+</span></div><div class="lesson-expand"><div class="le-inner">${notesBlock}<div class="le-goto"><a href="${l.url}">Go to Lesson →</a></div></div></div>`;
           row.querySelector('.lesson-row-head').addEventListener('click',e=>{
             e.stopPropagation();
             const exp=row.querySelector('.lesson-expand');
