@@ -119,7 +119,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .bonus-card .card-status{background:rgba(160,120,0,0.1)!important;border-color:rgba(160,120,0,0.28)!important;color:#a07820!important;z-index:2;top:50%;transform:translateY(-50%)}
 .module-card.next-up{animation:next-up-pulse 3.5s ease-in-out infinite}
 .module-card.next-up:hover{animation-play-state:paused}
-@keyframes next-up-pulse{0%,100%{border-color:rgba(0,200,255,0.08);box-shadow:0 0 0 rgba(0,200,255,0)}50%{border-color:rgba(0,200,255,0.55);box-shadow:0 0 24px rgba(0,200,255,0.15)}}
+@keyframes next-up-pulse{0%,100%{border-color:rgba(0,200,255,0.1);box-shadow:0 0 0 rgba(0,200,255,0)}50%{border-color:rgba(0,200,255,0.7);box-shadow:0 0 36px rgba(0,200,255,0.35)}}
 .continue-btn.pulsing{animation:continue-glow 3.5s ease-in-out infinite}
 @keyframes continue-glow{0%,100%{border-color:rgba(0,200,255,0.18);box-shadow:none}50%{border-color:rgba(0,200,255,0.55);box-shadow:0 0 24px rgba(0,200,255,0.15)}}
 .achievements-section{margin-bottom:40px}
@@ -385,7 +385,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         </svg>
       </div>
       <div class="machine-activate">
-        <a href="machine/input.html" class="activate-btn" id="activate-btn" data-no-transit onclick="machineRestoreTransit(event)">RESTORE</a>
+        <a href="machine/entry.html" class="activate-btn" id="activate-btn" data-no-transit onclick="machineRestoreTransit(event)">RESTORE</a>
       </div>
     </div>
   </div>
@@ -627,7 +627,18 @@ function renderModules(s){
       const sfxFile=pickPower();
       playS(sfxFile,0.1);
       localStorage.setItem('nexus_sfx_nav',JSON.stringify({file:sfxFile,ts:Date.now()}));
-      setTimeout(()=>{ window.location.href = m.url; },60);
+      var dest;
+      if(isComplete){
+        dest=m.next.url;
+      } else {
+        var last=getLastPage();
+        if(last && urlToModuleKey(last.url)===m.key){
+          dest=last.url;
+        } else {
+          dest=m.next.url;
+        }
+      }
+      setTimeout(()=>{ window.location.href = dest; },60);
     });
     wrap.appendChild(card);
     if(hasLessons){
@@ -795,39 +806,7 @@ function machineRestoreTransit(e){
       var iv=setInterval(function(){ a.volume=Math.max(0,a.volume-orig/steps); if(a.volume<=0){clearInterval(iv);a.pause();} },25);
     }
   });
-  playS('audio/sfx/decrypting-noise.wav', 0.1);
-  const ov=document.getElementById('nx-overlay');
-  const fill=document.getElementById('nx-fill');
-  const pct=document.getElementById('nx-pct');
-  const status=document.getElementById('nx-status');
-  fill.style.background='#ff4422';
-  fill.style.boxShadow='0 0 8px rgba(255,68,34,0.9),0 0 18px rgba(255,68,34,0.4)';
-  pct.style.color='rgba(255,100,60,0.55)';
-  status.style.color='rgba(255,100,60,0.38)';
-  ov.style.transition='none';
-  ov.style.opacity='1';
-  ov.classList.remove('gone');
-  ov.classList.add('blocking');
-  requestAnimationFrame(function(){ ov.style.transition=''; ov.style.opacity=''; });
-  fill.style.width='0%';
-  pct.textContent='0%';
-  status.textContent='DECRYPTING';
-  const kfs=[[0,0],[8,800],[18,1800],[19,2600],[45,3500],[80,4500],[100,5000]];
-  const labels=['DECRYPTING','ACCESSING CORE','INITIALIZING'];
-  let start=null,kfi=0;
-  function tick(ts){
-    if(!start) start=ts;
-    const el=ts-start;
-    status.textContent=labels[Math.min(Math.floor(el/1667),labels.length-1)];
-    while(kfi<kfs.length-1&&el>=kfs[kfi+1][1]) kfi++;
-    const c=kfs[kfi],n=kfs[Math.min(kfi+1,kfs.length-1)];
-    const p=c===n?c[0]:c[0]+(n[0]-c[0])*Math.min(1,(el-c[1])/(n[1]-c[1]));
-    fill.style.width=p.toFixed(1)+'%';
-    pct.textContent=Math.round(p)+'%';
-    if(el<5000) requestAnimationFrame(tick);
-    else{ fill.style.width='100%';pct.textContent='100%';setTimeout(function(){window.location.href='machine/input.html';},120); }
-  }
-  requestAnimationFrame(tick);
+  window.location.href='machine/entry.html';
 }
 
 function unlockModule(key){

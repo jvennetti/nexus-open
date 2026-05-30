@@ -19,14 +19,11 @@
     return el;
   });
 
-  // ── Overlay DOM ── (reuse static overlay if already present in HTML)
-  var ov=document.getElementById('nx-overlay');
-  if(!ov){
-    ov=document.createElement('div');
-    ov.id='nx-overlay';
-    document.body.insertBefore(ov,document.body.firstChild);
-  }
-  ov.innerHTML='<div class="nx-st" id="nx-status">LOADING</div><div class="nx-bar-wrap"><div class="nx-bar-fill" id="nx-fill"></div></div><div class="nx-pc" id="nx-pct">0%</div>';
+  // ── Overlay DOM ──
+  var ov=document.createElement('div');
+  ov.id='nx-overlay';
+  ov.innerHTML='<div class="nx-st" id="nx-status"></div><div class="nx-bar-wrap"><div class="nx-bar-fill" id="nx-fill"></div></div><div class="nx-pc" id="nx-pct"></div>';
+  document.body.insertBefore(ov,document.body.firstChild);
 
   var fill=document.getElementById('nx-fill');
   var pct=document.getElementById('nx-pct');
@@ -88,6 +85,19 @@
   // ── Transition out ──
   function runTransition(href,skipSound){
     if(window.nxSmFadeOut) window.nxSmFadeOut(2);
+    (function(){
+      var iframes=document.querySelectorAll('iframe[src*="youtube.com"],iframe[src*="youtube-nocookie.com"]');
+      if(!iframes.length) return;
+      var steps=30,i=0;
+      var iv=setInterval(function(){
+        i++;
+        var vol=Math.max(0,Math.round(100*(1-i/steps)));
+        [].forEach.call(iframes,function(fr){
+          try{ fr.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[vol]}),'*'); }catch(e){}
+        });
+        if(i>=steps) clearInterval(iv);
+      },100);
+    })();
     ov.classList.remove('gone');
     ov.classList.add('blocking');
     fill.style.width='0%';
@@ -231,7 +241,7 @@
     }
     function _smRenderOff(){
       _smBtn.removeAttribute('data-on');
-      _smBtn.innerHTML='<span class="sm-icon">♪</span><span class="sm-lbl">Study music</span>'+_smDotsHTML();
+      _smBtn.innerHTML='<span class="sm-icon">♪</span><span class="sm-lbl">Want study music?</span>';
       _smBtn.onclick=function(){_smCtxInit();_smPlay();_smBeep(true);_smRenderOn();};
     }
     function _smRenderOn(){
@@ -242,13 +252,11 @@
       _smBtn.querySelector('.sm-next').addEventListener('click',function(e){e.stopPropagation();_smSkip(1);});
       _smBtn.querySelector('.sm-off').addEventListener('click',function(e){e.stopPropagation();_smStop();_smBeep(false);_smRenderOff();});
     }
-    _smRenderOn();
-    setTimeout(function(){_smCtxInit();_smPlay();},80);
+    _smRenderOff();
     window.addEventListener('pageshow',function(e){
       if(!e.persisted) return;
       _smTrk=Math.floor(Math.random()*4);
-      _smBtn.querySelectorAll('.sm-dot').forEach(function(d,i){d.className='sm-dot'+(i===_smTrk?' sm-dot-on':'');});
-      setTimeout(function(){_smCtxInit();_smPlay();},80);
+      _smRenderOff();
     });
     // Background-preload all tracks after page settles
     setTimeout(function(){[0,1,2,3].forEach(function(i){_smFetch(i,function(){});});},3000);
