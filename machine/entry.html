@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>NEXUS — Accessing Core</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.15) 3px,rgba(0,0,0,0.15) 4px);pointer-events:none;z-index:1}
+#entry-status{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.45em;color:rgba(255,100,60,0.38);text-transform:uppercase;position:relative;z-index:2}
+#entry-bar-wrap{width:240px;height:1px;background:rgba(255,68,34,0.1);position:relative;z-index:2}
+#entry-fill{position:absolute;left:0;top:0;height:1px;width:0%;background:#ff4422;box-shadow:0 0 8px rgba(255,68,34,0.9),0 0 18px rgba(255,68,34,0.4)}
+#entry-pct{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;color:rgba(255,100,60,0.55);position:relative;z-index:2}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="entry-status">DECRYPTING</div>
+<div id="entry-bar-wrap"><div id="entry-fill"></div></div>
+<div id="entry-pct">0%</div>
+<script>
+function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});}
+function pickPower(){return '../audio/sfx/power-on-'+Math.ceil(Math.random()*3)+'.mp3';}
+playS(pickPower(),0.1);
+setTimeout(function(){playS('../audio/sfx/decrypting-noise.wav',0.1);},200);
+var fill=document.getElementById('entry-fill');
+var status=document.getElementById('entry-status');
+var pct=document.getElementById('entry-pct');
+var kfs=[[0,0],[8,800],[18,1800],[19,2600],[45,3500],[80,4500],[100,5000]];
+var labels=['DECRYPTING','ACCESSING CORE','INITIALIZING'];
+var start=null,kfi=0;
+function tick(ts){
+  if(!start) start=ts;
+  var el=ts-start;
+  status.textContent=labels[Math.min(Math.floor(el/1667),labels.length-1)];
+  while(kfi<kfs.length-1&&el>=kfs[kfi+1][1]) kfi++;
+  var c=kfs[kfi],n=kfs[Math.min(kfi+1,kfs.length-1)];
+  var p=c===n?c[0]:c[0]+(n[0]-c[0])*Math.min(1,(el-c[1])/(n[1]-c[1]));
+  fill.style.width=p.toFixed(1)+'%';
+  pct.textContent=Math.round(p)+'%';
+  if(el<5000) requestAnimationFrame(tick);
+  else{ fill.style.width='100%';pct.textContent='100%';setTimeout(function(){window.location.href='input.html';},120); }
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
