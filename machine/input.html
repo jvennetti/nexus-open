@@ -490,7 +490,7 @@ const CODES={operator:'76xJFp*w!W3*'};
 const OPS=['operator'];
 const confirmed={operator:false};
 const STORAGE='nexus_machine_inputs';
-function playS(src,vol){if(vol===undefined)vol=0.4;const a=new Audio(src);a.volume=vol;a.play().catch(function(){});return a;}
+function playS(src,vol){if(vol===undefined)vol=0.4;const a=new Audio(src);a.volume=vol*(window.nxVol||1);a.play().catch(function(){});return a;}
 function pickPower(){return '../audio/sfx/power-on-'+Math.ceil(Math.random()*3)+'.mp3';}
 
 function save(){
@@ -596,7 +596,7 @@ load();
       _gain=_ctx.createGain();_gain.gain.value=VOL;_gain.connect(_ctx.destination);
       fetch('../audio/music/machine-ambient.wav').then(function(r){return r.arrayBuffer();})
         .then(function(ab){return _ctx.decodeAudioData(ab);})
-        .then(function(buf){_buf=buf;if(_on)go();}).catch(function(){});
+        .then(function(buf){_buf=buf;if(_on){if(_ctx.state==='running')go();else _ctx.resume().then(function(){if(!_src)go();}).catch(function(){});}}).catch(function(){});
     }
     return _ctx;
   }
@@ -607,8 +607,8 @@ load();
   }
   function start(){
     var c=ctx();_on=true;
-    if(c.state==='suspended')c.resume().then(function(){go();});
-    else go();
+    if(c.state==='suspended')c.resume().then(function(){if(!_src)go();}).catch(function(){});
+    else if(!_src)go();
   }
   window._machineAmb={
     get paused(){return !_on||!_ctx||_ctx.state!=='running';},

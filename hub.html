@@ -160,7 +160,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   .card-overlay{padding:10px 14px}
   .bonus-card{aspect-ratio:6/1 !important}
   .bonus-card .card-title{font-size:13px}
-  .bonus-card .bv-sub{font-size:9px;letter-spacing:0.18em}
+  .bonus-card .bv-sub{display:none !important}
   .lesson-toggle{font-size:8px;letter-spacing:0.18em;padding:10px 14px}
   .lesson-row{padding:10px 12px;gap:10px}
   .lesson-row-head{padding:0 12px;height:40px}
@@ -935,7 +935,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-function playS(src,vol=0.4){const a=new Audio(src);a.volume=vol;a.play().catch(()=>{});return a;}
+function playS(src,vol=0.4){const a=new Audio(src);a.volume=vol*(window.nxVol||1);a.play().catch(()=>{});return a;}
 function pickPower(){return `audio/sfx/power-on-${Math.ceil(Math.random()*3)}.mp3`;}
 const hubMusic=new Audio('audio/music/hub-theme.mp3');
 hubMusic.loop=true;(window.__bgAudio=window.__bgAudio||[]).push(hubMusic);
