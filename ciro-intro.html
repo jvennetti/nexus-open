@@ -465,6 +465,28 @@ html,body{
   50%{opacity:0.1}
 }
 
+@media(max-width:768px){
+  html,body{overflow-y:auto !important;height:auto !important}
+  .viewport{grid-template-columns:1fr !important;grid-template-rows:auto 1fr !important;height:auto !important;min-height:100vh !important;overflow-y:auto !important}
+  .ciro-panel{height:44vh !important;min-height:220px !important;border-right:none !important;border-bottom:1px solid rgba(0,200,255,0.12) !important}
+  .ciro-figure{margin-bottom:44px !important}
+  #ciro-svg{width:130px !important;height:auto !important}
+  .power-zone{bottom:14px !important}
+  #power-btn{width:58px !important;height:58px !important}
+  .tx-panel{padding:24px 20px 36px !important;overflow-y:auto !important}
+  .tx-panel::before{display:none !important}
+  .tx-wordmark{font-size:8px !important;margin-bottom:18px !important}
+  .tx-name{font-size:18px !important;letter-spacing:3px !important}
+  .tx-status-text{font-size:8px !important}
+  .tx-line{font-size:12px !important;line-height:1.75 !important;margin-bottom:2px !important}
+  .boot-bar-wrap{margin-top:10px !important}
+  #nexus-btn{padding:12px 20px !important;font-size:9px !important;width:100% !important;justify-content:center !important;box-sizing:border-box !important}
+  .begin-btn{font-size:10px !important;padding:11px 20px !important;width:100% !important;justify-content:center !important;box-sizing:border-box !important}
+  .hud-tl{font-size:6px !important;top:10px !important;left:10px !important}
+  .hud-br{font-size:6px !important;bottom:10px !important;right:10px !important}
+  .floor-grid,.floor-line,.ciro-shadow{display:none !important}
+}
+
 </style>
 </head>
 <body>
@@ -633,7 +655,7 @@ let bootStarted   = false;
 let bg            = null;
 
 function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
-function playS(src,vol=0.4){const a=new Audio(src);a.volume=vol;a.play().catch(()=>{});return a;}
+function playS(src,vol=0.4){const a=new Audio(src);a.volume=vol*(window.nxVol||1);a.play().catch(()=>{});return a;}
 function pickPower(){return `audio/sfx/power-on-${Math.ceil(Math.random()*3)}.mp3`;}
 
 function setDotColor(color){
