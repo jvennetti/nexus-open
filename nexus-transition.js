@@ -241,6 +241,12 @@
     }
     _smRenderOn();
     setTimeout(function(){_smCtxInit();_smPlay();},80);
+    window.addEventListener('pageshow',function(e){
+      if(!e.persisted) return;
+      _smTrk=Math.floor(Math.random()*4);
+      _smBtn.querySelectorAll('.sm-dot').forEach(function(d,i){d.className='sm-dot'+(i===_smTrk?' sm-dot-on':'');});
+      setTimeout(function(){_smCtxInit();_smPlay();},80);
+    });
     // Background-preload all tracks after page settles
     setTimeout(function(){[0,1,2,3].forEach(function(i){_smFetch(i,function(){});});},3000);
     document.body.appendChild(_smBtn);
