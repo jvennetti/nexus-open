@@ -116,8 +116,10 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .bonus-card .bv-divider{width:1px;height:24px;background:rgba(180,140,0,0.25);flex-shrink:0}
 .bonus-card .bv-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.28em;color:rgba(180,140,0,0.55);text-transform:uppercase;white-space:nowrap}
 .bonus-card .card-status{background:rgba(160,120,0,0.1)!important;border-color:rgba(160,120,0,0.28)!important;color:#a07820!important;z-index:2;top:50%;transform:translateY(-50%)}
-.module-card.newest-complete{animation:mod-done-pulse 4s ease-in-out infinite}
-@keyframes mod-done-pulse{0%,100%{box-shadow:0 0 0 rgba(0,200,255,0)}50%{box-shadow:0 0 24px rgba(0,200,255,0.28)}}
+.module-card.next-up{animation:next-up-pulse 3.5s ease-in-out infinite}
+@keyframes next-up-pulse{0%,100%{box-shadow:0 0 0 rgba(0,200,255,0)}50%{box-shadow:0 0 30px rgba(0,200,255,0.4)}}
+.continue-btn.pulsing{animation:continue-glow 3.5s ease-in-out infinite}
+@keyframes continue-glow{0%,100%{border-color:rgba(0,200,255,0.18);box-shadow:none}50%{border-color:rgba(0,200,255,0.55);box-shadow:0 0 24px rgba(0,200,255,0.15)}}
 .achievements-section{margin-bottom:40px}
 .badges-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
 .badge-item{display:flex;flex-direction:column;align-items:center;text-align:center;transition:all 0.4s ease}
@@ -595,6 +597,7 @@ function renderContinue(s){
   document.getElementById('continue-mod-tag').textContent = found.label;
   document.getElementById('continue-lesson-title').textContent = title;
   document.getElementById('continue-btn').href = url;
+  document.getElementById('continue-btn').classList.add('pulsing');
 }
 
 function renderModules(s){
@@ -609,7 +612,7 @@ function renderModules(s){
     wrap.className = 'module-wrap';
     const card = document.createElement('div');
     card.className = 'module-card'+(isAccessible?' unlocked':'')+(hasLessons?' has-lessons':'')+(isComplete?' complete':'');
-    moduleCards.push({card, isComplete});
+    moduleCards.push({card, isAccessible, isComplete});
     const imgSrc = isAccessible ? m.unlocked : m.locked;
     card.innerHTML = `
       <img src="${imgSrc}" alt="${m.title}" loading="lazy">
@@ -662,8 +665,8 @@ function renderModules(s){
     }
     g.appendChild(wrap);
   });
-  const lastCI = moduleCards.reduce((acc,{isComplete},idx)=>isComplete?idx:acc,-1);
-  if(lastCI>=0) moduleCards[lastCI].card.classList.add('newest-complete');
+  const nextUpIdx = moduleCards.findIndex(({isAccessible,isComplete})=>isAccessible&&!isComplete);
+  if(nextUpIdx>=0) moduleCards[nextUpIdx].card.classList.add('next-up');
   const bv = document.createElement('div');
   bv.className = 'module-card unlocked bonus-card';
   bv.innerHTML = `
