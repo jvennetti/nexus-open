@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1280">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXUS Academy — The Machine</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -275,6 +275,21 @@ body::after{
 .hub-return-link:hover{color:rgba(0,200,255,0.6);}
 .reset-btn{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:10;background:none;border:1px solid rgba(255,255,255,0.05);border-radius:4px;color:rgba(255,255,255,0.1);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;padding:9px 20px;cursor:pointer;text-transform:uppercase;transition:all 0.2s;white-space:nowrap}
 .reset-btn:hover{border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.2)}
+@media(max-width:768px){
+  .auth-panel{width:94vw;min-width:0}
+  .panel-topbar{padding:10px 16px}
+  .panel-body{padding:22px 16px 24px}
+  .warning-title{margin-bottom:16px}
+  .wt-sub{font-size:12px !important}
+  .ops-stack{gap:12px}
+  .op-slot{gap:10px}
+  .slot-pill{padding:10px 14px;gap:8px}
+  .op-input{font-size:15px;letter-spacing:0.15em}
+  .submit-row{margin-top:22px}
+  .submit-btn{width:100%;padding:14px;font-size:11px;letter-spacing:3px}
+  .hub-return-link{font-size:11px;letter-spacing:0.2em;margin-top:8px}
+  .reset-btn{font-size:8px;padding:8px 16px;bottom:16px}
+}
 </style>
 </head>
 <body>
