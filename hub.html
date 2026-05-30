@@ -543,7 +543,7 @@ function renderCiro(s){
     localStorage.setItem('nexus_hub_visited_'+OPERATOR,'true');
     document.getElementById('ciro-text').innerHTML = '';
   } else if(localStorage.getItem('nexus_machine_activated')){
-    document.getElementById('ciro-text').innerHTML = `You have completed NEXUS Academy. Review the lessons whenever you need to. The system is yours now. Remember the code: <strong>Nexus</strong>.`;
+    document.getElementById('ciro-text').innerHTML = `You have completed NEXUS Academy. Review the lessons whenever you need to. The system is yours now.`;
   } else {
     document.getElementById('ciro-text').innerHTML = CIRO_LINES[Math.min(done, CIRO_LINES.length-1)];
   }
