@@ -677,7 +677,7 @@ function renderModules(s){
         <div class="card-title">${m.title}</div>
       </div>
       <div class="card-status ${isAccessible?'unlocked-tag':'locked-tag'}">${isComplete?'COMPLETE':isAccessible?'UNLOCKED':'LOCKED'}</div>`;
-    card.addEventListener('mouseenter', function(){_playSfx(_sfxHover);});
+    if(isAccessible) card.addEventListener('mouseenter', function(){_playSfx(_sfxHover);});
     if(isAccessible) card.addEventListener('click', ()=>{
       const sfxFile=pickPower();
       playS(sfxFile,0.1);
