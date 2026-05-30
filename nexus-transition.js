@@ -84,6 +84,7 @@
 
   // ── Transition out ──
   function runTransition(href,skipSound){
+    if(window.nxSmFadeOut) window.nxSmFadeOut(2);
     ov.classList.remove('gone');
     ov.classList.add('blocking');
     fill.style.width='0%';
@@ -197,7 +198,7 @@
       _smFetch(_smTrk,function(buf){
         if(!buf) return;
         _smStartNode(buf,buf.duration*(roll===0?0:roll===1?1/3:2/3));
-        _smFadeIn(3);
+        _smFadeIn(2);
       });
     }
     function _smStop(){
@@ -208,6 +209,13 @@
       _smGain.gain.linearRampToValueAtTime(0,t+0.5);
       setTimeout(function(){if(_smSrc){try{_smSrc.stop();}catch(e){}}_smSrc=null;},600);
     }
+    window.nxSmFadeOut=function(sec){
+      if(!_smCtx||!_smSrc) return;
+      var t=_smCtx.currentTime;
+      _smGain.gain.cancelScheduledValues(t);
+      _smGain.gain.setValueAtTime(_smGain.gain.value,t);
+      _smGain.gain.linearRampToValueAtTime(0,t+(sec||2));
+    };
     function _smSkip(dir){
       _smTrk=(_smTrk+dir+4)%4;
       sessionStorage.setItem('nexus_sm_track',String(_smTrk));
