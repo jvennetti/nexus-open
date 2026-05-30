@@ -119,7 +119,7 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 </div>
 
 <script>
-const _compMusic=new Audio('../audio/music/module-complete.mp3');_compMusic.loop=true;(window.__bgAudio=window.__bgAudio||[]).push(_compMusic);_compMusic.volume=0.4;_compMusic.play().catch(function(){document.addEventListener('click',function h(){_compMusic.play().catch(function(){});document.removeEventListener('click',h);});});window.addEventListener('pageshow',function(e){if(e.persisted)_compMusic.play().catch(function(){});});
+const _compMusic=new Audio('../audio/music/module-complete.mp3');_compMusic.loop=true;(window.__bgAudio=window.__bgAudio||[]).push(_compMusic);_compMusic.volume=0.4;_compMusic.play().catch(function(){var _h=function(){_compMusic.play().catch(function(){});document.removeEventListener('click',_h);document.removeEventListener('touchstart',_h);};document.addEventListener('click',_h);document.addEventListener('touchstart',_h,{passive:true});});window.addEventListener('pageshow',function(e){if(e.persisted)_compMusic.play().catch(function(){});});
 const OPERATOR   = localStorage.getItem('nexus_current_operator')||'operator';
 const MODULE_KEY = 'mod4';
 const BADGE_KEY  = 'architect';
@@ -304,7 +304,7 @@ function openStudyDoc(){
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(function(){URL.revokeObjectURL(url);},60000);
 }
-function playS(s,v){var a=new Audio(s);a.volume=v===undefined?0.4:v;a.play().catch(function(){});return a;}
+function playS(s,v){var a=new Audio(s);a.volume=(v===undefined?0.4:v)*(window.nxVol||1);a.play().catch(function(){});return a;}
 </script>
 <script>(function(){var op=localStorage.getItem('nexus_current_operator')||'operator';var hu='../hub.html';document.querySelectorAll('a[href*="hub.html"]').forEach(function(a){a.href=hu;});})();</script>
 <script src="../nexus-transition.js"></script>
