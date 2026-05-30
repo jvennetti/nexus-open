@@ -19,11 +19,14 @@
     return el;
   });
 
-  // ── Overlay DOM ──
-  var ov=document.createElement('div');
-  ov.id='nx-overlay';
+  // ── Overlay DOM ── (reuse static overlay if already present in HTML)
+  var ov=document.getElementById('nx-overlay');
+  if(!ov){
+    ov=document.createElement('div');
+    ov.id='nx-overlay';
+    document.body.insertBefore(ov,document.body.firstChild);
+  }
   ov.innerHTML='<div class="nx-st" id="nx-status">LOADING</div><div class="nx-bar-wrap"><div class="nx-bar-fill" id="nx-fill"></div></div><div class="nx-pc" id="nx-pct">0%</div>';
-  document.body.insertBefore(ov,document.body.firstChild);
 
   var fill=document.getElementById('nx-fill');
   var pct=document.getElementById('nx-pct');
