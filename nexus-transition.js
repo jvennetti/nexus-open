@@ -134,14 +134,42 @@
 
   window.nxTransit=runTransition;
 
-  // ── Study music toggle (lesson + challenge pages) ──
+  // ── Study music (lesson + challenge pages) ──
   if(/\/lesson-\d+-\d+/.test(window.location.pathname)||/\/module-\d+\/challenge/.test(window.location.pathname)){
     var _smCSS=document.createElement('style');
-    _smCSS.textContent='#nx-sm-btn{position:fixed;bottom:24px;right:24px;display:flex;align-items:center;gap:10px;background:rgba(10,18,34,0.96);border:1px solid rgba(0,200,255,0.28);border-radius:28px;padding:11px 20px 11px 16px;cursor:pointer;z-index:980;transition:all .25s;user-select:none;backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 0 rgba(0,200,255,0);}#nx-sm-btn:hover{border-color:rgba(0,200,255,0.55);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 16px rgba(0,200,255,0.18);}#nx-sm-btn[data-on]{border-color:rgba(0,200,255,0.6);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 22px rgba(0,200,255,0.3);animation:sm-pulse 2.4s ease-in-out infinite;}@keyframes sm-pulse{0%,100%{box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 16px rgba(0,200,255,0.2);}50%{box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 30px rgba(0,200,255,0.38);}}.sm-icon{font-size:18px;line-height:1;color:#4a7a9a;transition:color .25s;flex-shrink:0;}#nx-sm-btn[data-on] .sm-icon{color:#00c8ff;}.sm-text{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#4a7a9a;white-space:nowrap;transition:color .25s;line-height:1.3;}#nx-sm-btn:hover .sm-text{color:#8ab8cc;}#nx-sm-btn[data-on] .sm-text{color:#00c8ff;}';
+    _smCSS.textContent='#nx-sm-btn{position:fixed;bottom:24px;right:24px;display:flex;align-items:center;gap:8px;background:rgba(10,18,34,0.96);border:1px solid rgba(0,200,255,0.28);border-radius:28px;padding:10px 16px;cursor:pointer;z-index:980;transition:border-color .25s,box-shadow .25s;user-select:none;backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,0.45);}#nx-sm-btn[data-on]{cursor:default;border-color:rgba(0,200,255,0.6);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 22px rgba(0,200,255,0.3);animation:sm-pulse 2.4s ease-in-out infinite;}#nx-sm-btn:not([data-on]):hover{border-color:rgba(0,200,255,0.55);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 16px rgba(0,200,255,0.18);}@keyframes sm-pulse{0%,100%{box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 16px rgba(0,200,255,0.2);}50%{box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 30px rgba(0,200,255,0.38);}}.sm-icon{font-size:18px;line-height:1;color:#4a7a9a;transition:color .25s;flex-shrink:0;}#nx-sm-btn[data-on] .sm-icon{color:#00c8ff;}.sm-lbl{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#4a7a9a;white-space:nowrap;transition:color .25s;line-height:1.3;}#nx-sm-btn:not([data-on]):hover .sm-lbl{color:#8ab8cc;}.sm-dots{display:flex;align-items:center;gap:5px;margin:0 2px;}.sm-dot{width:5px;height:5px;border-radius:50%;background:rgba(0,200,255,0.15);transition:background .25s,transform .25s;flex-shrink:0;}.sm-dot.sm-dot-on{background:#00c8ff;transform:scale(1.35);}.sm-arr{background:none;border:none;padding:2px 6px;cursor:pointer;color:rgba(0,200,255,0.4);font-size:17px;line-height:1;transition:color .2s;flex-shrink:0;display:flex;align-items:center;font-family:"IBM Plex Mono",monospace;}.sm-arr:hover{color:#00c8ff;}.sm-off{background:none;border:none;padding:2px 0 2px 10px;cursor:pointer;color:rgba(0,200,255,0.25);font-size:11px;line-height:1;transition:color .2s;border-left:1px solid rgba(0,200,255,0.15);margin-left:2px;flex-shrink:0;}.sm-off:hover{color:rgba(220,70,70,0.9);}';
     document.head.appendChild(_smCSS);
-    var _smAudio=new Audio(_base+'audio/music/study-music.mp3');
-    _smAudio.loop=true;
-    _smAudio.volume=0;
+    // Web Audio API — gapless looping, 4 tracks
+    var _smCtx=null,_smGain=null,_smSrc=null,_smBufs=[null,null,null,null];
+    var _smTrk=Math.min(3,Math.max(0,parseInt(sessionStorage.getItem('nexus_sm_track')||'0')));
+    var _smFiles=[
+      _base+'audio/music/study-music.mp3',
+      _base+'audio/music/study-music_2.mp3',
+      _base+'audio/music/study-music_3.mp3',
+      _base+'audio/music/study-music_4.mp3'
+    ];
+    function _smCtxInit(){
+      if(!_smCtx){
+        _smCtx=new(window.AudioContext||window.webkitAudioContext)();
+        _smGain=_smCtx.createGain();
+        _smGain.gain.value=0;
+        _smGain.connect(_smCtx.destination);
+      }
+      if(_smCtx.state==='suspended') _smCtx.resume().catch(function(){});
+    }
+    function _smFetch(i,cb){
+      if(_smBufs[i]){cb(_smBufs[i]);return;}
+      _smCtxInit();
+      fetch(_smFiles[i]).then(function(r){return r.arrayBuffer();}).then(function(ab){return _smCtx.decodeAudioData(ab);}).then(function(buf){_smBufs[i]=buf;cb(buf);}).catch(function(){cb(null);});
+    }
+    function _smStartNode(buf,offset){
+      if(!buf) return;
+      if(_smSrc){try{_smSrc.stop();}catch(e){}}_smSrc=null;
+      var n=_smCtx.createBufferSource();
+      n.buffer=buf;n.loop=true;n.connect(_smGain);
+      n.start(0,(offset||0)%buf.duration);
+      _smSrc=n;
+    }
     function _smBeep(on){
       try{
         var ac=new(window.AudioContext||window.webkitAudioContext)();
@@ -154,56 +182,70 @@
         setTimeout(function(){ac.close();},300);
       }catch(e){}
     }
+    function _smFadeIn(sec){
+      var t=_smCtx.currentTime;
+      _smGain.gain.cancelScheduledValues(t);
+      _smGain.gain.setValueAtTime(0,t);
+      _smGain.gain.linearRampToValueAtTime(0.6,t+(sec||3));
+    }
     function _smPlay(){
-      function doStart(){
-        var dur=_smAudio.duration||0;
-        var lastRoll=parseInt(sessionStorage.getItem('nexus_sm_last_roll')||'-1');
-        var rolls=[0,1,2].filter(function(r){ return r!==lastRoll; });
-        var roll=rolls[Math.floor(Math.random()*rolls.length)];
-        sessionStorage.setItem('nexus_sm_last_roll',String(roll));
-        if(roll===0||dur<10){
-          _smAudio.currentTime=0;
-          _smAudio.volume=0.6;
-          _smAudio.play().catch(function(){});
-        } else {
-          _smAudio.currentTime=roll===1?dur/3:dur*2/3;
-          _smAudio.volume=0;
-          _smAudio.play().catch(function(){});
-          var t0=Date.now();
-          var fi=setInterval(function(){
-            var p=Math.min((Date.now()-t0)/3000,1);
-            _smAudio.volume=p*0.6;
-            if(p>=1)clearInterval(fi);
-          },50);
-        }
-      }
-      if(_smAudio.readyState>=1){doStart();}
-      else{_smAudio.addEventListener('loadedmetadata',doStart,{once:true});}
+      _smCtxInit();
+      var lastRoll=parseInt(sessionStorage.getItem('nexus_sm_last_roll')||'-1');
+      var pool=[0,1,2].filter(function(r){return r!==lastRoll;});
+      var roll=pool[Math.floor(Math.random()*pool.length)];
+      sessionStorage.setItem('nexus_sm_last_roll',String(roll));
+      _smFetch(_smTrk,function(buf){
+        if(!buf) return;
+        _smStartNode(buf,buf.duration*(roll===0?0:roll===1?1/3:2/3));
+        _smFadeIn(3);
+      });
+    }
+    function _smStop(){
+      if(!_smCtx) return;
+      var t=_smCtx.currentTime;
+      _smGain.gain.cancelScheduledValues(t);
+      _smGain.gain.setValueAtTime(_smGain.gain.value,t);
+      _smGain.gain.linearRampToValueAtTime(0,t+0.5);
+      setTimeout(function(){if(_smSrc){try{_smSrc.stop();}catch(e){}}_smSrc=null;},600);
+    }
+    function _smSkip(dir){
+      _smTrk=(_smTrk+dir+4)%4;
+      sessionStorage.setItem('nexus_sm_track',String(_smTrk));
+      var t=_smCtx.currentTime;
+      _smGain.gain.cancelScheduledValues(t);
+      _smGain.gain.setValueAtTime(_smGain.gain.value,t);
+      _smGain.gain.linearRampToValueAtTime(0,t+0.35);
+      setTimeout(function(){_smFetch(_smTrk,function(buf){if(buf){_smStartNode(buf,0);_smFadeIn(1.5);}});},420);
+      _smBtn.querySelectorAll('.sm-dot').forEach(function(d,i){d.className='sm-dot'+(i===_smTrk?' sm-dot-on':'');});
     }
     var _smBtn=document.createElement('div');
     _smBtn.id='nx-sm-btn';
-    _smBtn.innerHTML='<span class="sm-icon">♪</span><span class="sm-text">Want study music? Click here</span>';
-    var _smTxt=_smBtn.querySelector('.sm-text');
+    function _smDotsHTML(){
+      return '<span class="sm-dots">'+[0,1,2,3].map(function(i){return '<span class="sm-dot'+(i===_smTrk?' sm-dot-on':'')+'"></span>';}).join('')+'</span>';
+    }
+    function _smRenderOff(){
+      _smBtn.removeAttribute('data-on');
+      _smBtn.innerHTML='<span class="sm-icon">♪</span><span class="sm-lbl">Study music</span>'+_smDotsHTML();
+      _smBtn.onclick=function(){_smCtxInit();_smPlay();sessionStorage.setItem('nexus_study_music','1');_smBeep(true);_smRenderOn();};
+    }
+    function _smRenderOn(){
+      _smBtn.setAttribute('data-on','');
+      _smBtn.innerHTML='<button class="sm-arr sm-prev">‹</button><span class="sm-icon">♪</span>'+_smDotsHTML()+'<button class="sm-arr sm-next">›</button><button class="sm-off">✕</button>';
+      _smBtn.onclick=null;
+      _smBtn.querySelector('.sm-prev').addEventListener('click',function(e){e.stopPropagation();_smSkip(-1);});
+      _smBtn.querySelector('.sm-next').addEventListener('click',function(e){e.stopPropagation();_smSkip(1);});
+      _smBtn.querySelector('.sm-off').addEventListener('click',function(e){e.stopPropagation();_smStop();sessionStorage.removeItem('nexus_study_music');_smBeep(false);_smRenderOff();});
+    }
     var isChallenge=/\/module-\d+\/challenge/.test(window.location.pathname);
     if(sessionStorage.getItem('nexus_study_music')==='1'||isChallenge){
-      _smBtn.setAttribute('data-on','');
-      _smTxt.textContent='Study music — on';
-      _smPlay();
       if(isChallenge) sessionStorage.setItem('nexus_study_music','1');
+      _smRenderOn();
+      setTimeout(function(){_smCtxInit();_smPlay();},80);
+    } else {
+      _smRenderOff();
     }
-    _smBtn.addEventListener('click',function(){
-      if(_smBtn.hasAttribute('data-on')){
-        _smAudio.pause();_smBtn.removeAttribute('data-on');
-        _smTxt.textContent='Want study music? Click here';
-        sessionStorage.removeItem('nexus_study_music');
-        _smBeep(false);
-      } else {
-        _smPlay();_smBtn.setAttribute('data-on','');
-        _smTxt.textContent='Study music — on';
-        sessionStorage.setItem('nexus_study_music','1');
-        _smBeep(true);
-      }
-    });
+    // Background-preload all tracks after page settles
+    setTimeout(function(){[0,1,2,3].forEach(function(i){_smFetch(i,function(){});});},3000);
     document.body.appendChild(_smBtn);
   }
 
