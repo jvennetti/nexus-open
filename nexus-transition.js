@@ -135,14 +135,14 @@
 
   window.nxTransit=runTransition;
 
-  // ── Study music (lesson + challenge pages) ──
-  if(/\/lesson-\d+-\d+/.test(window.location.pathname)||/\/module-\d+\/challenge/.test(window.location.pathname)){
+  // ── Study music (challenge pages only) ──
+  if(/\/module-\d+\/challenge/.test(window.location.pathname)){
     var _smCSS=document.createElement('style');
     _smCSS.textContent='#nx-sm-btn{position:fixed;bottom:24px;right:24px;display:flex;align-items:center;gap:8px;background:rgba(10,18,34,0.96);border:1px solid rgba(0,200,255,0.28);border-radius:28px;padding:10px 16px;cursor:pointer;z-index:980;transition:border-color .25s,box-shadow .25s;user-select:none;backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,0.45);}#nx-sm-btn[data-on]{cursor:default;border-color:rgba(0,200,255,0.6);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 22px rgba(0,200,255,0.3);animation:sm-pulse 2.4s ease-in-out infinite;}#nx-sm-btn:not([data-on]):hover{border-color:rgba(0,200,255,0.55);box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 16px rgba(0,200,255,0.18);}@keyframes sm-pulse{0%,100%{box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 16px rgba(0,200,255,0.2);}50%{box-shadow:0 4px 24px rgba(0,0,0,0.45),0 0 30px rgba(0,200,255,0.38);}}.sm-icon{font-size:18px;line-height:1;color:#4a7a9a;transition:color .25s;flex-shrink:0;}#nx-sm-btn[data-on] .sm-icon{color:#00c8ff;}.sm-lbl{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#4a7a9a;white-space:nowrap;transition:color .25s;line-height:1.3;}#nx-sm-btn:not([data-on]):hover .sm-lbl{color:#8ab8cc;}.sm-dots{display:flex;align-items:center;gap:5px;margin:0 2px;}.sm-dot{width:5px;height:5px;border-radius:50%;background:rgba(0,200,255,0.15);transition:background .25s,transform .25s;flex-shrink:0;}.sm-dot.sm-dot-on{background:#00c8ff;transform:scale(1.35);}.sm-arr{background:none;border:none;padding:2px 6px;cursor:pointer;color:rgba(0,200,255,0.4);font-size:17px;line-height:1;transition:color .2s;flex-shrink:0;display:flex;align-items:center;font-family:"IBM Plex Mono",monospace;}.sm-arr:hover{color:#00c8ff;}.sm-off{background:none;border:none;padding:2px 0 2px 10px;cursor:pointer;color:rgba(0,200,255,0.25);font-size:11px;line-height:1;transition:color .2s;border-left:1px solid rgba(0,200,255,0.15);margin-left:2px;flex-shrink:0;}.sm-off:hover{color:rgba(220,70,70,0.9);}';
     document.head.appendChild(_smCSS);
     // Web Audio API — gapless looping, 4 tracks
     var _smCtx=null,_smGain=null,_smSrc=null,_smBufs=[null,null,null,null];
-    var _smTrk=Math.min(3,Math.max(0,parseInt(sessionStorage.getItem('nexus_sm_track')||'0')));
+    var _smTrk=Math.floor(Math.random()*4);
     var _smFiles=[
       _base+'audio/music/study-music.mp3',
       _base+'audio/music/study-music_2.mp3',
@@ -191,13 +191,9 @@
     }
     function _smPlay(){
       _smCtxInit();
-      var lastRoll=parseInt(sessionStorage.getItem('nexus_sm_last_roll')||'-1');
-      var pool=[0,1,2].filter(function(r){return r!==lastRoll;});
-      var roll=pool[Math.floor(Math.random()*pool.length)];
-      sessionStorage.setItem('nexus_sm_last_roll',String(roll));
       _smFetch(_smTrk,function(buf){
         if(!buf) return;
-        _smStartNode(buf,buf.duration*(roll===0?0:roll===1?1/3:2/3));
+        _smStartNode(buf,0);
         _smFadeIn(2);
       });
     }
@@ -218,7 +214,6 @@
     };
     function _smSkip(dir){
       _smTrk=(_smTrk+dir+4)%4;
-      sessionStorage.setItem('nexus_sm_track',String(_smTrk));
       var t=_smCtx.currentTime;
       _smGain.gain.cancelScheduledValues(t);
       _smGain.gain.setValueAtTime(_smGain.gain.value,t);
@@ -234,7 +229,7 @@
     function _smRenderOff(){
       _smBtn.removeAttribute('data-on');
       _smBtn.innerHTML='<span class="sm-icon">♪</span><span class="sm-lbl">Study music</span>'+_smDotsHTML();
-      _smBtn.onclick=function(){_smCtxInit();_smPlay();sessionStorage.setItem('nexus_study_music','1');_smBeep(true);_smRenderOn();};
+      _smBtn.onclick=function(){_smCtxInit();_smPlay();_smBeep(true);_smRenderOn();};
     }
     function _smRenderOn(){
       _smBtn.setAttribute('data-on','');
@@ -242,16 +237,10 @@
       _smBtn.onclick=null;
       _smBtn.querySelector('.sm-prev').addEventListener('click',function(e){e.stopPropagation();_smSkip(-1);});
       _smBtn.querySelector('.sm-next').addEventListener('click',function(e){e.stopPropagation();_smSkip(1);});
-      _smBtn.querySelector('.sm-off').addEventListener('click',function(e){e.stopPropagation();_smStop();sessionStorage.removeItem('nexus_study_music');_smBeep(false);_smRenderOff();});
+      _smBtn.querySelector('.sm-off').addEventListener('click',function(e){e.stopPropagation();_smStop();_smBeep(false);_smRenderOff();});
     }
-    var isChallenge=/\/module-\d+\/challenge/.test(window.location.pathname);
-    if(sessionStorage.getItem('nexus_study_music')==='1'||isChallenge){
-      if(isChallenge) sessionStorage.setItem('nexus_study_music','1');
-      _smRenderOn();
-      setTimeout(function(){_smCtxInit();_smPlay();},80);
-    } else {
-      _smRenderOff();
-    }
+    _smRenderOn();
+    setTimeout(function(){_smCtxInit();_smPlay();},80);
     // Background-preload all tracks after page settles
     setTimeout(function(){[0,1,2,3].forEach(function(i){_smFetch(i,function(){});});},3000);
     document.body.appendChild(_smBtn);
