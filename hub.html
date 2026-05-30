@@ -677,6 +677,7 @@ function renderModules(s){
         <div class="card-title">${m.title}</div>
       </div>
       <div class="card-status ${isAccessible?'unlocked-tag':'locked-tag'}">${isComplete?'COMPLETE':isAccessible?'UNLOCKED':'LOCKED'}</div>`;
+    card.addEventListener('mouseenter', function(){_playSfx(_sfxHover);});
     if(isAccessible) card.addEventListener('click', ()=>{
       const sfxFile=pickPower();
       playS(sfxFile,0.1);
@@ -713,16 +714,19 @@ function renderModules(s){
         row.innerHTML = `<div class="lesson-row-head"><span class="l-num">${l.n}</span><span class="l-name">${l.title}</span><span class="l-arr">+</span></div><div class="lesson-expand"><div class="le-inner">${notesBlock}<div class="le-goto"><a href="${l.url}">Go to Lesson →</a></div></div></div>`;
         row.querySelector('.lesson-row-head').addEventListener('click',e=>{
           e.stopPropagation();
+          _playSfx(_sfxClick);
           const exp=row.querySelector('.lesson-expand');
           const arr=row.querySelector('.l-arr');
           const open=exp.classList.toggle('open');
           arr.textContent=open?'−':'+';
         });
+        row.querySelector('.le-goto a').addEventListener('click',function(){_playSfx(_sfxGoto);});
         inner.appendChild(row);
       });
       tray.appendChild(inner);
       toggle.addEventListener('click', e=>{
         e.stopPropagation();
+        _playSfx(_sfxClick);
         const open = tray.classList.toggle('open');
         toggle.classList.toggle('open', open);
         toggle.querySelector('.tog-arr').textContent = open ? '▲' : '▼';
@@ -744,6 +748,7 @@ function renderModules(s){
       <div class="bv-sub">Extra Lessons</div>
     </div>
     <div class="card-status unlocked-tag">OPEN ACCESS</div>`;
+  bv.addEventListener('mouseenter', function(){_playSfx(_sfxHover);});
   bv.addEventListener('click', ()=>{
     const sfxFile=pickPower();
     playS(sfxFile,0.1);
@@ -937,6 +942,10 @@ document.addEventListener('keydown', function(e) {
 
 function playS(src,vol=0.4){const a=new Audio(src);a.volume=vol*(window.nxVol||1);a.play().catch(()=>{});return a;}
 function pickPower(){return `audio/sfx/power-on-${Math.ceil(Math.random()*3)}.mp3`;}
+var _sfxHover=(function(){var a=new Audio('audio/sfx/menu-select-1.wav');a.preload='auto';return a;})();
+var _sfxGoto=(function(){var a=new Audio('audio/sfx/menu-select-2.wav');a.preload='auto';return a;})();
+var _sfxClick=(function(){var a=new Audio('audio/sfx/menu-select-click.mp3');a.preload='auto';return a;})();
+function _playSfx(a){a.currentTime=0;a.volume=0.5*(window.nxVol||1);a.play().catch(function(){});}
 const hubMusic=new Audio('audio/music/hub-theme.mp3');
 hubMusic.loop=true;(window.__bgAudio=window.__bgAudio||[]).push(hubMusic);
 (function(){
