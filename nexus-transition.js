@@ -157,7 +157,10 @@
     function _smPlay(){
       function doStart(){
         var dur=_smAudio.duration||0;
-        var roll=Math.floor(Math.random()*3);
+        var lastRoll=parseInt(sessionStorage.getItem('nexus_sm_last_roll')||'-1');
+        var rolls=[0,1,2].filter(function(r){ return r!==lastRoll; });
+        var roll=rolls[Math.floor(Math.random()*rolls.length)];
+        sessionStorage.setItem('nexus_sm_last_roll',String(roll));
         if(roll===0||dur<10){
           _smAudio.currentTime=0;
           _smAudio.volume=0.6;
@@ -181,11 +184,12 @@
     _smBtn.id='nx-sm-btn';
     _smBtn.innerHTML='<span class="sm-icon">♪</span><span class="sm-text">Want study music? Click here</span>';
     var _smTxt=_smBtn.querySelector('.sm-text');
-    // Session persistence: music stays on between lesson/challenge pages within same tab
-    if(sessionStorage.getItem('nexus_study_music')==='1'){
+    var isChallenge=/\/module-\d+\/challenge/.test(window.location.pathname);
+    if(sessionStorage.getItem('nexus_study_music')==='1'||isChallenge){
       _smBtn.setAttribute('data-on','');
       _smTxt.textContent='Study music — on';
       _smPlay();
+      if(isChallenge) sessionStorage.setItem('nexus_study_music','1');
     }
     _smBtn.addEventListener('click',function(){
       if(_smBtn.hasAttribute('data-on')){
