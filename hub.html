@@ -312,7 +312,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 
   <div class="continue-section" id="continue-section" style="display:none">
     <div class="section-label">Continue Where You Left Off</div>
-    <a class="continue-btn" id="continue-btn" href="#" onclick="playS(pickPower(),0.1)">
+    <a class="continue-btn" id="continue-btn" href="#">
       <div class="continue-left">
         <div class="continue-label" id="continue-mod-tag">—</div>
         <div class="continue-title" id="continue-lesson-title">—</div>
@@ -652,8 +652,19 @@ function renderContinue(s){
   }
   document.getElementById('continue-mod-tag').textContent = found.label;
   document.getElementById('continue-lesson-title').textContent = title;
-  document.getElementById('continue-btn').href = url;
-  document.getElementById('continue-btn').classList.add('pulsing');
+  const btn = document.getElementById('continue-btn');
+  btn.href = url;
+  btn.classList.add('pulsing');
+  btn.onmouseenter = function(){setTimeout(function(){_playSfx(_sfxHover);},200);};
+  btn.onclick = function(e){
+    e.preventDefault();
+    _playSfx(_sfxClick);
+    const sfxFile=pickPower();
+    playS(sfxFile,0.1);
+    localStorage.setItem('nexus_sfx_nav',JSON.stringify({file:sfxFile,ts:Date.now()}));
+    if(window.nxTransit) window.nxTransit(btn.href,false);
+    else setTimeout(function(){window.location.href=btn.href;},60);
+  };
 }
 
 function renderModules(s){
@@ -679,6 +690,7 @@ function renderModules(s){
       <div class="card-status ${isAccessible?'unlocked-tag':'locked-tag'}">${isComplete?'COMPLETE':isAccessible?'UNLOCKED':'LOCKED'}</div>`;
     if(isAccessible) card.addEventListener('mouseenter', function(){setTimeout(function(){_playSfx(_sfxHover);},200);});
     if(isAccessible) card.addEventListener('click', ()=>{
+      _playSfx(_sfxClick);
       const sfxFile=pickPower();
       playS(sfxFile,0.1);
       localStorage.setItem('nexus_sfx_nav',JSON.stringify({file:sfxFile,ts:Date.now()}));
@@ -693,7 +705,8 @@ function renderModules(s){
           dest=m.next.url;
         }
       }
-      setTimeout(()=>{ window.location.href = dest; },60);
+      if(window.nxTransit) window.nxTransit(dest,false);
+      else setTimeout(()=>{ window.location.href = dest; },60);
     });
     wrap.appendChild(card);
     if(hasLessons){
