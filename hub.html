@@ -677,7 +677,7 @@ function renderModules(s){
         <div class="card-title">${m.title}</div>
       </div>
       <div class="card-status ${isAccessible?'unlocked-tag':'locked-tag'}">${isComplete?'COMPLETE':isAccessible?'UNLOCKED':'LOCKED'}</div>`;
-    if(isAccessible) card.addEventListener('mouseenter', function(){_playSfx(_sfxHover);});
+    if(isAccessible) card.addEventListener('mouseenter', function(){setTimeout(function(){_playSfx(_sfxHover);},200);});
     if(isAccessible) card.addEventListener('click', ()=>{
       const sfxFile=pickPower();
       playS(sfxFile,0.1);
@@ -945,7 +945,7 @@ function pickPower(){return `audio/sfx/power-on-${Math.ceil(Math.random()*3)}.mp
 var _sfxHover=(function(){var a=new Audio('audio/sfx/menu-select-1.wav');a.preload='auto';return a;})();
 var _sfxGoto=(function(){var a=new Audio('audio/sfx/menu-select-2.wav');a.preload='auto';return a;})();
 var _sfxClick=(function(){var a=new Audio('audio/sfx/menu-select-click.mp3');a.preload='auto';return a;})();
-function _playSfx(a){a.currentTime=0;a.volume=0.5*(window.nxVol||1);a.play().catch(function(){});}
+function _playSfx(a){a.currentTime=0;a.volume=0.25*(window.nxVol||1);a.play().catch(function(){});}
 const hubMusic=new Audio('audio/music/hub-theme.mp3');
 hubMusic.loop=true;(window.__bgAudio=window.__bgAudio||[]).push(hubMusic);
 (function(){
