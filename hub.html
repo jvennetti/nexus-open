@@ -659,7 +659,7 @@ function renderContinue(s){
   btn.onclick = function(e){
     e.preventDefault();
     const sfxFile=pickPower();
-    playS(sfxFile,0.1);
+    playS(sfxFile,0.5);
     localStorage.setItem('nexus_sfx_nav',JSON.stringify({file:sfxFile,ts:Date.now()}));
     if(window.nxTransit) window.nxTransit(btn.href,false);
     else setTimeout(function(){window.location.href=btn.href;},60);
@@ -690,7 +690,7 @@ function renderModules(s){
     if(isAccessible) card.addEventListener('mouseenter', function(){setTimeout(function(){_playSfx(_sfxHover);},200);});
     if(isAccessible) card.addEventListener('click', ()=>{
       const sfxFile=pickPower();
-      playS(sfxFile,0.1);
+      playS(sfxFile,0.5);
       localStorage.setItem('nexus_sfx_nav',JSON.stringify({file:sfxFile,ts:Date.now()}));
       var dest;
       if(isComplete){
