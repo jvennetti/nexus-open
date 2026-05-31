@@ -658,7 +658,6 @@ function renderContinue(s){
   btn.onmouseenter = function(){setTimeout(function(){_playSfx(_sfxHover);},200);};
   btn.onclick = function(e){
     e.preventDefault();
-    _playSfx(_sfxClick);
     const sfxFile=pickPower();
     playS(sfxFile,0.1);
     localStorage.setItem('nexus_sfx_nav',JSON.stringify({file:sfxFile,ts:Date.now()}));
@@ -690,7 +689,6 @@ function renderModules(s){
       <div class="card-status ${isAccessible?'unlocked-tag':'locked-tag'}">${isComplete?'COMPLETE':isAccessible?'UNLOCKED':'LOCKED'}</div>`;
     if(isAccessible) card.addEventListener('mouseenter', function(){setTimeout(function(){_playSfx(_sfxHover);},200);});
     if(isAccessible) card.addEventListener('click', ()=>{
-      _playSfx(_sfxClick);
       const sfxFile=pickPower();
       playS(sfxFile,0.1);
       localStorage.setItem('nexus_sfx_nav',JSON.stringify({file:sfxFile,ts:Date.now()}));
