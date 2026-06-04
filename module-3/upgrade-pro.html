@@ -32,6 +32,8 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
   transition:opacity 0.65s ease,transform 0.65s ease;
 }
 .gate-card.show{opacity:1;transform:translateY(0)}
+@keyframes yellowPulse{0%,100%{border-color:rgba(245,196,0,0.2);box-shadow:0 0 20px rgba(245,196,0,0.06)}50%{border-color:rgba(245,196,0,0.65);box-shadow:0 0 40px rgba(245,196,0,0.22),0 0 80px rgba(245,196,0,0.09)}}
+.gate-card.pulsing{animation:yellowPulse 2.5s ease-in-out infinite}
 .chip{
   display:inline-block;font-family:'IBM Plex Mono',monospace;
   font-size:9px;letter-spacing:3px;text-transform:uppercase;
@@ -68,23 +70,16 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 </nav>
 <div class="page-body">
   <div class="gate-card" id="gate-card">
-    <div class="chip">Operator Notice</div>
-    <div class="gate-heading">TIME TO<br>LEVEL UP.</div>
+    <div class="chip">Time to Upgrade</div>
     <div class="gate-divider"></div>
-    <p class="gate-body">
-      The tools ahead — <strong>Cowork, automation, and everything in Module 3 and beyond</strong> — require a paid Claude account.
-    </p>
-    <p class="gate-body">
-      If you're still on the free plan, now is the moment. Upgrade to <strong>Claude Pro</strong> or <strong>Max</strong> before you continue.
-    </p>
-    <p class="gate-note">The free plan got you here. Pro takes you the rest of the way.</p>
+    <p class="gate-body">The lessons ahead require a paid Claude account. Upgrade to <strong>Claude Pro</strong> before you continue.</p>
     <a href="lesson-3-1.html" class="continue-btn">
-      I'm upgraded — Continue <span class="continue-arrow">→</span>
+      Continue <span class="continue-arrow">→</span>
     </a>
   </div>
 </div>
 <script>
-setTimeout(function(){document.getElementById('gate-card').classList.add('show');},150);
+setTimeout(function(){var c=document.getElementById('gate-card');c.classList.add('show');setTimeout(function(){c.classList.add('pulsing');},700);},150);
 (function(){
   var s=new Audio('../audio/music/ciro-intro.mp3');
   s.loop=true;s.volume=0.18;
