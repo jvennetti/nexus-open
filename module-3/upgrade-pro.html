@@ -10,7 +10,7 @@
 :root{
   --bg:#08101f;--card:#0d1628;
   --y:#F5C400;--y-dim:rgba(245,196,0,0.07);--y-border:rgba(245,196,0,0.28);--y-glow:rgba(245,196,0,0.12);
-  --border:#1a2d45;--white:#ffffff;--offwhite:#eaf3fb;--body-text:#cce2f2;--muted:#5a8aaa;
+  --border:#1a2d45;--white:#ffffff;--body-text:#cce2f2;--muted:#5a8aaa;
 }
 html,body{background:var(--bg);color:var(--white);font-family:'Lexend',sans-serif;min-height:100vh;margin:0}
 nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;position:sticky;top:0;z-index:100;width:100%}
@@ -24,42 +24,53 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
   background:var(--card);
   border:1px solid var(--y-border);
   border-radius:14px;
-  padding:52px 56px 48px;
-  max-width:580px;width:100%;
+  padding:60px 64px 56px;
+  max-width:640px;width:100%;
   text-align:center;
   box-shadow:0 0 48px var(--y-glow),0 0 100px rgba(245,196,0,0.04);
   opacity:0;transform:translateY(18px);
   transition:opacity 0.65s ease,transform 0.65s ease;
+  position:relative;overflow:hidden;
 }
 .gate-card.show{opacity:1;transform:translateY(0)}
 @keyframes yellowPulse{0%,100%{border-color:rgba(245,196,0,0.2);box-shadow:0 0 20px rgba(245,196,0,0.06)}50%{border-color:rgba(245,196,0,0.65);box-shadow:0 0 40px rgba(245,196,0,0.22),0 0 80px rgba(245,196,0,0.09)}}
 .gate-card.pulsing{animation:yellowPulse 2.5s ease-in-out infinite}
+@keyframes scanline{0%{top:-2px;opacity:0}5%{opacity:1}90%{opacity:0.6}100%{top:100%;opacity:0}}
+.scanline{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,196,0,0.5),transparent);pointer-events:none;animation:scanline 4s ease-in-out 1.8s infinite}
 .chip{
   display:inline-block;font-family:'IBM Plex Mono',monospace;
-  font-size:9px;letter-spacing:3px;text-transform:uppercase;
-  color:var(--y);background:var(--y-dim);
-  border:1px solid var(--y-border);border-radius:3px;
-  padding:6px 14px;margin-bottom:30px;
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:22px;
 }
 .gate-heading{
-  font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;letter-spacing:3px;
-  color:var(--y);line-height:1.25;margin-bottom:26px;
+  font-family:'Orbitron',sans-serif;
+  font-size:52px;font-weight:900;letter-spacing:2px;
+  color:var(--y);line-height:1.1;
+  margin-bottom:32px;
+  min-height:1.2em;
+  text-shadow:0 0 40px rgba(245,196,0,0.3);
 }
-.gate-divider{height:1px;background:linear-gradient(90deg,transparent,var(--y-border),transparent);margin:0 auto 28px;max-width:320px}
-.gate-body{font-size:15px;font-weight:300;line-height:1.9;color:var(--body-text);margin-bottom:14px}
+@keyframes curBlink{0%,100%{opacity:1}50%{opacity:0}}
+.title-cursor{display:inline-block;width:4px;height:0.8em;background:var(--y);vertical-align:middle;margin-left:4px;animation:curBlink 0.7s step-end infinite}
+.gate-body{
+  font-size:23px;font-weight:300;line-height:1.75;
+  color:var(--body-text);margin-bottom:40px;
+  opacity:0;transition:opacity 0.6s ease;
+}
 .gate-body strong{color:var(--y);font-weight:500}
-.gate-note{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--muted);margin-top:6px;margin-bottom:36px}
 .continue-btn{
-  display:inline-flex;align-items:center;gap:12px;
-  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:14px;
+  font-family:'IBM Plex Mono',monospace;font-size:18px;letter-spacing:3px;text-transform:uppercase;
   color:#07101e;background:var(--y);
   border:1px solid var(--y);border-radius:3px;
-  padding:15px 36px;cursor:pointer;text-decoration:none;font-weight:500;
+  padding:18px 44px;cursor:pointer;text-decoration:none;font-weight:500;
   transition:background .2s,box-shadow .2s;
+  opacity:0;transition:opacity 0.6s ease,background .2s,box-shadow .2s;
 }
-.continue-btn:hover{background:#ffd700;box-shadow:0 0 24px rgba(245,196,0,0.45)}
+.continue-btn.show{opacity:1}
+.continue-btn:hover{background:#ffd700;box-shadow:0 0 28px rgba(245,196,0,0.5)}
 .continue-arrow{transition:transform .2s}
-.continue-btn:hover .continue-arrow{transform:translateX(5px)}
+.continue-btn:hover .continue-arrow{transform:translateX(6px)}
 </style>
 </head>
 <body>
@@ -70,16 +81,52 @@ nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;dis
 </nav>
 <div class="page-body">
   <div class="gate-card" id="gate-card">
-    <div class="chip">Time to Upgrade</div>
-    <div class="gate-divider"></div>
-    <p class="gate-body">The lessons ahead require a paid Claude account. Upgrade to <strong>Claude Pro</strong> before you continue.</p>
-    <a href="lesson-3-1.html" class="continue-btn">
+    <div class="scanline"></div>
+    <div class="chip">// system notice</div>
+    <div class="gate-heading" id="gate-heading"></div>
+    <p class="gate-body" id="gate-body">The lessons ahead require a paid Claude account. Upgrade to <strong>Claude Pro</strong> before you continue.</p>
+    <a href="lesson-3-1.html" class="continue-btn" id="continue-btn">
       Continue <span class="continue-arrow">→</span>
     </a>
   </div>
 </div>
 <script>
-setTimeout(function(){var c=document.getElementById('gate-card');c.classList.add('show');setTimeout(function(){c.classList.add('pulsing');},700);},150);
+(function(){
+  var TITLE = 'UPGRADE TO PRO.';
+  var headEl = document.getElementById('gate-heading');
+  var bodyEl = document.getElementById('gate-body');
+  var btnEl  = document.getElementById('continue-btn');
+  var card   = document.getElementById('gate-card');
+
+  function wait(ms){return new Promise(function(r){setTimeout(r,ms);})}
+
+  async function typeTitle(){
+    var cursor = document.createElement('span');
+    cursor.className = 'title-cursor';
+    headEl.appendChild(cursor);
+    for(var i=0;i<TITLE.length;i++){
+      headEl.insertBefore(document.createTextNode(TITLE[i]),cursor);
+      var d = TITLE[i]==='.' ? 180 : TITLE[i]===' ' ? 90 : 55;
+      await wait(d);
+    }
+    await wait(500);
+    cursor.remove();
+  }
+
+  async function run(){
+    await wait(150);
+    card.classList.add('show');
+    await wait(750);
+    card.classList.add('pulsing');
+    await wait(300);
+    await typeTitle();
+    bodyEl.style.opacity = '1';
+    await wait(400);
+    btnEl.classList.add('show');
+  }
+
+  run();
+})();
 (function(){
   var s=new Audio('../audio/music/ciro-intro.mp3');
   s.loop=true;s.volume=0.18;
