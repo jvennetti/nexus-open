@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Academy — Upgrade to Claude Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Lexend:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08101f;--card:#0d1628;
+  --y:#F5C400;--y-dim:rgba(245,196,0,0.07);--y-border:rgba(245,196,0,0.28);--y-glow:rgba(245,196,0,0.12);
+  --border:#1a2d45;--white:#ffffff;--offwhite:#eaf3fb;--body-text:#cce2f2;--muted:#5a8aaa;
+}
+html,body{background:var(--bg);color:var(--white);font-family:'Lexend',sans-serif;min-height:100vh;margin:0}
+nav{background:var(--card);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;position:sticky;top:0;z-index:100;width:100%}
+.wordmark{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;letter-spacing:4px;color:var(--white);text-decoration:none}
+.wordmark span{color:var(--y)}
+.nav-id{font-family:'Lexend',sans-serif;font-size:13px;font-weight:300;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.nav-back{font-family:'Lexend',sans-serif;font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:8px 18px;border-radius:3px;transition:color .2s,border-color .2s}
+.nav-back:hover{color:var(--y);border-color:var(--y-border)}
+.page-body{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:40px 20px}
+.gate-card{
+  background:var(--card);
+  border:1px solid var(--y-border);
+  border-radius:14px;
+  padding:52px 56px 48px;
+  max-width:580px;width:100%;
+  text-align:center;
+  box-shadow:0 0 48px var(--y-glow),0 0 100px rgba(245,196,0,0.04);
+  opacity:0;transform:translateY(18px);
+  transition:opacity 0.65s ease,transform 0.65s ease;
+}
+.gate-card.show{opacity:1;transform:translateY(0)}
+.chip{
+  display:inline-block;font-family:'IBM Plex Mono',monospace;
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--y);background:var(--y-dim);
+  border:1px solid var(--y-border);border-radius:3px;
+  padding:6px 14px;margin-bottom:30px;
+}
+.gate-heading{
+  font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;letter-spacing:3px;
+  color:var(--y);line-height:1.25;margin-bottom:26px;
+}
+.gate-divider{height:1px;background:linear-gradient(90deg,transparent,var(--y-border),transparent);margin:0 auto 28px;max-width:320px}
+.gate-body{font-size:15px;font-weight:300;line-height:1.9;color:var(--body-text);margin-bottom:14px}
+.gate-body strong{color:var(--y);font-weight:500}
+.gate-note{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--muted);margin-top:6px;margin-bottom:36px}
+.continue-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  color:#07101e;background:var(--y);
+  border:1px solid var(--y);border-radius:3px;
+  padding:15px 36px;cursor:pointer;text-decoration:none;font-weight:500;
+  transition:background .2s,box-shadow .2s;
+}
+.continue-btn:hover{background:#ffd700;box-shadow:0 0 24px rgba(245,196,0,0.45)}
+.continue-arrow{transition:transform .2s}
+.continue-btn:hover .continue-arrow{transform:translateX(5px)}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../hub.html" class="wordmark">NEXUS <span>ACADEMY</span></a>
+  <div class="nav-id">Module 3 — System Notice</div>
+  <a href="../hub.html" class="nav-back">← Hub</a>
+</nav>
+<div class="page-body">
+  <div class="gate-card" id="gate-card">
+    <div class="chip">Operator Notice</div>
+    <div class="gate-heading">TIME TO<br>LEVEL UP.</div>
+    <div class="gate-divider"></div>
+    <p class="gate-body">
+      The tools ahead — <strong>Cowork, automation, and everything in Module 3 and beyond</strong> — require a paid Claude account.
+    </p>
+    <p class="gate-body">
+      If you're still on the free plan, now is the moment. Upgrade to <strong>Claude Pro</strong> or <strong>Max</strong> before you continue.
+    </p>
+    <p class="gate-note">The free plan got you here. Pro takes you the rest of the way.</p>
+    <a href="lesson-3-1.html" class="continue-btn">
+      I'm upgraded — Continue <span class="continue-arrow">→</span>
+    </a>
+  </div>
+</div>
+<script>
+setTimeout(function(){document.getElementById('gate-card').classList.add('show');},150);
+(function(){
+  var s=new Audio('../audio/music/ciro-intro.mp3');
+  s.loop=true;s.volume=0.18;
+  s.play().catch(function(){document.addEventListener('click',function h(){s.play().catch(function(){});document.removeEventListener('click',h);});});
+  window.addEventListener('pageshow',function(e){if(e.persisted)s.play().catch(function(){});});
+})();
+</script>
+<script src="../nexus-transition.js"></script>
+</body>
+</html>
